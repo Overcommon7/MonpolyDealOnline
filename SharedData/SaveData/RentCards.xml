@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfRentCardSaveValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RentCardSaveValues>
+    <setType1>Green</setType1>
+    <setType2>DarkBlue</setType2>
+  </RentCardSaveValues>
+  <RentCardSaveValues>
+    <setType1>Brown</setType1>
+    <setType2>LightBlue</setType2>
+  </RentCardSaveValues>
+  <RentCardSaveValues>
+    <setType1>Purple</setType1>
+    <setType2>Orange</setType2>
+  </RentCardSaveValues>
+  <RentCardSaveValues>
+    <setType1>Railroad</setType1>
+    <setType2>Utilities</setType2>
+  </RentCardSaveValues>
+  <RentCardSaveValues>
+    <setType1>Red</setType1>
+    <setType2>Yellow</setType2>
+  </RentCardSaveValues>
+</ArrayOfRentCardSaveValues>

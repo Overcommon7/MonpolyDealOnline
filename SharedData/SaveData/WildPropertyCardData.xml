@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfWildPropertyCardSaveValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>4</value>
+      <setType>DarkBlue</setType>
+    </propertyValues>
+    <setType1>DarkBlue</setType1>
+    <setType2>Green</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>2</value>
+      <setType>Orange</setType>
+    </propertyValues>
+    <setType1>Orange</setType1>
+    <setType2>Purple</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>1</value>
+      <setType>Brown</setType>
+    </propertyValues>
+    <setType1>Brown</setType1>
+    <setType2>LightBlue</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>4</value>
+      <setType>Railroad</setType>
+    </propertyValues>
+    <setType1>Railroad</setType1>
+    <setType2>Green</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>4</value>
+      <setType>LightBlue</setType>
+    </propertyValues>
+    <setType1>LightBlue</setType1>
+    <setType2>Railroad</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>2</value>
+      <setType>Utilities</setType>
+    </propertyValues>
+    <setType1>Utilities</setType1>
+    <setType2>Railroad</setType2>
+  </WildPropertyCardSaveValues>
+  <WildPropertyCardSaveValues>
+    <propertyValues>
+      <name>Wild Card</name>
+      <value>3</value>
+      <setType>Red</setType>
+    </propertyValues>
+    <setType1>Red</setType1>
+    <setType2>Yellow</setType2>
+  </WildPropertyCardSaveValues>
+</ArrayOfWildPropertyCardSaveValues>

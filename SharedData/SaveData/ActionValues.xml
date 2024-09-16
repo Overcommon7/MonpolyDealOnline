@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfActionValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ActionValues>
+    <type>DealBreaker</type>
+    <amount>2</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>JustSayNo</type>
+    <amount>3</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>SlyDeal</type>
+    <amount>3</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>ForcedDeal</type>
+    <amount>3</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>ItsMyBirthday</type>
+    <amount>3</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>DoubleRent</type>
+    <amount>2</amount>
+  </ActionValues>
+  <ActionValues>
+    <type>PassGo</type>
+    <amount>10</amount>
+  </ActionValues>
+</ArrayOfActionValues>

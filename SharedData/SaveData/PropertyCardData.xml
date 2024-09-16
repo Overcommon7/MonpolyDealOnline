@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfPropertyCardSaveValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PropertyCardSaveValues>
+    <name>Mediterranean Avenue</name>
+    <value>1</value>
+    <setType>Brown</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Baltic Avenue</name>
+    <value>1</value>
+    <setType>Brown</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Oriental Avenue</name>
+    <value>1</value>
+    <setType>LightBlue</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Vermont Avenue</name>
+    <value>1</value>
+    <setType>LightBlue</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Connecticut Avenue</name>
+    <value>1</value>
+    <setType>LightBlue</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>St. Charles Place</name>
+    <value>2</value>
+    <setType>Purple</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>States Avenue</name>
+    <value>2</value>
+    <setType>Purple</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Virginia Avenue</name>
+    <value>2</value>
+    <setType>Purple</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>St. James Place</name>
+    <value>2</value>
+    <setType>Orange</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Tennessee Avenue</name>
+    <value>2</value>
+    <setType>Orange</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>New York Avenue</name>
+    <value>2</value>
+    <setType>Orange</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Kentucky Avenue</name>
+    <value>3</value>
+    <setType>Red</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Indiana Avenue</name>
+    <value>3</value>
+    <setType>Red</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Illinois Avenue</name>
+    <value>3</value>
+    <setType>Red</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Atlantic Avenue</name>
+    <value>3</value>
+    <setType>Yellow</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Ventnor Avenue</name>
+    <value>3</value>
+    <setType>Yellow</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Marvin Gardens</name>
+    <value>3</value>
+    <setType>Yellow</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Pacific Avenue</name>
+    <value>4</value>
+    <setType>Green</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>North Carolina Avenue</name>
+    <value>4</value>
+    <setType>Green</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Pennsylvania Avenue</name>
+    <value>4</value>
+    <setType>Green</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Park Place</name>
+    <value>4</value>
+    <setType>DarkBlue</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Boardwalk</name>
+    <value>4</value>
+    <setType>DarkBlue</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Pennsylvania Railroad</name>
+    <value>2</value>
+    <setType>Railroad</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Reading Railroad</name>
+    <value>2</value>
+    <setType>Railroad</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>B. &amp; O. Railroad</name>
+    <value>2</value>
+    <setType>Railroad</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Short Line</name>
+    <value>2</value>
+    <setType>Railroad</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Electric Company</name>
+    <value>2</value>
+    <setType>Utilities</setType>
+  </PropertyCardSaveValues>
+  <PropertyCardSaveValues>
+    <name>Water Works</name>
+    <value>2</value>
+    <setType>Utilities</setType>
+  </PropertyCardSaveValues>
+</ArrayOfPropertyCardSaveValues>

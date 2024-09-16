@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfMoneyValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MoneyValues>
+    <value>1</value>
+    <amount>6</amount>
+  </MoneyValues>
+  <MoneyValues>
+    <value>2</value>
+    <amount>5</amount>
+  </MoneyValues>
+  <MoneyValues>
+    <value>3</value>
+    <amount>3</amount>
+  </MoneyValues>
+  <MoneyValues>
+    <value>4</value>
+    <amount>3</amount>
+  </MoneyValues>
+  <MoneyValues>
+    <value>5</value>
+    <amount>2</amount>
+  </MoneyValues>
+  <MoneyValues>
+    <value>10</value>
+    <amount>1</amount>
+  </MoneyValues>
+</ArrayOfMoneyValues>
