@@ -53,6 +53,13 @@ namespace MonopolyDeal
             Client.SendData(ClientSendMessages.RequestHand, Player.Number);
             mCurrentPlayerNumbersTurn = playerNumbersTurn;
         }
+
+        internal void ImGuiUpdate()
+        {
+            Player.ImGuiDraw();
+            foreach (var player in mPlayers) 
+                player.ImGuiDraw();
+        }
     }
 }
 

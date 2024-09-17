@@ -2,6 +2,12 @@
 
 namespace MonopolyDeal
 {
+    public enum State
+    {
+        NotTurn,
+        PlayingCards,
+        RespondingToAction
+    }
     public class Gameplay : Appstate
     {
         public PlayerManager? PlayerManager { get; private set; }
@@ -22,7 +28,7 @@ namespace MonopolyDeal
 
         public override void ImGuiUpdate()
         {
-            
+            PlayerManager.ImGuiUpdate();
         }
 
         public void StartGame(int playerTurn)
