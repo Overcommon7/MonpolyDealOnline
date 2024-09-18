@@ -11,12 +11,8 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
-            ImGui.Begin(Name);
-
             ImGui.Text($"Cards In Hand: {CardsInHand}");
             PlayedCards.ImGuiDraw();            
-
-            ImGui.End();
         }
     }
 }

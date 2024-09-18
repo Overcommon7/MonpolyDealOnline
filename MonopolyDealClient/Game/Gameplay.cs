@@ -11,29 +11,25 @@ namespace MonopolyDeal
     public class Gameplay : Appstate
     {
         public PlayerManager? PlayerManager { get; private set; }
+        public State State { get; private set; }
         
         public override void OnOpen()
         {
             PlayerManager = new PlayerManager();
-        }
-        public override void Draw()
-        {
-            
-        }
 
-        public override void Update()
-        {
-            
-        }
+            AddWindow<LocalPlayerWindow>(PlayerManager.LocalPlayer);
 
-        public override void ImGuiUpdate()
-        {
-            PlayerManager.ImGuiUpdate();
+            foreach (var player in PlayerManager.OnlinePlayes)
+                AddWindow<OnlinePlayerWindow>(player);
         }
-
         public void StartGame(int playerTurn)
         {
             PlayerManager.StartGame(playerTurn);
+        }
+
+        public override void AddWindows()
+        {
+            
         }
     }
 }

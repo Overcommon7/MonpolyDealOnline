@@ -6,12 +6,12 @@ namespace MonopolyDeal
     {
         int mCurrentPlayerNumbersTurn;
         List<OnlinePlayer> mPlayers;
-        public LocalPlayer Player { get; private set; }
-        IReadOnlyList<OnlinePlayer> OnlinePlayes => mPlayers;
+        public LocalPlayer LocalPlayer { get; private set; }
+        public IReadOnlyList<OnlinePlayer> OnlinePlayes => mPlayers;
         public Player GetPlayer(int playerNumber)
         {
-            if (Player.Number == playerNumber)
-                return Player;
+            if (LocalPlayer.Number == playerNumber)
+                return LocalPlayer;
 
             return GetOnlinePlayer(playerNumber);
         }
@@ -27,8 +27,8 @@ namespace MonopolyDeal
         {
             get
             {
-                if (Player.Number == mCurrentPlayerNumbersTurn)
-                    return Player;
+                if (LocalPlayer.Number == mCurrentPlayerNumbersTurn)
+                    return LocalPlayer;
 
                 int index = mPlayers.FindIndex(player => player.Number == mCurrentPlayerNumbersTurn);
                 if (index == -1)
@@ -41,7 +41,7 @@ namespace MonopolyDeal
         public PlayerManager() 
         {
             var connection = App.GetState<Connection>();
-            Player = new LocalPlayer(connection.PlayerNumber, Client.ID, connection.Username);
+            LocalPlayer = new LocalPlayer(connection.PlayerNumber, Client.ID, connection.Username);
 
             mPlayers = new List<OnlinePlayer>();
             foreach (var onlinePlayer in connection.OtherPlayers)
@@ -50,15 +50,8 @@ namespace MonopolyDeal
 
         public void StartGame(int playerNumbersTurn)
         {
-            Client.SendData(ClientSendMessages.RequestHand, Player.Number);
+            Client.SendData(ClientSendMessages.RequestHand, LocalPlayer.Number);
             mCurrentPlayerNumbersTurn = playerNumbersTurn;
-        }
-
-        internal void ImGuiUpdate()
-        {
-            Player.ImGuiDraw();
-            foreach (var player in mPlayers) 
-                player.ImGuiDraw();
         }
     }
 }

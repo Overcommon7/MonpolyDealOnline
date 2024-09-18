@@ -105,7 +105,7 @@ namespace MonopolyDeal
             return cards;
         }
 
-        public void ImGuiDraw(Action<PropertyCard>? propertyLogic = null, Action<Card>? buildingLogic = null)
+        public void ImGuiDraw(Action<Card>? propertyLogic = null, Action<Card>? buildingLogic = null)
         {
             ImGui.TreePush($"PropertyCards##{mPlayer.ID}");
 

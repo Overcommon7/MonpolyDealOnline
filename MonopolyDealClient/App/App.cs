@@ -62,12 +62,16 @@ namespace MonopolyDeal
             AddStates();
 
             foreach (var state in mAppstates)
-                state.Intialize();
+                state.AddWindows();
+
+            foreach (var state in mAppstates)
+                state.Intialize();               
         }
 
         private static void AddStates()
         {
             mAppstates.Add(new Connection());
+            mAppstates.Add(new Gameplay());
         }
 
         private static void Update()
