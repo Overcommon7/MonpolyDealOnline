@@ -24,18 +24,21 @@ namespace StartupProject
                 info.WorkingDirectory = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealClient\\bin\\Debug\\net8.0-windows10.0.22000.0\\";
                 info.WindowStyle = ProcessWindowStyle.Normal;
                 info.CreateNoWindow = false;
+                info.ArgumentList.Clear();
+                info.ArgumentList.Add((i + 7).ToString());
 
                 clients.Add(info);
             }
 
-            List<Process?> processes = [Process.Start(server)];
+            List<Process?> processes = new();
+            processes.Add(Process.Start(server));
 
             Thread.Sleep(500);
 
             for (int i = 0; i < clients.Count; i++)
             {
                 processes.Add(Process.Start(clients[i]));
-                Thread.Sleep(250);
+                Thread.Sleep(500);
             }
 
             for (int i = 0; i < processes.Count; i++)

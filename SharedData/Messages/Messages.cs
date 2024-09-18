@@ -25,6 +25,7 @@ public enum ServerSendMessages : short
     PlayerUsername,
     OnPlayerIDAssigned,
     OnPlayerTurnStarted,
+    OnPlayerConnected,
     OnPlayerDisconnected,
     OnPlayerReconnected,
     HandReturned,

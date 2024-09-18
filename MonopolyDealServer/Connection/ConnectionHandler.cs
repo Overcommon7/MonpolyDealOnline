@@ -4,9 +4,11 @@ using System.Net.Sockets;
 
 public static class ConnectionHandler
 {
+    public static int sReadiedPlayers = 0;
     public static void Start()
     {
         GameManager.CurrentState = GameState.Lobby;
+        sReadiedPlayers = 0;
 
         Server.mOnClientConnected += Server_OnClientConnected;
         Server.mOnClientDisconnected += Server_OnClientDisconnected;
@@ -15,8 +17,6 @@ public static class ConnectionHandler
 
     public static void End()
     {
-        Server.mOnClientConnected -= Server_OnClientConnected;
-        Server.mOnClientDisconnected -= Server_OnClientDisconnected;
         Server.mOnDataRecieved -= Server_OnDataRecieved;
     }
 
@@ -29,10 +29,17 @@ public static class ConnectionHandler
         if (PlayerManager.TryGetPlayer(extra.TcpClient, out var player) != ConnectionStatus.Connected)
             return;
 
+        Interlocked.Increment(ref sReadiedPlayers);
+        Console.WriteLine("Players Ready: {0}", sReadiedPlayers);
+
         Server.BroadcastMessage(ServerSendMessages.PlayerUsername, name + ',' + clientID, player.Number);
 
         if (PlayerManager.ConnectedPlayers != GameManager.Configuration.mLobbySize)
             return;
+        
+        if (sReadiedPlayers < GameManager.Configuration.mLobbySize)
+            return;
+
 
         End();
         GameManager.Start();
@@ -47,9 +54,11 @@ public static class ConnectionHandler
         var status = PlayerManager.TryGetPlayer(client, out var player);
         if (status == ConnectionStatus.Invalid)
             return;
+            
 
         PlayerManager.PlayerDisconnected(player);
         Console.WriteLine($"{player.Name} Has Disconnected");
+        Server.BroadcastMessage(ServerSendMessages.OnPlayerDisconnected, player.ID.ToString(), player.Number);
     }
 
     private static void Server_OnClientConnected(SimpleTcpServer server, TcpClient client)
@@ -62,6 +71,7 @@ public static class ConnectionHandler
         {
             PlayerManager.PlayerReconnected(player);
             Console.WriteLine($"{player.Name} Has Reconnected");
+            Server.BroadcastMessage(ServerSendMessages.OnPlayerReconnected, player.ID.ToString(), player.Number);
             return;
         }
 
@@ -69,6 +79,10 @@ public static class ConnectionHandler
         {
             player = PlayerManager.AddPlayer(client);
             Console.WriteLine($"New Client {player.ID} Has Joined - EndPoint => { client.Client.RemoteEndPoint?.ToString() }");
+
+
+            Thread.Sleep(1500);
+            Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
         }  
     }
 }

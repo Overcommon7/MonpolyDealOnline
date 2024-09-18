@@ -104,6 +104,8 @@ internal static class Server
         StringBuilder builder = new StringBuilder();
         builder
             .Append(e.GetID())
+            .Append(',')
+            .Append(PlayerManager.TotalPlayers + 1)
             .Append('|');
 
         for (int i = 0; i < PlayerManager.TotalPlayers; ++i)
@@ -113,10 +115,12 @@ internal static class Server
 
             if (i + 1 != PlayerManager.TotalPlayers)
                 builder.Append('|');
-        }    
+        }
 
-        var playerData = Format.Encode(builder.ToString());
+        var data = builder.ToString();
+        var playerData = Format.Encode(data);
         e.GetStream().Write(playerData);
+
         mOnClientConnected?.Invoke(mServer, e);
     }
 

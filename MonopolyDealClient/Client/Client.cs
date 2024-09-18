@@ -37,7 +37,11 @@ namespace MonopolyDeal
             mClient.Connect(ipAddress, portNumber);
             Thread.Sleep(10);
 
-            return mClient.TcpClient.Connected;
+            if (!mClient.TcpClient.Connected)
+                return false;
+
+            EndPoint = mClient.TcpClient.Client.RemoteEndPoint?.ToString() ?? string.Empty;
+            return true;
         }
 
         public static void Shutdown()
@@ -70,8 +74,11 @@ namespace MonopolyDeal
             if (ID == 0)
             {
                 var connection = App.GetState<Connection>();
-                var strs = Format.ToString(e.Data).Split('|', StringSplitOptions.RemoveEmptyEntries);                
-                ID = ulong.Parse(strs[0]);
+                var strs = Format.ToString(e.Data).Split('|', StringSplitOptions.RemoveEmptyEntries);
+                var localData = strs[0].Split(',');
+
+                ID = ulong.Parse(localData[0]);
+                connection.PlayerNumber = int.Parse(localData[1]);
 
                 for (int i = 1; i < strs.Length; ++i)
                 {

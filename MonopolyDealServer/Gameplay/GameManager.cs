@@ -12,7 +12,7 @@ public static class GameManager
     public static void Start()
     {
         Server.mOnDataRecieved += Server_OnDataRecieved;
-
+        CurrentState = GameState.InGame;
     }
 
     private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data, Message extra)

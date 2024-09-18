@@ -3,7 +3,6 @@ using System.Net;
 using SimpleTCP;
 using System.Collections.Generic;
 using System.Threading;
-using System.Net.NetworkInformation;
 using System;
 
 namespace MonopolyDeal
@@ -15,26 +14,23 @@ namespace MonopolyDeal
         string mUsername = string.Empty;
         bool mValidServerCredentials = false;
         bool mIsReady = false;
-        bool mAutoConnect = true;
-        
-        int mPlayerNumber = -1;
+        bool mAutoConnect = true;    
         public string Username => mUsername;
-        public int PlayerNumber => mPlayerNumber;
+        public int PlayerNumber { get; set; }
         public IReadOnlyDictionary<int, (string, ulong)> OtherPlayers => mOtherPlayers;
 
         Dictionary<int, (string, ulong)> mOtherPlayers = new();
-        public override void Draw()
-        {
-
-        }
-
-        public override void Update()
-        {
-        }
 
         public void AddOnlinePlayer(int playerNumber, ulong id, string name)
         {
-            mOtherPlayers.Add(playerNumber, (name, id));
+            lock (mOtherPlayers)
+                mOtherPlayers.TryAdd(playerNumber, (name, id));
+        }
+
+        public void RemovePlayer(int playerNumber)
+        {
+            lock (mOtherPlayers)
+                mOtherPlayers.Remove(playerNumber);
         }
 
         public override void OnClose()
@@ -51,39 +47,57 @@ namespace MonopolyDeal
 
             mAddress = "192.168.1.86";
             mPort = "25565";
-            mUsername = "Overcommon" + Random.Shared.Next(100000);
+            mUsername = "Overcommon";
 
             Thread.Sleep(750);
 
+            if (!Program.DebugNumber.HasValue)
+                return;
+
+            mUsername += Program.DebugNumber.Value;
             ConnectToServer();            
         }
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
         {
+            if (message == ServerSendMessages.OnPlayerConnected || message == ServerSendMessages.OnPlayerReconnected)
+                PlayerConnected(playerNumber, data);
+
+            if (message == ServerSendMessages.OnPlayerDisconnected)
+                PlayerDisconnected(playerNumber, data);
+
             if (message == ServerSendMessages.PlayerUsername)
                 PlayerUsernameRecieved(playerNumber, data);
 
             if (message == ServerSendMessages.OnGameStarted)
-                OnGameStarted(data);
+                OnGameStarted(playerNumber);
         }
 
-        private void OnGameStarted(byte[] data)
+        private void PlayerConnected(int playerNumber, byte[] data)
         {
-            var gameplay = App.ChangeState<Gameplay>();
-            var playerTurn = int.Parse(Format.ToString(data));
-            gameplay.StartGame(playerTurn);
+            var id = ulong.Parse(Format.ToString(data));
+
+            if (Client.ID != id)
+                AddOnlinePlayer(playerNumber, id, $"Player {playerNumber}");
+        }
+
+        private void PlayerDisconnected(int playerNumber, byte[] data)
+        {
+            RemovePlayer(playerNumber);
+        }
+
+        private void OnGameStarted(int playerTurn)
+        {
+            App.ChangeState<Gameplay>().StartingPlayerNumber = playerTurn;            
         }
 
         public override void ImGuiUpdate()
         {
-            ImGui.Begin("Connect To Lobby");
 
             if (Client.IsConnected)
                 CreateUsername();
             else
                 EstablishConnection();
-
-            ImGui.End();
         }
 
         void EstablishConnection()
@@ -128,8 +142,13 @@ namespace MonopolyDeal
             if (mIsReady)
                 ImGui.Text($"You: {mUsername}");
 
-            foreach (var player in mOtherPlayers.Values)
-                ImGui.Text(player.Item1 + " - " + player.Item2);
+            lock (mOtherPlayers)
+            {
+                foreach (var player in mOtherPlayers.Values)
+                    ImGui.Text(player.Item1 + " - " + player.Item2);
+            }
+                
+            ImGui.SeparatorText("Debug Info");
 
             ImGui.TextDisabled(Client.ID.ToString());
             ImGui.TextDisabled(Client.EndPoint);
@@ -146,7 +165,7 @@ namespace MonopolyDeal
 
         void PlayerUsernameRecieved(int playerNumber, byte[] data)
         {
-            var strs = Format.ToString(data).Split(',', System.StringSplitOptions.RemoveEmptyEntries);
+            var strs = Format.ToString(data).Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             if (strs.Length != 2)
                 return;
@@ -165,6 +184,11 @@ namespace MonopolyDeal
                     mOtherPlayers[playerNumber] = (username, incomingID);
             }
 
+        }
+
+        public override void AddWindows()
+        {
+            
         }
     }
 }

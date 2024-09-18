@@ -16,7 +16,7 @@ namespace MonopolyDeal
         static Appstate? mCurrentState => mAppstates[mCurrentStateIndex];
         static bool mValidAppstateLoaded => mCurrentStateIndex >= 0 && mCurrentStateIndex < mAppstates.Count && mCurrentState is not null;
 
-        public static Vector2 ScreenSize { get; private set; } = new Vector2(640, 480);
+        public static Vector2 ScreenSize { get; private set; } = new Vector2(1280, 720);
         public static void Run()
         {
             Initialize();

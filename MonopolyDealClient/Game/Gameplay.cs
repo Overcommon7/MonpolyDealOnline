@@ -11,6 +11,7 @@ namespace MonopolyDeal
     public class Gameplay : Appstate
     {
         public PlayerManager? PlayerManager { get; private set; }
+        public int StartingPlayerNumber { get; set; }
         public State State { get; private set; }
         
         public override void OnOpen()
@@ -21,10 +22,12 @@ namespace MonopolyDeal
 
             foreach (var player in PlayerManager.OnlinePlayes)
                 AddWindow<OnlinePlayerWindow>(player);
+
+            StartGame();
         }
-        public void StartGame(int playerTurn)
+        public void StartGame()
         {
-            PlayerManager.StartGame(playerTurn);
+            PlayerManager.StartGame(StartingPlayerNumber);
         }
 
         public override void AddWindows()
