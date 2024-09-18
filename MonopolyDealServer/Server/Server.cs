@@ -91,7 +91,7 @@ internal static class Server
         var messsage = Format.GetMessageType<ClientSendMessages>(e.Data);
         byte[] data;
 
-        if ((int)messsage < 100)
+        if ((int)messsage < Format.HEADER_SIZE)
             data = Format.GetByteDataFromMessage(e.Data);
         else
             data = e.Data;
@@ -104,21 +104,21 @@ internal static class Server
         StringBuilder builder = new StringBuilder();
         builder
             .Append(e.GetID())
-            .Append(',')
-            .Append(PlayerManager.TotalPlayers + 1)
             .Append('|');
 
         for (int i = 0; i < PlayerManager.TotalPlayers; ++i)
         {
-            PlayerManager.TryGetPlayer(i, out var player);
+            var status = PlayerManager.TryGetPlayer(i, out var player);
+            if (status != ConnectionStatus.Connected)
+                continue;
+
             builder.Append(player.Number).Append(',').Append(player.ID).Append(',').Append(player.Name);
 
             if (i + 1 != PlayerManager.TotalPlayers)
                 builder.Append('|');
         }
 
-        var data = builder.ToString();
-        var playerData = Format.Encode(data);
+        var playerData = Format.ToData(ServerSendMessages.OnPlayerIDAssigned, builder.ToString(), PlayerManager.TotalPlayers + 1);
         e.GetStream().Write(playerData);
 
         mOnClientConnected?.Invoke(mServer, e);

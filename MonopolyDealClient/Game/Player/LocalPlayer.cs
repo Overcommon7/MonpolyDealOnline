@@ -27,5 +27,14 @@ namespace MonopolyDeal
 
             PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1]);
         }
+
+        public void OnHandReturned(int playerNumber, byte[] data)
+        {
+            if (playerNumber != Number)
+                return;
+
+
+            mHand.AddCard()
+        }
     }
 }

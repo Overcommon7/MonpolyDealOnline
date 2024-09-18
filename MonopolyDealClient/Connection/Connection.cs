@@ -60,6 +60,9 @@ namespace MonopolyDeal
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
         {
+            if (message == ServerSendMessages.OnPlayerIDAssigned)
+                IDAssigned(playerNumber, data);
+
             if (message == ServerSendMessages.OnPlayerConnected || message == ServerSendMessages.OnPlayerReconnected)
                 PlayerConnected(playerNumber, data);
 
@@ -73,8 +76,35 @@ namespace MonopolyDeal
                 OnGameStarted(playerNumber);
         }
 
+        private void IDAssigned(int playerNumber, byte[] data)
+        {
+            if (Client.ID == 0)
+            {
+                var connection = App.GetState<Connection>();
+                var strs = Format.ToString(data).Split('|', StringSplitOptions.RemoveEmptyEntries);
+
+                Client.ID = ulong.Parse(strs[0]);
+                connection.PlayerNumber = playerNumber;
+
+                for (int i = 1; i < strs.Length; ++i)
+                {
+                    var playerData = strs[i].Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    if (playerData.Length != 3)
+                        continue;
+
+                    int number = int.Parse(playerData[0]);
+                    ulong id = ulong.Parse(playerData[1]);
+                    connection.AddOnlinePlayer(number, id, playerData[2]);
+                }
+                return;
+            }
+        }
+
         private void PlayerConnected(int playerNumber, byte[] data)
         {
+            if (Client.ID == 0)
+                return;
+
             var id = ulong.Parse(Format.ToString(data));
 
             if (Client.ID != id)

@@ -79,9 +79,7 @@ public static class ConnectionHandler
         {
             player = PlayerManager.AddPlayer(client);
             Console.WriteLine($"New Client {player.ID} Has Joined - EndPoint => { client.Client.RemoteEndPoint?.ToString() }");
-
-
-            Thread.Sleep(1500);
+            Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
         }  
     }

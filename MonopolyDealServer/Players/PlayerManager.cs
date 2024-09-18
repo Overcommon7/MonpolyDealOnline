@@ -51,6 +51,11 @@ public static class PlayerManager
         return GetStatus(out player, p => p.ID == id);
     }
 
+    public static ConnectionStatus TryGetPlayer(ulong playerID, out Player player)
+    {
+        return GetStatus(out player, p => p.ID == playerID);
+    }
+
     public static void PlayerReconnected(Player player)
     {
         lock (mDisconnectedPlayers)

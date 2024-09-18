@@ -1,7 +1,12 @@
 ﻿public enum ClientSendMessages : short
 {
-    PlayCard,
+    PlayStealCard,
+    PlayForcedDeal,
     PlayRentCard,
+    PlayWildCard,
+    RemoveCardsFromHand,
+    RemoveCardsFromPlayArea,
+    RequestCards,
     MoveCard,
     PayPlayer,
     OnTurnEnded,

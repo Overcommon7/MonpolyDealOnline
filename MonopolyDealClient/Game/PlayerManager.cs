@@ -23,7 +23,7 @@ namespace MonopolyDeal
 
             return mPlayers[index];
         }
-        public Player CurrentPlayer
+        public Player CurrentTurnPlayer
         {
             get
             {

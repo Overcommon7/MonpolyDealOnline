@@ -19,6 +19,16 @@ public static class Format
         return Encoding.UTF8.GetBytes(header);
     }
 
+    public static bool ContainsProperlyFormattedHeader<T>(byte[] data) where T : struct, Enum
+    {
+        string header = Encoding.UTF8.GetString(data, 0, MESSAGE_SIZE);
+        if (!Enum.TryParse<T>(header.TrimEnd(), false, out T result))
+            return false;
+
+        string id = Encoding.UTF8.GetString(data, MESSAGE_SIZE, PLAYER_ID_LENGTH);
+        return int.TryParse(id.TrimEnd(), out int number);
+    }
+
     public static string CreateHeaderString<T>(T messageName, int playerNumber) where T : struct, Enum
     {
         var header = messageName.ToString().PadRight(MESSAGE_SIZE);

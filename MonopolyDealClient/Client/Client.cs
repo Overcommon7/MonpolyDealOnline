@@ -15,7 +15,7 @@ namespace MonopolyDeal
         public static event SendMessageCallback? mOnMessageSent;
 
         public static bool IsConnected => mClient.TcpClient?.Connected ?? false;
-        public static ulong ID { get; private set; } = 0;
+        public static ulong ID { get; set; } = 0;
         public static string EndPoint { get; private set; } = string.Empty;
 
         static Client()
@@ -71,28 +71,6 @@ namespace MonopolyDeal
 
         private static void Client_DataReceived(object? sender, Message e)
         {
-            if (ID == 0)
-            {
-                var connection = App.GetState<Connection>();
-                var strs = Format.ToString(e.Data).Split('|', StringSplitOptions.RemoveEmptyEntries);
-                var localData = strs[0].Split(',');
-
-                ID = ulong.Parse(localData[0]);
-                connection.PlayerNumber = int.Parse(localData[1]);
-
-                for (int i = 1; i < strs.Length; ++i)
-                {
-                    var playerData = strs[i].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    if (playerData.Length != 3)
-                        continue;
-
-                    int number = int.Parse(playerData[0]);
-                    ulong id = ulong.Parse(playerData[1]);
-                    connection.AddOnlinePlayer(number, id, playerData[2]);
-                }
-                return;
-            }
-
             var data = Format.GetByteDataFromMessage(e.Data);
             var message = Format.GetMessageType<ServerSendMessages>(e.Data);
             var playerNumber = Format.GetPlayerNumber(e.Data);

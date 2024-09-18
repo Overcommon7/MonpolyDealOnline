@@ -2,11 +2,13 @@
 {
     Stack<Card> cards;
     List<Card> fullDeck;
+    List<Card> remainingCards;
     int decksToUse = 1;
     public Deck(int decksToUse = 1)
     {
         fullDeck = new();
         cards = new();
+        remainingCards = new();
         this.decksToUse = decksToUse;
     }
 
@@ -88,7 +90,8 @@
             }
         }
 
-        ReloadCards();
+        Shuffle(fullDeck);
+        cards = new(fullDeck);
     }
 
     public Card RemoveCardFromDeck()
@@ -102,10 +105,16 @@
         return RemoveCardFromDeck();
     }
 
+    public void AddCardToRemainingPile(Card card)
+    {
+        remainingCards.Add(card);
+    }
+
     private void ReloadCards()
     {
-        Shuffle(fullDeck);
-        cards = new(fullDeck);
+        Shuffle(remainingCards);
+        cards = new(remainingCards);
+        remainingCards.Clear();
     }
 
     void Shuffle(List<Card> source)

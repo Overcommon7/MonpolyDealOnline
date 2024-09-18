@@ -8,4 +8,9 @@
     <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MonopolyDealClient\MonopolyDealClient.csproj" />
+    <ProjectReference Include="..\MonopolyDealServer\MonopolyDealServer.csproj" />
+  </ItemGroup>
+
 </Project>

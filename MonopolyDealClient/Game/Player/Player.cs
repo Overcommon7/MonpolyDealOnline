@@ -5,7 +5,7 @@
         public ulong ID { get; protected set; }
         public int Number { get; protected set; }
         public string Name { get; protected set; }
-        public bool IsTurn => mGameplay.PlayerManager.CurrentPlayer.Number == Number;
+        public bool IsTurn => mGameplay.PlayerManager.CurrentTurnPlayer.Number == Number;
         public PlayedCards PlayedCards { get; private set; }
 
         protected Gameplay mGameplay;
