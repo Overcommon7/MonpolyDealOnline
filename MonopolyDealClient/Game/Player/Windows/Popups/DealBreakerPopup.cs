@@ -6,7 +6,7 @@ namespace MonopolyDeal
     public class DealBreakerPopup : PlayerPopup
     {
         
-        public DealBreakerPopup(Card card)
+        public DealBreakerPopup()
             : base(nameof(DealBreakerPopup))
         {
             

@@ -5,7 +5,7 @@ namespace MonopolyDeal
 {
     public class WildRentPopup : PlayerPopup
     {        
-        public WildRentPopup(Card card) 
+        public WildRentPopup() 
             : base(nameof(WildRentPopup))
         {
             

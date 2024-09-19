@@ -34,7 +34,7 @@ public static class ConnectionHandler
 
         Server.BroadcastMessage(ServerSendMessages.PlayerUsername, name + ',' + clientID, player.Number);
 
-        if (PlayerManager.ConnectedPlayers != GameManager.Configuration.mLobbySize)
+        if (PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize)
             return;
         
         if (sReadiedPlayers < GameManager.Configuration.mLobbySize)
@@ -46,7 +46,9 @@ public static class ConnectionHandler
 
         Thread.Sleep(50);
 
-        Server.BroadcastMessage(ServerSendMessages.OnGameStarted, Random.Shared.Next(1, PlayerManager.TotalPlayers + 1));
+        var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
+        TurnManager.StartGame(startingPlayerNumber);
+        Server.BroadcastMessage(ServerSendMessages.OnGameStarted, startingPlayerNumber);
     }
 
     private static void Server_OnClientDisconnected(SimpleTcpServer server, TcpClient client)

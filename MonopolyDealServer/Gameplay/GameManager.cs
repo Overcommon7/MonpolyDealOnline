@@ -15,6 +15,7 @@ public static class GameManager
         Server.mOnDataRecieved += Server_OnDataRecieved;
         CurrentState = GameState.InGame;
         sDeck = new(Configuration.mDecksToUse);
+        sDeck.LoadCardsFromFile();
     }
 
     private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data, Message extra)
@@ -25,7 +26,8 @@ public static class GameManager
 
         switch (message)
         {
-            case ClientSendMessages.PlayStealCard:
+            case ClientSendMessages.PlaySlyDeal:
+                
                 break;
             case ClientSendMessages.PlayForcedDeal:
                 break;
@@ -33,22 +35,20 @@ public static class GameManager
                 break;
             case ClientSendMessages.PlayWildCard:
                 break;
-            case ClientSendMessages.RemoveCardsFromHand:
-                break;
-            case ClientSendMessages.RemoveCardsFromPlayArea:
-                break;
             case ClientSendMessages.RequestCards:
                 break;
             case ClientSendMessages.MoveCard:
                 break;
             case ClientSendMessages.PayPlayer:
                 break;
-            case ClientSendMessages.OnTurnEnded:
+            case ClientSendMessages.OnEndTurn:
+                TurnManager.EndTurn(sDeck);
+                TurnManager.StartTurn(sDeck);
                 break;
             case ClientSendMessages.ReadyForNextTurn:
                 break;
             case ClientSendMessages.RequestHand:
-                PlayerActions.OnHandRequested(player, data, extra);
+                PlayerActions.OnHandRequested(sDeck, player, data, extra);
                 break;
         }
     }

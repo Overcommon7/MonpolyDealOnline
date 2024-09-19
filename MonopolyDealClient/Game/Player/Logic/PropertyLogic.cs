@@ -10,11 +10,7 @@ namespace MonopolyDeal
             {
                 ImGui.SameLine();
                 if (ImGui.Button("Move"))
-                {
-                    var popup = mGameplay.GetWindow<MoveCardPopup>();
-                    popup.SetCard(card);
-                    popup.Open();                    
-                }                   
+                    mGameplay.GetWindow<MoveCardPopup>().Open(card);                                 
             }
         }
         void RespondToAction_PropertyLogic(Card card)

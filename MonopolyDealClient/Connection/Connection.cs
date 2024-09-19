@@ -45,7 +45,7 @@ namespace MonopolyDeal
             if (!mAutoConnect)
                 return;
 
-            mAddress = "192.168.1.86";
+            mAddress = "192.168.1.64";
             mPort = "25565";
             mUsername = "Overcommon";
 
@@ -155,11 +155,17 @@ namespace MonopolyDeal
             ImGui.TextDisabled($"Server Port: {mPort}");
 
             bool notValid = string.IsNullOrEmpty(mUsername) || string.IsNullOrWhiteSpace(mUsername);
-
-            if (notValid || mIsReady)
+            bool isDisabled = false;
+            if (mIsReady)
+            {
                 ImGui.BeginDisabled();
-
+                isDisabled = true;
+            }
+       
             ImGui.InputText("Username", ref mUsername, 12);
+
+            if (notValid && !isDisabled)
+                ImGui.BeginDisabled();
 
             if (ImGui.Button(!mIsReady ? "Ready" : "Waiting For Other Players"))
                 SendUsernameToServer();

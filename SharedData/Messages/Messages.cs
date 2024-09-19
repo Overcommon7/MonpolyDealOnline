@@ -1,38 +1,46 @@
 ﻿public enum ClientSendMessages : short
 {
-    PlayStealCard,
+    PlaySlyDeal,
     PlayForcedDeal,
     PlayRentCard,
     PlayWildCard,
-    RemoveCardsFromHand,
-    RemoveCardsFromPlayArea,
     RequestCards,
     MoveCard,
     PayPlayer,
-    OnTurnEnded,
+    OnEndTurn,
     SendUsername,
     ReadyForNextTurn,
     RequestHand
 }
 
 public enum ServerSendMessages : short
-{
-    OnGameStarted,
-    OnTurnEnded,
-    CardPlayed,
-    CardMoved,
+{     
+    WildPropertyPlayed,
+    WildCardPlayed,
+    PropertyCardPlayed,
     RentCardPlayed,
-    ActionCardPlayed,
-    CardsPayed,
-    OnAllRequestsComplete,
+    SlyDealPlayed,
+    ForcedDealPlayed,
+    DealBreakerPlayed,
+    SingleTargetActionCard,
+    ActionCardPlayed,      
     JustSayNoPlayed,
+
+    CardsPayed,
+    PlayerPaidValues,
+    OnAllPlayersPaid,
+
+    CardMoved,
+    CardsSent,
+
+    OnGameStarted,
+    HandReturned,
+    OnTurnStarted,
     OnPlayerWin,
+
     PlayerUsername,
     OnPlayerIDAssigned,
-    OnPlayerTurnStarted,
     OnPlayerConnected,
     OnPlayerDisconnected,
     OnPlayerReconnected,
-    HandReturned,
-    AllPlayersHands
 }

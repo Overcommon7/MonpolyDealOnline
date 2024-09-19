@@ -10,15 +10,13 @@ public static class DataMarshal
 
     public static byte[] GetCards(Deck deck, int amount)
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        List<Card> cards = new List<Card>();
         for (int i = 0; i < amount; i++)
         {
-            stringBuilder.Append(deck.RemoveCardFromDeck().ID);
-            if (i + 1 < amount)
-                stringBuilder.Append(',');
+            cards.Add(deck.RemoveCardFromDeck());
         }
 
-        return Format.Encode(stringBuilder.ToString());
+        return Format.Encode(Serializer.SerializeListOfCards(cards));
     }
 }
 

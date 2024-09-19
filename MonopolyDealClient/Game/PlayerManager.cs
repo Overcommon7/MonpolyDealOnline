@@ -38,19 +38,20 @@ namespace MonopolyDeal
             }
         }
 
-        public PlayerManager() 
+        public PlayerManager()
         {
             var connection = App.GetState<Connection>();
             LocalPlayer = new LocalPlayer(connection.PlayerNumber, Client.ID, connection.Username);
 
-            mPlayers = new List<OnlinePlayer>();
+            mPlayers = new();
             foreach (var onlinePlayer in connection.OtherPlayers)
                 mPlayers.Add(new(onlinePlayer.Key, onlinePlayer.Value.Item2, onlinePlayer.Value.Item1));
-        }
 
+            Client.SendData(ClientSendMessages.RequestHand, LocalPlayer.Number);
+        }
         public void StartGame(int playerNumbersTurn)
         {
-            Client.SendData(ClientSendMessages.RequestHand, LocalPlayer.Number);
+
             mCurrentPlayerNumbersTurn = playerNumbersTurn;
         }
     }

@@ -13,10 +13,10 @@ public static class PlayerManager
     static List<Player> mDisconnectedPlayers;
 
     public static int TotalPlayers => mConnectedPlayers.Count + mDisconnectedPlayers.Count;
-    public static int ConnectedPlayers => mConnectedPlayers.Count;
-    public static int DisconnectedPlayers => mDisconnectedPlayers.Count;
+    public static int ConnectedPlayerCount => mConnectedPlayers.Count;
+    public static int DisconnectedPlayerCount => mDisconnectedPlayers.Count;
     public static bool DisconnectedPLayers => mDisconnectedPlayers.Count > 0;
-
+    public static IReadOnlyList<Player> ConnectedPlayers => mConnectedPlayers;
     static PlayerManager()
     {
         mConnectedPlayers = new List<Player>();
@@ -93,6 +93,18 @@ public static class PlayerManager
         return GetStatus(out player, p => p.Number == playerNumber);
     }
 
+    public static TcpClient[] GetClientsExcluding(int excludedPlayerNumber)
+    {
+        TcpClient[] clients = new TcpClient[mConnectedPlayers.Count - 1];
+        for (int i = 0, j = 0; i < mConnectedPlayers.Count; ++i)
+        {
+            if (mConnectedPlayers[i].Number != excludedPlayerNumber)
+                clients[j++] = mConnectedPlayers[i].Client;
+        }
+
+        return clients;
+    }
+
     static ConnectionStatus GetStatus(out Player player, Predicate<Player> predicate) 
     {
         player = mConnectedPlayers.Find(predicate);
@@ -106,4 +118,6 @@ public static class PlayerManager
 
         return ConnectionStatus.Invalid;
     }
+
+    
 }

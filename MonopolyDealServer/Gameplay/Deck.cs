@@ -1,4 +1,6 @@
-﻿public class Deck
+﻿using System.Collections.Generic;
+
+public class Deck
 {
     Stack<Card> cards;
     List<Card> fullDeck;
@@ -96,25 +98,44 @@
 
     public Card RemoveCardFromDeck()
     {
-        if (cards.TryPop(out Card? card))
+        lock (cards)
         {
-            return card;
+            if (cards.TryPop(out Card? card))
+            {
+                return card;
+            }
         }
 
         ReloadCards();
         return RemoveCardFromDeck();
     }
 
+    public List<Card> RemoveMultipleCardsFromDeck(int amount)
+    {
+        List<Card> cards = []; 
+        for (int i = 0; i < cards.Count; ++i)
+            cards.Add(RemoveCardFromDeck());
+
+        return cards;
+    }
+
     public void AddCardToRemainingPile(Card card)
     {
-        remainingCards.Add(card);
+        lock (remainingCards)
+            remainingCards.Add(card);
     }
 
     private void ReloadCards()
     {
-        Shuffle(remainingCards);
-        cards = new(remainingCards);
-        remainingCards.Clear();
+        lock (remainingCards)
+        {
+            Shuffle(remainingCards);
+            lock (cards)
+            {
+                cards = new(remainingCards);
+            }
+            remainingCards.Clear();
+        }
     }
 
     void Shuffle(List<Card> source)

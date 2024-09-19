@@ -27,9 +27,16 @@ public struct PlayCardValues
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct StealValues
+public struct DealBreakerValues
 {
     public SetType setType;
+    public int targetPlayerNumber;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct SlyDealvalues
+{
+    public int cardID;
     public int targetPlayerNumber;
 }
 
@@ -46,5 +53,19 @@ public struct PlayWildCard
 {
     public SetType setType;
     public int cardID;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct PlayBuildingCard
+{
+    public SetType setType;
+    public ActionType buildingType;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct PayPlayer
+{
+    public int cardID;
+    public bool asMoney;
 }
 

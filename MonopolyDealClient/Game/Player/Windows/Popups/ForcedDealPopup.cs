@@ -6,7 +6,7 @@ namespace MonopolyDeal
     public class ForcedDealPopup : PlayerPopup
     {
         
-        public ForcedDealPopup(Card card)
+        public ForcedDealPopup()
             : base(nameof(ForcedDealPopup))
         {
             

@@ -17,6 +17,8 @@ public class Player : IEquatable<Player>
     public TcpClient Client => mClient ?? throw new ArgumentNullException(nameof(mClient));
     public bool IsReady { get; set; }
     public string Name { get => mName; set => mName = value; }
+    public int CardsInHand => mHand.Count;
+    public int CardsInPlayArea => mPlayArea.Count;
 
     public Player(TcpClient client, string name, int playerNumber)
     {
@@ -56,16 +58,20 @@ public class Player : IEquatable<Player>
     {
         mHand.Add(card);
     }
+    public void AddCardsToHand(IEnumerable<Card> cards)
+    {
+        mHand.AddRange(cards);
+    }
     public void AddCardToPlayArea(Card card)
     {
         mPlayArea.Add(card);
     }
-    public void RemoveCardFromHand(Card card)
+    public bool RemoveCardFromHand(Card card)
     {
-        mHand.Remove(card);
+        return mHand.Remove(card);
     }
-    public void RemoveCardFromPlayArea(Card card)
+    public bool RemoveCardFromPlayArea(Card card)
     {
-        mPlayArea.Add(card);
+        return mPlayArea.Remove(card);
     }
 }

@@ -81,6 +81,13 @@ public static class Format
         return CombineByteArrays(header, content);
     }
 
+    public static byte[] ToData<T>(T message, byte[] data, int playerNumber)
+       where T : struct, Enum
+    {
+        var header = CreateHeader(message, playerNumber);
+        return CombineByteArrays(header, data);
+    }
+
     public static T ToStruct<T>(byte[] data, bool parseFromMessage = false) where T : struct
     {
         if (parseFromMessage)

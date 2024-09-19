@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Collections.Generic;
 
 namespace MonopolyDeal
@@ -15,6 +16,12 @@ namespace MonopolyDeal
         public override void ImGuiDraw()
         {
             ConnectedPlayer.ImGuiDraw();
+
+            if (!ConnectedPlayer.IsTurn)
+                return;
+
+            if (ImGui.Button("End Turn"))
+                Client.SendData(ClientSendMessages.OnEndTurn, ConnectedPlayer.Number);
         }
     }
 }

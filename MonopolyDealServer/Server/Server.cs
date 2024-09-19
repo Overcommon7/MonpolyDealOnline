@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Globalization;
 using System.Text;
+using System.Runtime.InteropServices;
 
 internal static class Server
 {
@@ -81,6 +82,56 @@ internal static class Server
     public static void BroadcastMessage(ServerSendMessages message, int playerNumber)
     {
         mServer.Broadcast(Format.CreateHeader(message, playerNumber));
+    }
+
+    public static void SendMessageToPlayers(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, params int[] playerNumbers)
+    {
+        var header = Format.CreateHeader(message, sentFromPlayerNumber);
+        var byteData = Format.CombineByteArrays(header, data);
+
+        foreach (var playerNumber in playerNumbers)
+        {
+            var status = PlayerManager.TryGetPlayer(playerNumber, out var player);
+            if (status != ConnectionStatus.Connected)
+                continue;
+
+            player.Client.GetStream().Write(byteData);
+        }
+    }
+
+    public static void SendMessageToPlayers<T>(ServerSendMessages message, int sentFromPlayerNumber, ref T data, params int[] playerNumbers) where T : struct
+    {
+        var byteData = Format.ToData(message, ref data, sentFromPlayerNumber);
+
+        foreach (var playerNumber in playerNumbers)
+        {
+            var status = PlayerManager.TryGetPlayer(playerNumber, out var player);
+            if (status != ConnectionStatus.Connected)
+                continue;
+
+            player.Client.GetStream().Write(byteData);
+        }
+    }
+
+    public static void SendMessageToPlayers(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, params TcpClient[] players)
+    {
+        var header = Format.CreateHeader(message, sentFromPlayerNumber);
+        var byteData = Format.CombineByteArrays(header, data);
+
+        foreach (var player in players)
+        {
+            player.GetStream().Write(byteData);
+        }
+    }
+
+    public static void SendMessageToPlayers<T>(ServerSendMessages message, int sentFromPlayerNumber, ref T data, params TcpClient[] players) where T : struct
+    {
+        var byteData = Format.ToData(message, ref data, sentFromPlayerNumber);
+
+        foreach (var player in players)
+        {
+            player.GetStream().Write(byteData);
+        }
     }
 
     private static void DataReceived(object? sender, Message e)

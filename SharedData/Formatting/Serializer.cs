@@ -30,4 +30,17 @@ public static class Serializer
 
         return cards;
     }
+
+    public static int GetNumberOfCardsInString(string data)
+    {
+        int index = data.IndexOf('|');
+        if (index == -1)
+            return -1;
+
+        var number = data.Substring(0, index);
+        if (int.TryParse(number, out int value))
+            return value;
+
+        return -1;
+    }
 }
