@@ -1,4 +1,7 @@
-﻿public enum SetType
+﻿using System.Net.Sockets;
+using System.Text;
+
+public enum SetType
 {
     None,
     Brown,
@@ -83,9 +86,7 @@ public static class CardData
         if (a is MoneyCard maCard && b is MoneyCard mbCard)
         {
             return maCard.Value.CompareTo(mbCard.Value);
-        }
-
-        
+        }       
 
         return SortTypes[a.GetType()].CompareTo(SortTypes[b.GetType()]);
     }
@@ -139,21 +140,8 @@ public static class CardData
         return copyable.Copy();
     }
 
-    public static void Initialize()
+    public static void LoadFromFile()
     {
-        sortTypes = new Dictionary<Type, int>
-        {
-            { typeof(BuildingCard), 8 },
-            { typeof(WildCard), 7 },
-            { typeof(ActionCard), 6 },
-            { typeof(WildRentCard), 5 },
-            { typeof(RentCard), 4 },
-            { typeof(MoneyCard), 3 },
-            { typeof(WildPropertyCard), 2 },
-            { typeof(PropertyCard), 1 },
-            { typeof(Card), 0 }
-        };
-
         List<PropertyCardSaveValues> propertyCards = new();
         List<WildPropertySaveValues> wildPropertyCards = new();
         List<ActionCardSaveValues> actionCards = new();
@@ -167,6 +155,113 @@ public static class CardData
         XMLSerializer.Load(Files.MoneyValues, ref moneyCards);
         XMLSerializer.Load(Files.RentCardData, ref rentCards);
         XMLSerializer.Load(Files.CardValues, ref cardValues);
+
+        Initialize(propertyCards, wildPropertyCards, actionCards, moneyCards, rentCards, cardValues);
+    }
+
+    public static byte[] LoadToMemory()
+    {
+        List<PropertyCardSaveValues> propertyCards = new();
+        List<WildPropertySaveValues> wildPropertyCards = new();
+        List<ActionCardSaveValues> actionCards = new();
+        List<MoneyValues> moneyCards = new();
+        List<RentCardSaveValues> rentCards = new();
+        List<CardValues> cardValues = new();
+
+        XMLSerializer.Load(Files.PropertyCardData, ref propertyCards);
+        XMLSerializer.Load(Files.WildPropertyCardData, ref wildPropertyCards);
+        XMLSerializer.Load(Files.ActionCardData, ref actionCards);
+        XMLSerializer.Load(Files.MoneyValues, ref moneyCards);
+        XMLSerializer.Load(Files.RentCardData, ref rentCards);
+        XMLSerializer.Load(Files.CardValues, ref cardValues);
+
+        List<byte[]> dataWrapper =
+        [
+            XMLSerializer.SaveObjectToXMLMemory(ref propertyCards),
+            XMLSerializer.SaveObjectToXMLMemory(ref wildPropertyCards),
+            XMLSerializer.SaveObjectToXMLMemory(ref actionCards),
+            XMLSerializer.SaveObjectToXMLMemory(ref moneyCards),
+            XMLSerializer.SaveObjectToXMLMemory(ref rentCards),
+            XMLSerializer.SaveObjectToXMLMemory(ref cardValues),
+        ];
+
+        StringBuilder builder = new StringBuilder();
+        byte[] rv = new byte[dataWrapper.Sum(a => a.Length)];
+        int offset = 0;
+
+        foreach (byte[] array in dataWrapper)
+        {
+            Buffer.BlockCopy(array, 0, rv, offset, array.Length);
+            offset += array.Length;
+            builder.Append(array.Length.ToString().PadRight(Constants.CARD_DATA_SIZE_DIGITS));
+        }
+
+        return Format.CombineByteArrays(Format.Encode(builder.ToString().PadRight(Constants.CARD_DATA_HEADER_SIZE)), rv);
+    }
+
+    public static void LoadFromData(byte[] externalData)
+    {
+        List<PropertyCardSaveValues> propertyCards = new();
+        List<WildPropertySaveValues> wildPropertyCards = new();
+        List<ActionCardSaveValues> actionCards = new();
+        List<MoneyValues> moneyCards = new();
+        List<RentCardSaveValues> rentCards = new();
+        List<CardValues> cardValues = new();
+
+        using (var stream = new MemoryStream(externalData))
+        {
+            using (var reader = new StreamReader(stream))
+            {
+                char[] data = new char[Constants.CARD_DATA_HEADER_SIZE];
+                reader.ReadBlock(data, 0, Constants.CARD_DATA_HEADER_SIZE);
+                string sizes = new(data);
+
+               
+                int index = 0;
+                for (int i = 0; i < Constants.CARD_DATA_FILE_COUNT; i++)
+                {
+                    var intermediate = sizes.Substring(i * Constants.CARD_DATA_SIZE_DIGITS, Constants.CARD_DATA_SIZE_DIGITS).TrimEnd();
+                    int size = int.Parse(intermediate);
+                    char[] fileData = new char[size];
+                    reader.ReadBlock(fileData, index, size);
+                    var buffer = Encoding.UTF8.GetBytes(fileData);
+
+                    switch (i)
+                    {
+                        case 0: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref propertyCards); break;
+                        case 1: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref wildPropertyCards); break;
+                        case 2: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref actionCards); break;
+                        case 3: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref moneyCards); break;
+                        case 4: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref rentCards); break;
+                        case 5: XMLSerializer.LoadObjectFromXMLMemory(buffer, ref cardValues); break;
+                    }
+                }
+            }
+        }
+
+        Initialize(propertyCards, wildPropertyCards, actionCards, moneyCards, rentCards, cardValues);
+    }
+
+    public static void Initialize(
+        List<PropertyCardSaveValues> propertyCards,
+        List<WildPropertySaveValues> wildPropertyCards,
+        List<ActionCardSaveValues> actionCards,
+        List<MoneyValues> moneyCards,
+        List<RentCardSaveValues> rentCards,
+        List<CardValues> cardValues)
+    {
+        sortTypes = new Dictionary<Type, int>
+        {
+            { typeof(BuildingCard), 8 },
+            { typeof(WildCard), 7 },
+            { typeof(ActionCard), 6 },
+            { typeof(WildRentCard), 5 },
+            { typeof(RentCard), 4 },
+            { typeof(MoneyCard), 3 },
+            { typeof(WildPropertyCard), 2 },
+            { typeof(PropertyCard), 1 },
+            { typeof(Card), 0 }
+        };
 
         cards.Add(new BuildingCard(ActionType.House));
         cards.Add(new BuildingCard(ActionType.Hotel));

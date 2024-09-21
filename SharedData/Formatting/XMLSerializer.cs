@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Diagnostics;
+using System.Xml.Serialization;
 
 public class XMLSerializer
 {
@@ -21,7 +22,43 @@ public class XMLSerializer
         XmlSerializer serializer = new XmlSerializer(typeof(T));
         using (Stream stream = new FileStream(path, FileMode.Open))
         {
-            obj = (T)serializer.Deserialize(stream);
+            try
+            {
+                obj = (T)serializer.Deserialize(stream);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static byte[] SaveObjectToXMLMemory<T>(ref T obj)
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(T));
+        using (MemoryStream ms = new MemoryStream())
+        {
+            serializer.Serialize(ms, obj);
+            return ms.ToArray();
+        }
+    }
+
+    public static bool LoadObjectFromXMLMemory<T>(byte[] data, ref T obj)
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(T));
+        using (MemoryStream ms = new MemoryStream(data))
+        {
+            try
+            {
+                obj = (T)serializer.Deserialize(ms);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return false;
+            }
         }
         return true;
     }

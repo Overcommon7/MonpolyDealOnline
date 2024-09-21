@@ -2,9 +2,7 @@
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net;
-using System.Globalization;
 using System.Text;
-using System.Runtime.InteropServices;
 
 internal static class Server
 {
@@ -57,6 +55,8 @@ internal static class Server
 
     public static void BroadcastMessage<T>(ServerSendMessages message, ref T data, int playerNumber) where T : struct
     {
+        Console.WriteLine($"[SERVER] ");
+
         var byteData = Format.ToData(message, ref data, playerNumber);
         mServer.Broadcast(byteData);
     }
@@ -137,9 +137,10 @@ internal static class Server
     private static void DataReceived(object? sender, Message e)
     {
         ulong id = e.TcpClient.GetID();
-        Console.WriteLine($"Data Recieved From: {e.TcpClient.Client.RemoteEndPoint?.ToString()} - {id}");
-
         var messsage = Format.GetMessageType<ClientSendMessages>(e.Data);
+        if (PlayerManager.TryGetPlayer(id, out var player) != ConnectionStatus.Invalid)
+            Console.WriteLine($"[Server] R: {player.Name} - Type: {messsage} - #: {player.Number}");
+
         byte[] data;
 
         if ((int)messsage < Format.HEADER_SIZE)

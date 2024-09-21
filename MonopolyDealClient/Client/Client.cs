@@ -70,11 +70,12 @@ namespace MonopolyDeal
 
 
         private static void Client_DataReceived(object? sender, Message e)
-        {
+        {           
             var data = Format.GetByteDataFromMessage(e.Data);
             var message = Format.GetMessageType<ServerSendMessages>(e.Data);
             var playerNumber = Format.GetPlayerNumber(e.Data);
 
+            Console.WriteLine($"[Client] C: {message} Number: {playerNumber}");
             mOnMessageRecieved?.Invoke(message, playerNumber, data);
         }
 

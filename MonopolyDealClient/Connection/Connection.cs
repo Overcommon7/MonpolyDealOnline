@@ -45,7 +45,7 @@ namespace MonopolyDeal
             if (!mAutoConnect)
                 return;
 
-            mAddress = "192.168.1.64";
+            mAddress = "192.168.1.100";
             mPort = "25565";
             mUsername = "Overcommon";
 
@@ -73,7 +73,7 @@ namespace MonopolyDeal
                 PlayerUsernameRecieved(playerNumber, data);
 
             if (message == ServerSendMessages.OnGameStarted)
-                OnGameStarted(playerNumber);
+                OnGameStarted(playerNumber, data);
         }
 
         private void IDAssigned(int playerNumber, byte[] data)
@@ -116,8 +116,9 @@ namespace MonopolyDeal
             RemovePlayer(playerNumber);
         }
 
-        private void OnGameStarted(int playerTurn)
+        private void OnGameStarted(int playerTurn, byte[] data)
         {
+            CardData.LoadFromData(data);
             App.ChangeState<Gameplay>().StartingPlayerNumber = playerTurn;            
         }
 

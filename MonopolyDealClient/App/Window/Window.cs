@@ -21,7 +21,7 @@ namespace MonopolyDeal
                 mTitle = name;
 
             mIsPopup = isPopup;
-            mIsOpen = !startClosed || isPopup;
+            mIsOpen = !startClosed || !isPopup;
             mIsClosable = isClosable || isPopup;
             mHasMenuBar = hasMenuBar && !isPopup;
         }

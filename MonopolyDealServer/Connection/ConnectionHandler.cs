@@ -48,7 +48,8 @@ public static class ConnectionHandler
 
         var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
         TurnManager.StartGame(startingPlayerNumber);
-        Server.BroadcastMessage(ServerSendMessages.OnGameStarted, startingPlayerNumber);
+
+        Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
     }
 
     private static void Server_OnClientDisconnected(SimpleTcpServer server, TcpClient client)

@@ -28,7 +28,7 @@ public static class PlayerManager
         if (string.IsNullOrEmpty(name))
             name = $"Player {TotalPlayers + 1}";
 
-        Player player = new(client, name, TotalPlayers);
+        Player player = new(client, name, TotalPlayers + 1);
 
         lock (mConnectedPlayers) 
         {

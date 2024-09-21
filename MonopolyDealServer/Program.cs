@@ -6,7 +6,7 @@
         configuration.mLobbySize = 2;
         configuration.mDecksToUse = 1;
 
-        CardData.Initialize();
+        CardData.LoadFromFile();
         ConnectionHandler.Start();
 
         GameManager.Configuration = configuration;

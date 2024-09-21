@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MonopolyDealClient": {
+      "commandName": "Project",
+      "commandLineArgs": "7"
+    }
+  }
+}

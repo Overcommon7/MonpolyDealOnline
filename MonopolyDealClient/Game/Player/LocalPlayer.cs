@@ -33,12 +33,8 @@ namespace MonopolyDeal
             if (playerNumber != Number)
                 return;
 
-            var cards = Format.ToString(data).Split(',', StringSplitOptions.RemoveEmptyEntries);
-            foreach (var card in cards)
-            {
-                var value = CardData.CreateNewCard<Card>(int.Parse(card));
-                mHand.AddCard(value);
-            }           
+            var cards = Format.ToString(data);
+            mHand.AddCards(Serializer.GetCardsFromString<Card>(cards));     
         }
     }
 }
