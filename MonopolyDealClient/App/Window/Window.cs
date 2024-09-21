@@ -38,7 +38,6 @@ namespace MonopolyDeal
             if (mIsPopup)
             {
                 Appstate.OpenPopup(this);
-                ImGui.OpenPopup(mTitle);
             }
                 
 
@@ -59,7 +58,8 @@ namespace MonopolyDeal
             {
                 if (!mIsOpen)
                     return;
-                
+
+                ImGui.OpenPopup(mTitle);
                 mPopupOpenSuccessful = ImGui.BeginPopupModal(mTitle, ref mIsOpen, ImGuiWindowFlags.AlwaysAutoResize);
             }
             else
@@ -93,7 +93,6 @@ namespace MonopolyDeal
 
                 if (!mIsOpen && Appstate.CurrentPopup is not null && Appstate.CurrentPopup == this)
                     Appstate.ClosePopup();
-
             }
             else
             {

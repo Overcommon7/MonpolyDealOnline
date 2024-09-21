@@ -7,7 +7,7 @@ namespace MonopolyDeal
         void OnTurn_HandLogic(Card card)
         {
             ImGui.SameLine();
-            if (!ImGui.Button("Play"))
+            if (!ImGui.Button($"Play##{card.ID}"))
                 return;
 
             if (card is ActionCard action)
@@ -29,11 +29,13 @@ namespace MonopolyDeal
                     case ActionType.Rent:
                         mGameplay.GetWindow<ChargeRentPopup>().Open(card);
                         break;
+                    case ActionType.Hotel:
+                    case ActionType.House:
+                        mGameplay.GetWindow<PlayBuildingCardPopup>().Open(card);                     
+                        break;
 
 
                     case ActionType.JustSayNo:
-                    case ActionType.Hotel:
-                    case ActionType.House:
                     case ActionType.PassGo:
                         mGameplay.GetWindow<PlayActionCardPopup>().Open(card, TargetType.None);
                         break;
@@ -53,6 +55,12 @@ namespace MonopolyDeal
                 {
                     mGameplay.GetWindow<PlayWildCardPopup>().Open(card);
                 }
+            }
+
+            if (card is MoneyCard money)
+            {
+                Hand.RemoveCard(card);
+                PlayedCards.AddMoneyCard(money);
             }
         }
         void RespondToAction_HandLogic(Card card)

@@ -10,11 +10,19 @@ public struct MoveValues
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct RentCardPlayValues
+public struct WildRentPlayValues
+{
+    public bool withDoubleRent; 
+    public int cardID;
+    public int targetPlayerNumber;
+    public SetType chargingSetType;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct RentPlayValues
 {
     public bool withDoubleRent;
     public int cardID;
-    public int targetPlayerNumber;
     public SetType chargingSetType;
 }
 
@@ -34,7 +42,7 @@ public struct DealBreakerValues
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct SlyDealvalues
+public struct SlyDealValues
 {
     public int cardID;
     public int targetPlayerNumber;
@@ -67,5 +75,12 @@ public struct PayPlayer
 {
     public int cardID;
     public bool asMoney;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct ActionAgainstOne
+{
+    public ActionType actionType;
+    public int targetPlayerID;
 }
 

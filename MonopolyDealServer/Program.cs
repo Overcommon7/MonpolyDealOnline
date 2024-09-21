@@ -1,4 +1,8 @@
-﻿public class Program
+﻿using ImGuiNET;
+using Raylib_cs;
+using rlImGui_cs;
+
+public class Program
 {
     static void Main(string[] args)
     {
@@ -13,15 +17,38 @@
 
         Server.Start();
 
-        Console.WriteLine("Press Q To Close Server");
-        while (true)
+        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
+        Raylib.InitWindow(640, 480, "Server");
+        Raylib.SetTargetFPS(30);
+
+        rlImGui.Setup();
+
+        while (!Raylib.WindowShouldClose())
         {
-            var key = Console.ReadKey().Key;
-            if (key == ConsoleKey.Q)
-                break;
+            Raylib.BeginDrawing();
+            {
+                Raylib.ClearBackground(Color.Black);
+                {
+
+                }
+                Raylib.DrawFPS(5, 5);
+
+                rlImGui.Begin();
+                {
+                    if (GameManager.CurrentState == GameState.Lobby)
+                        ConnectionHandler.ImGuiDraw();
+
+                    if (GameManager.CurrentState == GameState.InGame)
+                        GameManager.ImGuiDraw();
+                }
+                rlImGui.End();
+
+            }
+            Raylib.EndDrawing();
         }
 
-       
+        Server.Close();
+
     }
 }
 

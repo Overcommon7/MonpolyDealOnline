@@ -43,7 +43,7 @@ namespace MonopolyDeal
         {
             foreach (var card in mCards)
             {
-                ImGui.Text(card.ToString());
+                ImGui.Text(card.Name);
                 extraLogic?.Invoke(card);
             }
         }

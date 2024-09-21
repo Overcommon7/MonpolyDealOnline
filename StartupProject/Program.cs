@@ -31,7 +31,7 @@ namespace StartupProject
                     ProcessStartInfo info = new ProcessStartInfo();
 
                     info.FileName = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealClient\\bin\\Debug\\net8.0-windows10.0.22000.0\\MonopolyDealClient.exe";
-                    info.WorkingDirectory = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealClient\\bin\\Debug\\net8.0-windows10.0.22000.0\\";
+                    info.WorkingDirectory = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\WorkingDirForExtraClients\\";
                     info.WindowStyle = ProcessWindowStyle.Hidden;
                     info.CreateNoWindow = true;
                     info.ArgumentList.Clear();

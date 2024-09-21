@@ -99,6 +99,11 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.OnPlayerReconnected:
                     break;
+                case ServerSendMessages.DebugSendCard:
+                    int cardID = int.Parse(Format.ToString(data));
+                    if (CardData.TryGetCard<Card>(cardID, out var card))
+                        PlayerManager.LocalPlayer.Hand.AddCard(card);
+                    break;
             }
         }
 

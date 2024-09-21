@@ -1,4 +1,5 @@
-﻿using SimpleTCP;
+﻿using ImGuiNET;
+using SimpleTCP;
 
 public enum GameState
 {
@@ -7,9 +8,14 @@ public enum GameState
 }
 public static class GameManager
 {
+    struct ImGuiValues
+    {
+        public int targetPlayerNumber;
+    }
     public static GameState CurrentState { get; set; } = GameState.Lobby;
     public static Configuration Configuration { get; set; } = new();
     static Deck sDeck;
+    static ImGuiValues mValues = new();
     public static void Start()
     {
         Server.mOnDataRecieved += Server_OnDataRecieved;
@@ -59,6 +65,39 @@ public static class GameManager
 
     public static void End()
     {
+        Server.mOnDataRecieved -= Server_OnDataRecieved;
+        CurrentState = GameState.Lobby;
+        sDeck = new(Configuration.mDecksToUse);
+    }
 
+    public static void ImGuiDraw()
+    {
+        ImGui.Begin("Debug Window");
+
+        ImGui.InputInt("Target Player", ref mValues.targetPlayerNumber);
+
+        if (ImGui.TreeNode("Give Card To Player"))
+        {
+            foreach (var card in CardData.Cards)
+            {
+                if (card is RentCard rent)
+                {
+                    if (!ImGui.Button($"Give {card.Name} - {rent.TargetType1}-{rent.TargetType2}##{card.ID}"))
+                        continue;
+                }
+                else
+                {
+                    if (!ImGui.Button($"Give {card.Name}##{card.ID}"))
+                        continue;
+                }
+
+                
+                Server.SendMessageToPlayers(ServerSendMessages.DebugSendCard, 0, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);
+            }
+
+            ImGui.TreePop();
+        }
+
+        ImGui.End();
     }
 }

@@ -13,6 +13,7 @@ namespace MonopolyDeal
 
         Dictionary<SetType, int> mSetTypes;
         int playerNumber;
+        bool isLocalPlayer;
         
         public IReadOnlyList<PropertyCard> PropertyCards => mPropertyCards;
         public IReadOnlyList<BuildingCard> BuildingCardsCards => mBuildingCards;
@@ -26,6 +27,7 @@ namespace MonopolyDeal
             mMoneyCards = new List<Card>();
 
             playerNumber = player.Number;
+            isLocalPlayer = player is LocalPlayer;
             mSetTypes = new() { { SetType.None, -10000 } };
         }
         public void RemovePropertyCard(PropertyCard card)
@@ -72,6 +74,9 @@ namespace MonopolyDeal
         public void AddPropertyCard(PropertyCard card)
         {
             mPropertyCards.Add(card);
+
+            if (!mSetTypes.TryAdd(card.SetType, 1))
+                mSetTypes[card.SetType]++;
         }
 
         public void AddBuildingCard(BuildingCard card, SetType setType)
@@ -120,7 +125,7 @@ namespace MonopolyDeal
 
         public void ImGuiDraw(Action<Card>? propertyLogic = null, Action<Card>? buildingLogic = null)
         {
-            ImGui.TreePush($"PropertyCards##{playerNumber}");
+            ImGui.SeparatorText("Properties");
 
             foreach (var setType in mSetTypes.Keys)
             {
@@ -132,18 +137,54 @@ namespace MonopolyDeal
 
                 foreach (var card in GetCardsOfType(setType))
                 {
-                    ImGui.Text(card.ToString());
+                    ImGui.Text(card.Name);
                     propertyLogic?.Invoke(card);
                 }
 
                 foreach (var buildingCard in mBuildingCards.FindAll(building => building.CurrentSetType == setType))
                 {
-                    ImGui.Text(buildingCard.ToString());
+                    ImGui.Text(buildingCard.Name);
                     buildingLogic?.Invoke(buildingCard);
-                }                  
+                }
+
+                ImGui.TreePop();
             }
 
-            ImGui.TreePop();
+            ImGui.SeparatorText("Money");
+
+            if (isLocalPlayer)
+            {
+                if (ImGui.TreeNode($"Action Cards As Money##{playerNumber}"))
+                {
+                    foreach (var card in mMoneyCards)
+                    {
+                        if (card is ActionCard)
+                        {
+                            ImGui.Text($"M{card.Value} - {card.Name}");
+                        }
+                    }
+
+                    ImGui.TreePop();
+                }
+
+                if (ImGui.TreeNode($"Money Cards##{playerNumber}"))
+                {
+                    foreach (var card in mMoneyCards)
+                    {
+                        if (card is MoneyCard)
+                            ImGui.Text($"M{card.Name}");
+                    }
+
+                    ImGui.TreePop();
+                }
+            }
+
+            int value = 0;
+            foreach (var card in mMoneyCards)
+                value += card.Value;
+
+            ImGui.Text($"Total: {value}");
+              
         }
     }
 }

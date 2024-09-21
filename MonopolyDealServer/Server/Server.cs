@@ -53,6 +53,16 @@ internal static class Server
         Console.WriteLine($"Server started on Address: {Address} - Port: {port}");
     }
 
+    public static void Close()
+    {
+        foreach (var player in PlayerManager.ConnectedPlayers)
+        {
+            player.CloseClient();
+        }
+
+        mServer.Stop();
+    }
+
     public static void BroadcastMessage<T>(ServerSendMessages message, ref T data, int playerNumber) where T : struct
     {
         Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");

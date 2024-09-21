@@ -45,4 +45,6 @@ public enum ServerSendMessages : short
     OnPlayerConnected,
     OnPlayerDisconnected,
     OnPlayerReconnected,
+
+    DebugSendCard
 }

@@ -29,7 +29,7 @@ namespace MonopolyDeal
                     mSelectedSetType = Enum.Parse<SetType>(mSetTypes[mSelectedTypeIndex]);
             }
 
-            if (ImGui.Button("Play"))
+            if (ImGui.Button("Play##WildPopup"))
             {
                 PlayCard();
             }

@@ -1,6 +1,8 @@
-﻿using SimpleTCP;
+﻿using ImGuiNET;
+using SimpleTCP;
 using System.Diagnostics;
 using System.Net.Sockets;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class ConnectionHandler
 {
@@ -33,23 +35,6 @@ public static class ConnectionHandler
         Console.WriteLine("Players Ready: {0}", sReadiedPlayers);
 
         Server.BroadcastMessage(ServerSendMessages.PlayerUsername, name + ',' + clientID, player.Number);
-
-        if (PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize)
-            return;
-        
-        if (sReadiedPlayers < GameManager.Configuration.mLobbySize)
-            return;
-
-
-        End();
-        GameManager.Start();
-
-        Thread.Sleep(50);
-
-        var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
-        TurnManager.StartGame(startingPlayerNumber);
-
-        Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
     }
 
     private static void Server_OnClientDisconnected(SimpleTcpServer server, TcpClient client)
@@ -85,5 +70,63 @@ public static class ConnectionHandler
             Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
         }  
+    }
+
+    public static void ImGuiDraw()
+    {
+        ImGui.Begin("Connection");
+
+        var config = GameManager.Configuration;
+        bool change = ImGui.InputInt("Lobby Size", ref config.mLobbySize);
+        change |= ImGui.InputInt("Decks To Play With", ref config.mDecksToUse);
+
+        if (change)
+            GameManager.Configuration = config;
+
+        bool invalid = PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize ||
+            sReadiedPlayers < GameManager.Configuration.mLobbySize;
+
+        if (invalid)
+        {
+            ImGui.BeginDisabled();
+        }
+            
+  
+        if (ImGui.Button("Start Game"))
+        {
+            End();
+            GameManager.Start();
+
+            Thread.Sleep(50);
+
+            for (int i = 0; i < PlayerManager.ConnectedPlayerCount; ++i)
+            {
+                if (PlayerManager.ConnectedPlayers[i].Name.Contains('7'))
+                {
+                    TurnManager.StartGame(PlayerManager.ConnectedPlayers[i].Number);
+                    Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), PlayerManager.ConnectedPlayers[i].Number);
+                    return;
+                }
+            }
+
+            var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
+            TurnManager.StartGame(startingPlayerNumber);
+
+            Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
+        }
+
+        if (invalid)
+        {
+            ImGui.EndDisabled();
+        }
+
+        ImGui.SeparatorText("Connected Players");                           
+
+        foreach (var player in PlayerManager.ConnectedPlayers)
+        {
+            ImGui.Text(player.Name + " - " + player.ID);
+        }
+
+        ImGui.End();
     }
 }

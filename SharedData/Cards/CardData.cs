@@ -68,7 +68,9 @@ public static class CardData
     static Dictionary<Type, int> sortTypes = new();
     static List<Card> cards = new List<Card>();
 
+
     public static IReadOnlyDictionary<Type, int> SortTypes => sortTypes;
+    public static IReadOnlyList<Card> Cards => cards;
 
     public static Values GetValues(SetType type) => cardValues[type];
     public static int SortAlgorithm(Card a, Card b)

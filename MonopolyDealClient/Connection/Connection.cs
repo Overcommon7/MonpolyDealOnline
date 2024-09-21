@@ -55,7 +55,7 @@ namespace MonopolyDeal
                 return;
 
             mUsername += Program.DebugNumber.Value;
-            ConnectToServer();            
+            ConnectToServer();
         }
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)

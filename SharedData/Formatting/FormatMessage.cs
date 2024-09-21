@@ -182,7 +182,7 @@ public static class Format
         IntPtr ptr = Marshal.AllocHGlobal(size);
         try
         {
-            Marshal.Copy(arr, HEADER_SIZE, ptr, size);
+            Marshal.Copy(arr, 0, ptr, size);
             str = Marshal.PtrToStructure<T>(ptr);
         }
         finally
