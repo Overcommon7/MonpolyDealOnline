@@ -21,7 +21,12 @@ namespace MonopolyDeal
                 return;
 
             if (ImGui.Button("End Turn"))
-                Client.SendData(ClientSendMessages.OnEndTurn, ConnectedPlayer.Number);
+            {
+                if (!ConnectedPlayer.Hand.CheckForTooManyCards())
+                {
+                    Client.SendData(ClientSendMessages.OnEndTurn, ConnectedPlayer.Number);
+                }                    
+            }                
         }
     }
 }

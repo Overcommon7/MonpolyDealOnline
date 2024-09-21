@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MonopolyDeal
 {
@@ -11,8 +12,12 @@ namespace MonopolyDeal
         List<Card> mMoneyCards;
 
         Dictionary<SetType, int> mSetTypes;
-
-        Player mPlayer;
+        int playerNumber;
+        
+        public IReadOnlyList<PropertyCard> PropertyCards => mPropertyCards;
+        public IReadOnlyList<BuildingCard> BuildingCardsCards => mBuildingCards;
+        public IReadOnlyList<Card> CardsAsMoney => mMoneyCards;
+        public IReadOnlyCollection<SetType> SetTypesPlayed => mSetTypes.Keys;
 
         public PlayedCards(Player player)
         {
@@ -20,8 +25,8 @@ namespace MonopolyDeal
             mBuildingCards = new List<BuildingCard>();
             mMoneyCards = new List<Card>();
 
-            mSetTypes = new();
-            mPlayer = player;
+            playerNumber = player.Number;
+            mSetTypes = new() { { SetType.None, -10000 } };
         }
         public void RemovePropertyCard(PropertyCard card)
         {
@@ -32,8 +37,11 @@ namespace MonopolyDeal
             mPropertyCards.RemoveAt(index);
             --mSetTypes[card.SetType];
 
-            if (mSetTypes[card.SetType] == 0)
+            if (card.SetType != SetType.None && mSetTypes[card.SetType] == 0)
+            {
                 mSetTypes.Remove(card.SetType);
+            }
+               
         }
 
         public void RemoveBuildingCard(BuildingCard card)
@@ -59,6 +67,11 @@ namespace MonopolyDeal
                 actionCard.SetAsMoney(true);
 
             mMoneyCards.Add(card);
+        }
+
+        public void AddPropertyCard(PropertyCard card)
+        {
+            mPropertyCards.Add(card);
         }
 
         public void AddBuildingCard(BuildingCard card, SetType setType)
@@ -87,7 +100,7 @@ namespace MonopolyDeal
 
         public PropertyCard[] GetCardsOfType(SetType setType)
         {
-            if (!mSetTypes.TryGetValue(setType, out var count))
+            if (setType == SetType.None || !mSetTypes.TryGetValue(setType, out var count))
                 return Array.Empty<PropertyCard>();
 
             PropertyCard[] cards = new PropertyCard[count];
@@ -107,14 +120,15 @@ namespace MonopolyDeal
 
         public void ImGuiDraw(Action<Card>? propertyLogic = null, Action<Card>? buildingLogic = null)
         {
-            ImGui.TreePush($"PropertyCards##{mPlayer.ID}");
+            ImGui.TreePush($"PropertyCards##{playerNumber}");
 
-            foreach (var setType in Constants.SET_TYPES)
-            {                
-                if (!mSetTypes.ContainsKey(setType))
+            foreach (var setType in mSetTypes.Keys)
+            {
+                if (setType == SetType.None)
                     continue;
 
-                ImGui.TreeNode($"{setType}##{mPlayer.ID}");
+                if (!ImGui.TreeNode($"{setType}##{playerNumber}"))
+                    continue;
 
                 foreach (var card in GetCardsOfType(setType))
                 {
@@ -126,7 +140,7 @@ namespace MonopolyDeal
                 {
                     ImGui.Text(buildingCard.ToString());
                     buildingLogic?.Invoke(buildingCard);
-                }                
+                }                  
             }
 
             ImGui.TreePop();

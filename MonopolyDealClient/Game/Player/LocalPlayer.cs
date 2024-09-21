@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Collections.Generic;
 
 namespace MonopolyDeal
@@ -23,8 +24,10 @@ namespace MonopolyDeal
         public override void ImGuiDraw()
         {
             var extraLogic = mLogic[mGameplay.State];
+            ImGui.SeparatorText("Hand");
             mHand.ImGuiDraw(extraLogic[2]);
 
+            ImGui.SeparatorText("Played Cards");
             PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1]);
         }
 

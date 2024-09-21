@@ -55,7 +55,7 @@ internal static class Server
 
     public static void BroadcastMessage<T>(ServerSendMessages message, ref T data, int playerNumber) where T : struct
     {
-        Console.WriteLine($"[SERVER] ");
+        Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
 
         var byteData = Format.ToData(message, ref data, playerNumber);
         mServer.Broadcast(byteData);
@@ -63,25 +63,46 @@ internal static class Server
 
     public static void BroadcastMessage<T>(ServerSendMessages message, ref T data) where T : struct
     {
+        Console.WriteLine($"[SERVER] S: {message}");
+
         var byteData = Format.ToData(message, ref data);
         mServer.Broadcast(byteData);
     }
 
     public static void BroadcastMessage(ServerSendMessages message, string data, int playerNumber)
     {
+        Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
+
         var byteData = Format.ToData(message, data, playerNumber);
         mServer.Broadcast(byteData);
     }
 
     public static void BroadcastMessage(ServerSendMessages message, byte[] data, int playerNumber)
     {
+        Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
+
         var header = Format.CreateHeader(message, playerNumber);
         mServer.Broadcast(Format.CombineByteArrays(header, data));
     }
 
     public static void BroadcastMessage(ServerSendMessages message, int playerNumber)
     {
+        Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
         mServer.Broadcast(Format.CreateHeader(message, playerNumber));
+    }
+
+    public static void SendMessageExcluding(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, int excludedPlayer)
+    {
+        var header = Format.CreateHeader(message, sentFromPlayerNumber);
+        var byteData = Format.CombineByteArrays(header, data);
+
+        foreach (var player in PlayerManager.ConnectedPlayers)
+        {
+            if (player.Number == excludedPlayer)
+                continue;
+
+            player.Client.GetStream().Write(byteData);
+        }
     }
 
     public static void SendMessageToPlayers(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, params int[] playerNumbers)
@@ -139,7 +160,7 @@ internal static class Server
         ulong id = e.TcpClient.GetID();
         var messsage = Format.GetMessageType<ClientSendMessages>(e.Data);
         if (PlayerManager.TryGetPlayer(id, out var player) != ConnectionStatus.Invalid)
-            Console.WriteLine($"[Server] R: {player.Name} - Type: {messsage} - #: {player.Number}");
+            Console.WriteLine($"[SERVER] R: {player.Name} - Type: {messsage} - #: {player.Number}");
 
         byte[] data;
 

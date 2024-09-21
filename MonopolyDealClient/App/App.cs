@@ -53,8 +53,7 @@ namespace MonopolyDeal
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
             Raylib.InitWindow((int)ScreenSize.X, (int)ScreenSize.Y, "EmptyRaylib");
-            int currentMonitor = Raylib.GetCurrentMonitor();
-            Raylib.SetTargetFPS(Raylib.GetMonitorRefreshRate(currentMonitor));
+            Raylib.SetTargetFPS(30);
             Raylib.SetExitKey(KeyboardKey.Null);
 
             rlImGui.Setup();

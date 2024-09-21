@@ -5,6 +5,7 @@
     PlayRentCard,
     PlayWildCard,
     RequestCards,
+    PutCardsBack,
     MoveCard,
     PayPlayer,
     OnEndTurn,
@@ -15,7 +16,7 @@
 
 public enum ServerSendMessages : short
 {     
-    WildPropertyPlayed,
+    WildRentPlayed,
     WildCardPlayed,
     PropertyCardPlayed,
     RentCardPlayed,
@@ -32,6 +33,7 @@ public enum ServerSendMessages : short
 
     CardMoved,
     CardsSent,
+    UpdateCardsInHand,
 
     OnGameStarted,
     HandReturned,

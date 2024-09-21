@@ -113,7 +113,7 @@ public class Deck
     public List<Card> RemoveMultipleCardsFromDeck(int amount)
     {
         List<Card> cards = []; 
-        for (int i = 0; i < cards.Count; ++i)
+        for (int i = 0; i < amount; ++i)
             cards.Add(RemoveCardFromDeck());
 
         return cards;

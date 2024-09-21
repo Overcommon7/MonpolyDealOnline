@@ -17,6 +17,9 @@ public static class Serializer
 
     public static T[] GetCardsFromString<T>(string data) where T : Card
     {
+        if (data[0] == '0')
+            return Array.Empty<T>();
+
         var strs = data.Split('|');
         int count = int.Parse(strs[0]);
         T[] cards = new T[count];
@@ -33,15 +36,18 @@ public static class Serializer
 
     public static int GetNumberOfCardsInString(string data)
     {
+        if (data[0] == '0')
+            return 0;
+
         int index = data.IndexOf('|');
         if (index == -1)
-            return -1;
+            return 0;
 
         var number = data.Substring(0, index);
         if (int.TryParse(number, out int value))
             return value;
 
-        return -1;
+        return 0;
     }
 
 

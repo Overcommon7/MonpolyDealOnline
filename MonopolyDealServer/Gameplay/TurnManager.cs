@@ -22,8 +22,7 @@ public static class TurnManager
         {
             var cards = deck.RemoveMultipleCardsFromDeck(Constants.PICK_UP_AMOUNT_ON_HAND_EMPTY);
             player.AddCardsToHand(cards);
-            var data = Format.Encode(Serializer.SerializeListOfCards(cards));
-            Server.BroadcastMessage(ServerSendMessages.CardsSent, data, CurrentPlayerNumberTurn);
+            Server.BroadcastMessage(ServerSendMessages.CardsSent, Serializer.SerializeListOfCards(cards), player.Number);
             Thread.Sleep(100);
         }
 
@@ -48,7 +47,7 @@ public static class TurnManager
         player.AddCardsToHand(cards);
 
         var data = Format.Encode(Serializer.SerializeListOfCards(cards));
-        Server.SendMessageToPlayers(ServerSendMessages.CardsSent, CurrentPlayerNumberTurn, data, CurrentPlayerNumberTurn);
+        Server.SendMessageToPlayers(ServerSendMessages.CardsSent, CurrentPlayerNumberTurn, data, player.Number);
 
         StringBuilder stringBuilder = new StringBuilder();
         foreach (var connectedPlayer in PlayerManager.ConnectedPlayers)

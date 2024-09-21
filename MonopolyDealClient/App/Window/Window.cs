@@ -36,14 +36,22 @@ namespace MonopolyDeal
         {
             mIsOpen = true;
             if (mIsPopup)
-                Appstate.OpenPopup(this);    
+            {
+                Appstate.OpenPopup(this);
+                ImGui.OpenPopup(mTitle);
+            }
+                
 
         }
         public virtual void Close()
         {
-            mIsOpen = true;
+            mIsOpen = false;
             if (mIsPopup)
+            {
+                ImGui.CloseCurrentPopup();
                 Appstate.ClosePopup();
+            }
+                
         }
         public virtual void ImGuiDrawBegin()
         {
@@ -51,8 +59,7 @@ namespace MonopolyDeal
             {
                 if (!mIsOpen)
                     return;
-
-                ImGui.OpenPopup(mTitle);
+                
                 mPopupOpenSuccessful = ImGui.BeginPopupModal(mTitle, ref mIsOpen, ImGuiWindowFlags.AlwaysAutoResize);
             }
             else
@@ -83,6 +90,10 @@ namespace MonopolyDeal
                 {
                     ImGui.EndPopup();
                 }
+
+                if (!mIsOpen && Appstate.CurrentPopup is not null && Appstate.CurrentPopup == this)
+                    Appstate.ClosePopup();
+
             }
             else
             {

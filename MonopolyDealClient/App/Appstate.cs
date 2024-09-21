@@ -41,6 +41,16 @@ namespace MonopolyDeal
                 if (window.IsClosable && !window.IsOpen)
                     continue;
 
+                if (window.IsPopup)
+                {
+                    if (CurrentPopup is null)
+                        continue;
+
+                    if (CurrentPopup != window)
+                        continue;
+                }
+
+
                 window.ImGuiDrawBegin();
                 window.ImGuiDraw();
                 window.ImGuiDrawEnd();
@@ -79,10 +89,10 @@ namespace MonopolyDeal
             sPopupStack.TryPop(out var popup);
         }
 
-        static IWindow? CurrentPopup
+        public static IWindow? CurrentPopup
         {
             get => sPopupStack.Count > 0 ? sPopupStack.Peek() : null;
-            set
+            private set
             {
                 if (value is null)
                     throw new NullReferenceException();

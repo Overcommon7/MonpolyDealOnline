@@ -8,6 +8,7 @@ namespace MonopolyDeal
         List<OnlinePlayer> mPlayers;
         public LocalPlayer LocalPlayer { get; private set; }
         public IReadOnlyList<OnlinePlayer> OnlinePlayes => mPlayers;
+        public int CurrentPlayerNumbersTurn => mCurrentPlayerNumbersTurn;
         public Player GetPlayer(int playerNumber)
         {
             if (LocalPlayer.Number == playerNumber)
@@ -51,8 +52,12 @@ namespace MonopolyDeal
         }
         public void StartGame(int playerNumbersTurn)
         {
-
             mCurrentPlayerNumbersTurn = playerNumbersTurn;
+        }
+
+        public void SetCurrentPlayer(int playerNumber)
+        {
+            mCurrentPlayerNumbersTurn = playerNumber;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Xml.Linq;
 
@@ -68,10 +69,24 @@ public class Player : IEquatable<Player>
     }
     public bool RemoveCardFromHand(Card card)
     {
-        return mHand.Remove(card);
+        int index = mHand.FindIndex(c => c.ID == card.ID);
+        if (index == -1)
+            return false;
+
+        mHand.RemoveAt(index);
+        return true;
     }
     public bool RemoveCardFromPlayArea(Card card)
     {
         return mPlayArea.Remove(card);
+    }
+    public bool RemoveCardFromPlayArea(Predicate<Card> predicate)
+    {
+        int index = mPlayArea.FindIndex(predicate);
+        if (index == -1)
+            return false;
+
+        mPlayArea.RemoveAt(index);
+        return true;
     }
 }

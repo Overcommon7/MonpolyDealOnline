@@ -75,7 +75,6 @@ namespace MonopolyDeal
             var message = Format.GetMessageType<ServerSendMessages>(e.Data);
             var playerNumber = Format.GetPlayerNumber(e.Data);
 
-            Console.WriteLine($"[Client] C: {message} Number: {playerNumber}");
             mOnMessageRecieved?.Invoke(message, playerNumber, data);
         }
 

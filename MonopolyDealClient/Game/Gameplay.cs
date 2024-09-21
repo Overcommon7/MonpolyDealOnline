@@ -13,7 +13,7 @@ namespace MonopolyDeal
         public PlayerManager PlayerManager { get; private set; }
         public int StartingPlayerNumber { get; set; }
         public State State { get; private set; }
-        
+        State mPreviousState = State.NotTurn;
         public override void OnOpen()
         {
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
@@ -28,13 +28,25 @@ namespace MonopolyDeal
             StartGame();
         }
 
+        public void SetToRespondingState()
+        {
+            mPreviousState = State;
+            State = State.RespondingToAction;
+        }
+
+        public void RevertState()
+        {
+            State = mPreviousState;
+        }
+
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
         {
             switch (message)
             {
-                case ServerSendMessages.WildPropertyPlayed:                    
+                case ServerSendMessages.WildRentPlayed:                    
                     break;
                 case ServerSendMessages.WildCardPlayed:
+                    SystemMessageHandler.WildCardPlayed(PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.PropertyCardPlayed:
                     break;
@@ -63,12 +75,23 @@ namespace MonopolyDeal
                 case ServerSendMessages.CardsSent:
                     SystemMessageHandler.OnCardsRecieved(PlayerManager, data, playerNumber);
                     break;
+                case ServerSendMessages.UpdateCardsInHand:
+                    SystemMessageHandler.OnlinePlayerHandUpdate(PlayerManager, data, playerNumber);
+                    break;
                 case ServerSendMessages.HandReturned:
                     PlayerManager.LocalPlayer.OnHandReturned(playerNumber, data);
                     break;
                 case ServerSendMessages.OnPlayerWin:
                     break;
                 case ServerSendMessages.OnTurnStarted:
+                    PlayerManager.SetCurrentPlayer(playerNumber);
+                    SystemMessageHandler.TurnStarted(PlayerManager, data);
+
+                    if (PlayerManager.CurrentPlayerNumbersTurn == PlayerManager.LocalPlayer.Number)
+                        State = State.PlayingCards;
+                    else
+                        State = State.NotTurn;
+
                     break;
                 case ServerSendMessages.OnPlayerConnected:
                     break;
@@ -82,6 +105,11 @@ namespace MonopolyDeal
         public void StartGame()
         {
             PlayerManager.StartGame(StartingPlayerNumber);
+
+            if (PlayerManager.CurrentPlayerNumbersTurn == PlayerManager.LocalPlayer.Number)
+                State = State.PlayingCards;
+            else
+                State = State.NotTurn;
         }
 
         public override void AddWindows()

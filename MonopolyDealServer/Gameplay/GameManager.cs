@@ -34,8 +34,12 @@ public static class GameManager
             case ClientSendMessages.PlayRentCard:
                 break;
             case ClientSendMessages.PlayWildCard:
+                PlayerActions.WildCardPlayed(player, data);
                 break;
             case ClientSendMessages.RequestCards:
+                break;
+            case ClientSendMessages.PutCardsBack:
+                PlayerActions.PutCardsBack(sDeck, player, data);
                 break;
             case ClientSendMessages.MoveCard:
                 break;
