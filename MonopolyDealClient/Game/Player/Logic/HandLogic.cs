@@ -47,21 +47,30 @@ namespace MonopolyDeal
                         break;
                 }
 
+                return;
             }
 
-            if (card is PropertyCard)
+            if (card is PropertyCard property)
             {
-                if (card is WildCard)
+                if (property is WildCard)
                 {
                     mGameplay.GetWindow<PlayWildCardPopup>().Open(card);
+                    return;
                 }
+
+                Hand.RemoveCard(card);
+                PlayedCards.AddPropertyCard(property);
+                Client.SendData(ClientSendMessages.PlayPropertyCard, card.ID.ToString(), Number);
             }
 
             if (card is MoneyCard money)
             {
                 Hand.RemoveCard(card);
                 PlayedCards.AddMoneyCard(money);
+                Client.SendData(ClientSendMessages.PlayMoneyCard, card.ID.ToString(), Number);
             }
+
+              
         }
         void RespondToAction_HandLogic(Card card)
         {

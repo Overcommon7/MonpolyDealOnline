@@ -35,7 +35,11 @@ namespace StartupProject
                     info.WindowStyle = ProcessWindowStyle.Hidden;
                     info.CreateNoWindow = true;
                     info.ArgumentList.Clear();
+                    info.ArgumentList.Add("--Number");
                     info.ArgumentList.Add((i + 8).ToString());
+                    info.ArgumentList.Add("--Position");
+                    info.ArgumentList.Add("2100");
+                    info.ArgumentList.Add("475");
 
                     processes.Add(Process.Start(info));
                 }

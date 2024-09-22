@@ -93,6 +93,18 @@ public static class CardData
         return SortTypes[a.GetType()].CompareTo(SortTypes[b.GetType()]);
     }
 
+    public static int GetRentAmount(SetType type, int cardsOwnedInSet)
+    {
+        if (cardValues.TryGetValue(type, out var values))
+            return 0;
+
+        int index = Array.FindIndex(values.Prices, rent => rent.cardsOwned == cardsOwnedInSet);
+        if (index == -1)
+            return 0;
+
+        return values.Prices[index].rentAmount;
+    }
+
     public static bool TryGetCard<T>(int cardID, out T card) where T : Card
     {
         int index = cards.FindIndex(value =>
@@ -131,15 +143,53 @@ public static class CardData
         return false;
     }
 
-    public static T CreateNewCard<T>(int cardID) where T : Card
+    public static T? CreateNewCard<T>(int cardID) where T : Card
     {
         if (!TryGetCard(cardID, out T card))
             throw new ArgumentException();
 
-        if (card is not Copy<T> copyable)
-            throw new NullReferenceException();
+        if (typeof(T) != typeof(Card))
+        {
+            if (card is not Copy<T> copyable)
+                return null;
 
-        return copyable.Copy();
+            return copyable.Copy();
+        }
+       
+        if (card is ActionCard action)
+        {
+            if (action is BuildingCard buildingCard)
+                return buildingCard.Copy() as T;
+
+            if (action is WildRentCard wildRentCard)
+                return wildRentCard.Copy() as T;
+
+            if (action is RentCard rent)
+                return rent.Copy() as T;
+
+            return action.Copy() as T;
+        }
+
+        if (card is PropertyCard property)
+        {
+            if (property is WildCard wildCard)
+            {
+                if (property is WildPropertyCard wildProperty)
+                {
+                    return wildProperty.Copy() as T;
+                }
+
+                return wildCard.Copy() as T;
+            }
+
+            return property.Copy() as T;
+        }
+
+        if (card is MoneyCard money)
+            return money.Copy() as T;
+
+        return card.Copy() as T;
+
     }
 
     public static void LoadFromFile()

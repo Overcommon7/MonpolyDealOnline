@@ -15,6 +15,7 @@ public struct WildRentPlayValues
     public bool withDoubleRent; 
     public int cardID;
     public int targetPlayerNumber;
+    public int cardsOwnedInSet;
     public SetType chargingSetType;
 }
 
@@ -23,11 +24,12 @@ public struct RentPlayValues
 {
     public bool withDoubleRent;
     public int cardID;
+    public int cardsOwnedInSet;
     public SetType chargingSetType;
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct PlayCardValues
+public struct PlayActionCardValues
 {
     public bool asMoney;
     public bool addToPlayArea;  

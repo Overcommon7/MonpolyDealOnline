@@ -2,7 +2,7 @@
   "profiles": {
     "MonopolyDealClient": {
       "commandName": "Project",
-      "commandLineArgs": "7"
+      "commandLineArgs": "--Number 7 --Position 50 475"
     }
   }
 }

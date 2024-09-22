@@ -2,8 +2,15 @@
 {
     PlaySlyDeal,
     PlayForcedDeal,
+    PlayDealBreaker,
     PlayRentCard,
+    PlayWildRentCard,
+    PlayBuildingRentCard,
     PlayWildCard,
+    PlayMoneyCard,
+    PlayPropertyCard,
+    PlayActionCard,
+
     RequestCards,
     PutCardsBack,
     MoveCard,
@@ -24,7 +31,8 @@ public enum ServerSendMessages : short
     ForcedDealPlayed,
     DealBreakerPlayed,
     SingleTargetActionCard,
-    ActionCardPlayed,      
+    ActionCardPlayed,
+    MoneyCardPlayed,
     JustSayNoPlayed,
 
     CardsPayed,

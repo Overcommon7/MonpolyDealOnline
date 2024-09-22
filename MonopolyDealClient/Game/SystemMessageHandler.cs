@@ -52,12 +52,69 @@ namespace MonopolyDeal
             if (playerNumber == playerManager.LocalPlayer.Number)
                 return;
 
-            var player = playerManager.GetOnlinePlayer(playerNumber);
             var wildCardData = Format.ToStruct<PlayWildCard>(data);
-            var wildCard = CardData.CreateNewCard<WildCard>(wildCardData.cardID);
-            wildCard.SetCurrentType(wildCard.SetType);
-            player.PlayedCards.AddPropertyCard(wildCard);
-            --player.CardsInHand;
+            OnlinePlayerPlayedCard<WildCard>(playerManager, wildCardData.cardID, playerNumber, (player, card) =>
+            {
+                card.SetCurrentType(card.SetType);
+                player.PlayedCards.AddPropertyCard(card);
+            });
         }
+
+        public static void MoneyCardPlayed(PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            if (playerNumber == playerManager.LocalPlayer.Number)
+                return;
+
+            int cardID = int.Parse(Format.ToString(data));
+            OnlinePlayerPlayedCard<MoneyCard>(playerManager, playerNumber, cardID, (player, card) =>
+            {
+                player.PlayedCards.AddMoneyCard(card);
+            });
+        }
+
+        public static void PropertyCardPlayed(PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            if (playerNumber == playerManager.LocalPlayer.Number)
+                return;
+
+            int cardID = int.Parse(Format.ToString(data));
+            OnlinePlayerPlayedCard<PropertyCard>(playerManager, playerNumber, cardID, (player, card) =>
+            {
+                player.PlayedCards.AddPropertyCard(card);
+            });
+        }
+
+        public static void RentCardPlayed(PayPopup pay, PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            if (playerNumber == playerManager.LocalPlayer.Number)
+                return;
+
+            var rentValues = Format.ToStruct<RentPlayValues>(data);
+            if (!CardData.TryGetCard<RentCard>(rentValues.cardID, out var card))
+                return;
+
+            int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet);
+            var player = playerManager.GetOnlinePlayer(playerNumber);
+            --player.CardsInHand;
+
+            string message = string.Empty;
+
+            pay.Open(message, rentAmount);
+        }
+
+        static void OnlinePlayerPlayedCard<T>(PlayerManager playerManager, int playerNumber, int cardID, Action<OnlinePlayer, T> action) where T : Card
+        {
+            var player = playerManager.GetOnlinePlayer(playerNumber);
+            var card = CardData.CreateNewCard<T>(cardID);
+
+            if (card is null)
+                return;
+
+            --player.CardsInHand;
+
+            action(player, card);
+        }
+
+
     }
 }

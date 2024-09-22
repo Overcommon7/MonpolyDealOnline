@@ -17,9 +17,9 @@ namespace MonopolyDeal
         static bool mValidAppstateLoaded => mCurrentStateIndex >= 0 && mCurrentStateIndex < mAppstates.Count && mCurrentState is not null;
 
         public static Vector2 ScreenSize { get; private set; } = new Vector2(1280, 720);
-        public static void Run()
+        public static void Run(Vector2 position)
         {
-            Initialize();
+            Initialize(position);
             Update();
             Terminate();
         }
@@ -49,12 +49,14 @@ namespace MonopolyDeal
             throw new System.Exception("App state not loaded");
         }
 
-        private static void Initialize()
+        private static void Initialize(Vector2 position)
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
             Raylib.InitWindow((int)ScreenSize.X, (int)ScreenSize.Y, "EmptyRaylib");
             Raylib.SetTargetFPS(30);
             Raylib.SetExitKey(KeyboardKey.Null);
+
+            Raylib.SetWindowPosition((int)position.X, (int)position.Y);
 
             rlImGui.Setup();
 

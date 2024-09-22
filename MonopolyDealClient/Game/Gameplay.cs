@@ -41,18 +41,22 @@ namespace MonopolyDeal
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
         {
+
             switch (message)
             {
-                case ServerSendMessages.WildRentPlayed:                    
+                case ServerSendMessages.WildRentPlayed:
                     break;
                 case ServerSendMessages.WildCardPlayed:
                     SystemMessageHandler.WildCardPlayed(PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.PropertyCardPlayed:
+                    SystemMessageHandler.PropertyCardPlayed(PlayerManager, playerNumber, data);
                     break;
-                case ServerSendMessages.CardMoved:
+                case ServerSendMessages.MoneyCardPlayed:
+                    SystemMessageHandler.MoneyCardPlayed(PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.RentCardPlayed:
+                    SystemMessageHandler.RentCardPlayed(GetWindow<PayPopup>(), PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.SlyDealPlayed:
                     break;
@@ -64,6 +68,7 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.ActionCardPlayed:
                     break;
+
                 case ServerSendMessages.JustSayNoPlayed:
                     break;
                 case ServerSendMessages.CardsPayed:
@@ -71,6 +76,8 @@ namespace MonopolyDeal
                 case ServerSendMessages.PlayerPaidValues:
                     break;
                 case ServerSendMessages.OnAllPlayersPaid:
+                    break;
+                case ServerSendMessages.CardMoved:
                     break;
                 case ServerSendMessages.CardsSent:
                     SystemMessageHandler.OnCardsRecieved(PlayerManager, data, playerNumber);
@@ -81,8 +88,6 @@ namespace MonopolyDeal
                 case ServerSendMessages.HandReturned:
                     PlayerManager.LocalPlayer.OnHandReturned(playerNumber, data);
                     break;
-                case ServerSendMessages.OnPlayerWin:
-                    break;
                 case ServerSendMessages.OnTurnStarted:
                     PlayerManager.SetCurrentPlayer(playerNumber);
                     SystemMessageHandler.TurnStarted(PlayerManager, data);
@@ -91,7 +96,8 @@ namespace MonopolyDeal
                         State = State.PlayingCards;
                     else
                         State = State.NotTurn;
-
+                    break;
+                case ServerSendMessages.OnPlayerWin:
                     break;
                 case ServerSendMessages.OnPlayerConnected:
                     break;
@@ -105,6 +111,8 @@ namespace MonopolyDeal
                         PlayerManager.LocalPlayer.Hand.AddCard(card);
                     break;
             }
+
+           
         }
 
         public void StartGame()
@@ -128,6 +136,7 @@ namespace MonopolyDeal
             AddWindow<PlayWildCardPopup>();
             AddWindow<SlyDealPopup>();
             AddWindow<TooManyCardsPopup>();
+            AddWindow<PayPopup>();
         }
     }
 }

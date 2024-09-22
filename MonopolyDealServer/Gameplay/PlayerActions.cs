@@ -37,6 +37,9 @@ public static class PlayerActions
         var wildCardData = Format.ToStruct<PlayWildCard>(data);
         var wildCard = CardData.CreateNewCard<WildCard>(wildCardData.cardID);
 
+        if (wildCard is null)
+            return;
+
         wildCard.SetCurrentType(wildCard.SetType);
         player.RemoveCardFromHand(wildCard);
         player.AddCardToPlayArea(wildCard);

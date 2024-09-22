@@ -1,4 +1,5 @@
 ﻿using Raylib_cs;
+using System.Numerics;
 
 namespace MonopolyDeal
 {
@@ -7,16 +8,25 @@ namespace MonopolyDeal
         public static int? DebugNumber = null;
         static void Main(string[] args)
         {
+            Vector2 position = new();
+
             for (int i = 0; i < args.Length; i++)
             {
-                if (!int.TryParse(args[i], out int number))
-                    continue;
+                if (args[i].Contains("--Number"))
+                {
+                    if (int.TryParse(args[++i], out int number))
+                        DebugNumber = number;
+                }
 
-                DebugNumber = number;
-                break;
+                if (args[i].Contains("Position"))
+                {
+                    float.TryParse(args[++i], out position.X);
+                    float.TryParse(args[++i], out position.Y);
+                }
+
             }
 
-           App.Run();
+           App.Run(position);
         }
     }
 }

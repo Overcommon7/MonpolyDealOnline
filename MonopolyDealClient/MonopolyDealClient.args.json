@@ -4,7 +4,23 @@
   "Items": [
     {
       "Id": "5499add4-7b3c-4200-bb5f-f21d4984d3e1",
+      "Command": "--Number"
+    },
+    {
+      "Id": "74786515-d5a3-45f1-9bc6-facc6b6dbd10",
       "Command": "7"
+    },
+    {
+      "Id": "c8c7c590-9fea-40a9-8115-bab76ec77e7c",
+      "Command": "--Position"
+    },
+    {
+      "Id": "7bff0bad-d26e-441a-86fb-557fb6935e94",
+      "Command": "50"
+    },
+    {
+      "Id": "8e0108c9-f193-4098-99b2-ec32e445a7af",
+      "Command": "475"
     }
   ]
 }
