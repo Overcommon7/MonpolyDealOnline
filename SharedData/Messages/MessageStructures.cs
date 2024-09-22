@@ -73,13 +73,6 @@ public struct PlayBuildingCard
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct PayPlayer
-{
-    public int cardID;
-    public bool asMoney;
-}
-
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ActionAgainstOne
 {
     public ActionType actionType;

@@ -12,12 +12,13 @@ namespace MonopolyDeal
         List<Card> mMoneyCards;
 
         Dictionary<SetType, int> mSetTypes;
+        Dictionary<SetType, ActionType> mBuildingTypes;
         int playerNumber;
         bool isLocalPlayer;
         
         public IReadOnlyList<PropertyCard> PropertyCards => mPropertyCards;
-        public IReadOnlyList<BuildingCard> BuildingCardsCards => mBuildingCards;
-        public IReadOnlyList<Card> CardsAsMoney => mMoneyCards;
+        public IReadOnlyList<BuildingCard> BuildingCards => mBuildingCards;
+        public IReadOnlyList<Card> MoneyCards => mMoneyCards;
         public IReadOnlyCollection<SetType> SetTypesPlayed => mSetTypes.Keys;
 
         public PlayedCards(Player player)
@@ -28,6 +29,7 @@ namespace MonopolyDeal
 
             playerNumber = player.Number;
             isLocalPlayer = player is LocalPlayer;
+            mBuildingTypes = new Dictionary<SetType, ActionType>();
             mSetTypes = new() { { SetType.None, -10000 } };
         }
         public void RemovePropertyCard(PropertyCard card)
@@ -52,7 +54,42 @@ namespace MonopolyDeal
             if (index == -1) 
                 return;
 
+            if (card.ActionType == ActionType.House)
+                mBuildingTypes.Remove(card.CurrentSetType);
+
+            if (card.ActionType == ActionType.Hotel)
+                mBuildingTypes[card.CurrentSetType] = ActionType.House;
+
             mBuildingCards.RemoveAt(index);
+        }
+
+        public void AddBuildingCard(BuildingCard card, SetType setType)
+        {
+            if (card.AsMoney)
+                return;
+
+            if (!HasFullSetOfType(setType))
+                return;
+
+            if (card.ActionType == ActionType.House)
+                mBuildingTypes.Add(setType, ActionType.House);
+
+            if (card.ActionType == ActionType.Hotel)
+                mBuildingTypes[setType] = ActionType.Hotel;
+
+            card.CurrentSetType = setType;
+            mBuildingCards.Add(card);
+        }
+
+        public void MoveBuildingCard(BuildingCard card, SetType setType)
+        {
+            RemoveBuildingCard(card);
+            AddBuildingCard(card, setType);
+        }
+
+        public BuildingCard? GetBuildingCard(ActionType type, SetType setType)
+        {
+            return mBuildingCards.Find(card => card.ActionType == type && card.CurrentSetType == setType);
         }
 
         public void RemoveMoneyCard(Card card)
@@ -77,18 +114,7 @@ namespace MonopolyDeal
 
             if (!mSetTypes.TryAdd(card.SetType, 1))
                 mSetTypes[card.SetType]++;
-        }
-
-        public void AddBuildingCard(BuildingCard card, SetType setType)
-        {
-            if (card.AsMoney)
-                return;
-
-            if (!HasFullSetOfType(setType))
-                return;
-
-            mBuildingCards.Add(card);
-        }
+        }       
 
         public bool HasPropertyCardOfType(SetType setType)
         {
@@ -101,6 +127,19 @@ namespace MonopolyDeal
                 return false;
 
             return amount == CardData.GetValues(setType).AmountForFullSet;
+        }
+
+        public bool HasHouse(SetType setType)
+        {
+            return mBuildingTypes.ContainsKey(setType);
+        }
+
+        public bool HasHotel(SetType setType)
+        {
+            if (!mBuildingTypes.TryGetValue(setType, out var type))
+                return false;
+
+            return type == ActionType.Hotel;
         }
 
         public PropertyCard[] GetCardsOfType(SetType setType)
@@ -123,7 +162,19 @@ namespace MonopolyDeal
             return cards;
         }
 
-        public void ImGuiDraw(Action<Card>? propertyLogic = null, Action<Card>? buildingLogic = null)
+        public int GetNumberOfCardsInSet(SetType setType)
+        {
+            if (setType == SetType.None || !mSetTypes.TryGetValue(setType, out var count))
+                return 0;
+
+            return count;
+        }
+
+        public void ImGuiDraw(
+            Action<Card>? propertyLogic = null, 
+            Action<Card>? buildingLogic = null, 
+            Action<Card>? moneyLogic = null,
+            string identifier = "1")
         {
             ImGui.SeparatorText("Properties");
 
@@ -132,7 +183,7 @@ namespace MonopolyDeal
                 if (setType == SetType.None)
                     continue;
 
-                if (!ImGui.TreeNode($"{setType}##{playerNumber}"))
+                if (!ImGui.TreeNode($"{setType}##{playerNumber}{identifier}"))
                     continue;
 
                 foreach (var card in GetCardsOfType(setType))
@@ -154,25 +205,29 @@ namespace MonopolyDeal
 
             if (isLocalPlayer)
             {
-                if (ImGui.TreeNode($"Action Cards As Money##{playerNumber}"))
+                if (ImGui.TreeNode($"Action Cards As Money##{playerNumber}{identifier}"))
                 {
                     foreach (var card in mMoneyCards)
                     {
-                        if (card is ActionCard)
+                        if (card is ActionCard action)
                         {
                             ImGui.Text($"M{card.Value} - {card.Name}");
+                            moneyLogic?.Invoke(action);
                         }
                     }
 
                     ImGui.TreePop();
                 }
 
-                if (ImGui.TreeNode($"Money Cards##{playerNumber}"))
+                if (ImGui.TreeNode($"Money Cards##{playerNumber}{identifier}"))
                 {
                     foreach (var card in mMoneyCards)
                     {
-                        if (card is MoneyCard)
+                        if (card is MoneyCard money)
+                        {
                             ImGui.Text($"M{card.Name}");
+                            moneyLogic?.Invoke(money);
+                        }                            
                     }
 
                     ImGui.TreePop();

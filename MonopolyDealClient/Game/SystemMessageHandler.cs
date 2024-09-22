@@ -97,9 +97,13 @@ namespace MonopolyDeal
             var player = playerManager.GetOnlinePlayer(playerNumber);
             --player.CardsInHand;
 
-            string message = string.Empty;
+            string[] messages =
+                [
+                    $"Player {player.Name} Has Charged Rent On Their {rentValues.chargingSetType} Properties",
+                    $"You Owe M{rentAmount}"
+                ];
 
-            pay.Open(message, rentAmount);
+            pay.Open(playerManager.LocalPlayer, player.Name, messages, rentAmount);
         }
 
         static void OnlinePlayerPlayedCard<T>(PlayerManager playerManager, int playerNumber, int cardID, Action<OnlinePlayer, T> action) where T : Card

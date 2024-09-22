@@ -34,9 +34,27 @@ namespace MonopolyDeal
                 mCards.RemoveAt(index);  
                 if (sort)
                     mCards.Sort(CardData.SortAlgorithm);
-            }
+            }  
+        }
 
-            
+        public bool TryGetCard<T>(Predicate<T> predicate, out T card) where T : Card
+        {
+            int index = mCards.FindIndex(value =>
+            {
+                if (value is not T typedCard)
+                    return false;
+
+                return predicate(typedCard);
+            });
+
+            if (index == -1)
+            {
+                card = null;
+                return false;
+            }
+               
+            card = mCards[index] as T;
+            return true;
         }
 
         public void ImGuiDraw(Action<Card>? extraLogic = null)

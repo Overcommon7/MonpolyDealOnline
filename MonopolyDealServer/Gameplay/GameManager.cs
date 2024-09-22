@@ -38,6 +38,7 @@ public static class GameManager
             case ClientSendMessages.PlayForcedDeal:
                 break;
             case ClientSendMessages.PlayRentCard:
+                PlayerActions.RentCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayWildCard:
                 PlayerActions.WildCardPlayed(player, data);
@@ -50,6 +51,7 @@ public static class GameManager
             case ClientSendMessages.MoveCard:
                 break;
             case ClientSendMessages.PayPlayer:
+
                 break;
             case ClientSendMessages.OnEndTurn:
                 TurnManager.EndTurn(sDeck);

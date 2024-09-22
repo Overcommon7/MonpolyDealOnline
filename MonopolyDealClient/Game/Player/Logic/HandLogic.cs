@@ -54,7 +54,7 @@ namespace MonopolyDeal
             {
                 if (property is WildCard)
                 {
-                    mGameplay.GetWindow<PlayWildCardPopup>().Open(card);
+                    mGameplay.GetWindow<PlayWildCardPopup>().Open(this, card);
                     return;
                 }
 

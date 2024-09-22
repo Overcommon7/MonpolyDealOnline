@@ -68,12 +68,10 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.ActionCardPlayed:
                     break;
-
                 case ServerSendMessages.JustSayNoPlayed:
                     break;
-                case ServerSendMessages.CardsPayed:
-                    break;
-                case ServerSendMessages.PlayerPaidValues:
+                case ServerSendMessages.PlayerPaid:
+
                     break;
                 case ServerSendMessages.OnAllPlayersPaid:
                     break;

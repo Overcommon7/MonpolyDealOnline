@@ -46,4 +46,9 @@ public static class PlayerActions
 
         Server.SendMessageExcluding(ServerSendMessages.WildCardPlayed, player.Number, data, player.Number);
     }
+
+    public static void RentCardPlayed(Player player, byte[] data)
+    {
+        //PaymentManager.StartNewPayment(player, )
+    }
 }
