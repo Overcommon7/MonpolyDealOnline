@@ -21,7 +21,7 @@ namespace MonopolyDeal
             ImGui.TextColored(Color.Red.ToVector4(), "Cards To Discard");
             for (int i = 0; i < mDiscardingCards.Count;)
             {
-                ImGui.Text(mDiscardingCards[i].Name);
+                ImGui.Text(mDiscardingCards[i].DisplayName());
                 ImGui.SameLine();
 
                 if (ImGui.Button("Put Back##" + i))
@@ -38,7 +38,7 @@ namespace MonopolyDeal
                     continue;
 
                 ++suffix;
-                ImGui.Text(card.Name);
+                ImGui.Text(card.DisplayName());
                 ImGui.SameLine();
                 if (!ImGui.Button("Discard##" + suffix))
                     continue;

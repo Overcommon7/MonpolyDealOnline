@@ -1,10 +1,13 @@
-﻿public class ActionCard : Card, Copy<ActionCard>
+﻿using System.Text.RegularExpressions;
+
+public partial class ActionCard : Card, Copy<ActionCard>
 {
     protected ActionType actionType;
     protected bool asMoney;
     protected bool requiresOutsideAction;
     protected bool requiresAllPlayerAction;
     protected bool requiresOnePlayerAction;
+    protected string displayName;
     public ActionType ActionType => actionType;
     public bool AsMoney => asMoney;
     public bool RequiresOutsideAction => requiresOutsideAction;
@@ -18,6 +21,8 @@
         requiresOutsideAction = outsideAction;
         requiresAllPlayerAction = allPlayerAction;
         requiresOnePlayerAction = onePlayerAction;
+
+        displayName = SeperateEnums().Replace(actionType.ToString(), " $1");
     }
     public void SetAsMoney(bool asMoney)
     {
@@ -33,5 +38,13 @@
     {
         return new ActionCard(actionType, Value, requiresOutsideAction, requiresAllPlayerAction, requiresOnePlayerAction);
     }
+
+    public override string DisplayName()
+    {
+        return displayName;
+    }
+
+    [GeneratedRegex("(\\B[A-Z])")]
+    private static partial Regex SeperateEnums();
 }
 

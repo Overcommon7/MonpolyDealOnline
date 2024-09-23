@@ -45,9 +45,9 @@ namespace MonopolyDeal
             int value = 0;
             for (int i = 0; i < mCardsPaying.Count;)
             {
-                ImGui.Text(mCardsPaying[i].Name);
+                ImGui.Text(mCardsPaying[i].DisplayName());
                 ImGui.SameLine();
-                if (!ImGui.Button($"Put Back##{mCardsPaying[i].ID}"))
+                if (!ImGui.Button($"Put Back##{i}"))
                 {
                     value += mCardsPaying[i].Value;
                     ++i;

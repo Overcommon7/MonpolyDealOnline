@@ -1,5 +1,8 @@
-﻿public class RentCard : ActionCard, Copy<RentCard>
+﻿using System.Text.RegularExpressions;
+
+public partial class RentCard : ActionCard, Copy<RentCard>
 {
+    protected string displayName;
     public SetType TargetType1 {get; private set; }   
     public SetType TargetType2 { get; private set;  }
 
@@ -28,6 +31,12 @@
     {
         TargetType1 = setType1;
         TargetType2 = setType2;
+
+        displayName = 
+            "Rent " +
+            EnumSeperator().Replace(setType1.ToString(), " $1") + 
+            " - " +
+            EnumSeperator().Replace(setType2.ToString(), " $1");
     }
 
     public override string ToString()
@@ -39,4 +48,12 @@
     {
         return new RentCard(TargetType1, TargetType2);
     }
+
+    public override string DisplayName()
+    {
+        return displayName;
+    }
+
+    [GeneratedRegex("(\\B[A-Z])")]
+    private static partial Regex EnumSeperator();
 }

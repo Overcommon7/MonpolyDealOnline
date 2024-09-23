@@ -60,10 +60,10 @@ namespace MonopolyDeal
         public void ImGuiDraw(Func<Card, int, bool>? extraLogic = null)
         {
             int id = 0;
-            foreach (var card in mCards)
+            for (int i = 0; i < mCards.Count; i++)
             {
-                ImGui.Text(card.Name);
-                if (extraLogic is not null && extraLogic.Invoke(card, id++))
+                ImGui.Text(mCards[i].DisplayName());
+                if (extraLogic is not null && extraLogic.Invoke(mCards[i], id++))
                     return;
             }
         }

@@ -15,5 +15,10 @@
     {
         return $"{Name} - ID: {ID}";
     }
+
+    public override string DisplayName()
+    {
+        return Name;
+    }
 }
 

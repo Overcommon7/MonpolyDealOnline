@@ -197,7 +197,7 @@ namespace MonopolyDeal
 
                 foreach (var buildingCard in mBuildingCards.FindAll(building => building.CurrentSetType == setType))
                 {
-                    ImGui.Text(buildingCard.Name);
+                    ImGui.Text(buildingCard.DisplayName());
                     if (buildingLogic is not null && buildingLogic.Invoke(buildingCard, id++))
                         break;
                 }
@@ -216,7 +216,7 @@ namespace MonopolyDeal
                     {
                         if (card is ActionCard action)
                         {
-                            ImGui.Text($"M{card.Value} - {card.Name}");
+                            ImGui.Text($"M{card.Value} - {card.DisplayName()}");
                             if (moneyLogic is not null && moneyLogic.Invoke(action, id++))
                                 break;
                         }
@@ -231,7 +231,7 @@ namespace MonopolyDeal
                     {
                         if (card is MoneyCard money)
                         {
-                            ImGui.Text($"M{card.Name}");
+                            ImGui.Text(money.Name);
                             if(moneyLogic is not null && moneyLogic.Invoke(card, id++))
                                 break;
                         }                            

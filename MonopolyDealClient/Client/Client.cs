@@ -70,7 +70,10 @@ namespace MonopolyDeal
 
 
         private static void Client_DataReceived(object? sender, Message e)
-        {           
+        {
+            if (e.Data.Length < Format.HEADER_SIZE)
+                return;
+
             var data = Format.GetByteDataFromMessage(e.Data);
             var message = Format.GetMessageType<ServerSendMessages>(e.Data);
             var playerNumber = Format.GetPlayerNumber(e.Data);

@@ -49,6 +49,7 @@ public static class GameManager
                 PlayerActions.WildCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayMoneyCard:
+                PlayerActions.MoneyCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayPropertyCard:
                 PlayerActions.PropertyCardPlayed(player, data);
@@ -97,18 +98,9 @@ public static class GameManager
         {
             foreach (var card in CardData.Cards)
             {
-                if (card is RentCard rent)
-                {
-                    if (!ImGui.Button($"Give {card.Name} - {rent.TargetType1}-{rent.TargetType2}##{card.ID}"))
-                        continue;
-                }
-                else
-                {
-                    if (!ImGui.Button($"Give {card.Name}##{card.ID}"))
-                        continue;
-                }
+                if (!ImGui.Button($"Give {card.DisplayName()}##{card.ID}"))
+                    continue;
 
-                
                 Server.SendMessageToPlayers(ServerSendMessages.DebugSendCard, 0, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);
             }
 

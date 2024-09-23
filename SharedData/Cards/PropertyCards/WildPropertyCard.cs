@@ -9,7 +9,7 @@
         => setType1 == setType || setType2 == setType;
 
     public WildPropertyCard(SetType setType1, SetType setType2, int value) 
-        : base(setType1, $"{setType1}{setType2}", value)
+        : base(setType1, $"{setType1} {setType2}", value)
     {
         this.setType1 = setType1;
         this.setType2 = setType2;
@@ -23,6 +23,13 @@
     public new WildPropertyCard Copy()
     {
         return new WildPropertyCard(setType1, setType2, Value);
+    }
+
+    public override string DisplayName()
+    {
+        if (setType == SetType1)
+            return $"{setType1} - {setType2}";
+        return $"{setType2} - {setType1}";
     }
 }
 

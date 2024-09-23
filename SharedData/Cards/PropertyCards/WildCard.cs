@@ -24,5 +24,13 @@
     {
         return $"{Name} - {SetType} - M{Value} - ID: {ID}";
     }
+
+    public override string DisplayName()
+    {
+        if (setType == SetType.None)
+            return Name;
+
+        return $"WildCard ({setType})";
+    }
 }
 

@@ -1,6 +1,6 @@
 ﻿public class BuildingCard : ActionCard, Copy<BuildingCard>
 {
-    public SetType CurrentSetType { get; set; }
+    public SetType CurrentSetType { get; set; } = SetType.None;
     public int AmountToAddToSet => actionType == ActionType.Hotel ? 4 : 3;
     public bool IsHotel => actionType == ActionType.Hotel;
     public bool IsHouse => actionType == ActionType.House;
@@ -23,6 +23,14 @@
     public new BuildingCard Copy()
     {
         return new BuildingCard(actionType);
+    }
+
+    public override string DisplayName()
+    {
+        if (CurrentSetType == SetType.None)
+            return displayName;
+
+        return $"{displayName} ({CurrentSetType})";
     }
 }
 

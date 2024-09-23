@@ -15,7 +15,7 @@ namespace MonopolyDeal
         public State State { get; private set; }
         State mPreviousState = State.NotTurn;
         public override void OnOpen()
-        {
+        {           
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
 
             PlayerManager = new PlayerManager();
@@ -26,6 +26,14 @@ namespace MonopolyDeal
                 AddWindow<OnlinePlayerWindow>(player);
 
             StartGame();
+
+            base.OnOpen();
+        }
+
+        public override void OnClose()
+        {
+            Client.mOnMessageRecieved -= Client_OnMessageRecieved;
+            base.OnClose();
         }
 
         public void SetToRespondingState()
@@ -132,6 +140,7 @@ namespace MonopolyDeal
             AddWindow<PayPopup>();
             AddWindow<PlayActionCardPopup>();
             AddWindow<PlayWildCardPopup>();
+            AddWindow<WildRentPopup>(); 
             AddWindow<SlyDealPopup>();
             AddWindow<TooManyCardsPopup>();
             AddWindow<PayPopup>();

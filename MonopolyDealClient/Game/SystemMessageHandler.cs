@@ -53,9 +53,9 @@ namespace MonopolyDeal
                 return;
 
             var wildCardData = Format.ToStruct<PlayWildCard>(data);
-            OnlinePlayerPlayedCard<WildCard>(playerManager, wildCardData.cardID, playerNumber, (player, card) =>
+            OnlinePlayerPlayedCard<WildCard>(playerManager, playerNumber, wildCardData.cardID, (player, card) =>
             {
-                card.SetCurrentType(card.SetType);
+                card.SetCurrentType(wildCardData.setType);
                 player.PlayedCards.AddPropertyCard(card);
             });
         }

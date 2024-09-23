@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using SimpleTCP;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class PlayerActions
 {
@@ -34,17 +35,10 @@ public static class PlayerActions
 
     public static void WildCardPlayed(Player player, byte[] data)
     {
-        var wildCardData = Format.ToStruct<PlayWildCard>(data);
-        var wildCard = CardData.CreateNewCard<WildCard>(wildCardData.cardID);
-
-        if (wildCard is null)
-            return;
-
-        wildCard.SetCurrentType(wildCard.SetType);
-        player.RemoveCardFromHand(wildCard);
-        player.AddCardToPlayArea(wildCard);
-
-        Server.SendMessageExcluding(ServerSendMessages.WildCardPlayed, player.Number, data, player.Number);
+        var wildCard = Format.ToStruct<PlayWildCard>(data);
+        CardPlayed<WildCard>(player, wildCard.cardID, data, ServerSendMessages.PropertyCardPlayed, card => {
+            card.SetCurrentType(wildCard.setType);
+        });       
     }
 
     public static void RentCardPlayed(Player player, byte[] data)
@@ -55,14 +49,26 @@ public static class PlayerActions
     public static void PropertyCardPlayed(Player player, byte[] data)
     {
         int cardID = int.Parse(Format.ToString(data));
-        var property = CardData.CreateNewCard<PropertyCard>(cardID);
+        CardPlayed<MoneyCard>(player, cardID, data, ServerSendMessages.PropertyCardPlayed);
+    }
 
-        if (property is null) 
+    public static void MoneyCardPlayed(Player player, byte[] data)
+    {
+        int cardID = int.Parse(Format.ToString(data));
+        CardPlayed<MoneyCard>(player, cardID, data, ServerSendMessages.MoneyCardPlayed);
+    }
+
+    static void CardPlayed<T>(Player player, int cardID, byte[] data, ServerSendMessages message, Action<T>? action = null) where T : Card
+    {
+        var card = CardData.CreateNewCard<T>(cardID);
+
+        if (card is null)
             return;
 
-        player.RemoveCardFromHand(property);
-        player.AddCardToHand(property);
+        action?.Invoke(card);
 
-        Server.SendMessageExcluding(ServerSendMessages.PropertyCardPlayed, player.Number, data, player.Number);
+        player.RemoveCardFromHand(card);
+        player.AddCardToHand(card);       
+        Server.SendMessageExcluding(message, player.Number, data, player.Number);
     }
 }
