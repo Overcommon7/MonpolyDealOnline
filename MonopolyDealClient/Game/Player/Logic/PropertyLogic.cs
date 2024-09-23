@@ -4,22 +4,24 @@ namespace MonopolyDeal
 {
     public partial class LocalPlayer
     {
-        void OnTurn_PropertyLogic(Card card)
+        bool OnTurn_PropertyLogic(Card card, int id)
         {            
             if (card is WildCard)
             {
                 ImGui.SameLine();
-                if (ImGui.Button("Move"))
+                if (ImGui.Button($"Move##{id}"))
                     mGameplay.GetWindow<MoveCardPopup>().Open(card);                                 
             }
-        }
-        void RespondToAction_PropertyLogic(Card card)
-        {
 
+            return false;
         }
-        void NotTurn_PropertyLogic(Card card)
+        bool RespondToAction_PropertyLogic(Card card, int id)
         {
-
+            return false;
+        }
+        bool NotTurn_PropertyLogic(Card card, int id)
+        {
+            return false;
         }
     }
 }

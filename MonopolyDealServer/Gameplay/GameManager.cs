@@ -33,15 +33,29 @@ public static class GameManager
         switch (message)
         {
             case ClientSendMessages.PlaySlyDeal:
-                
                 break;
             case ClientSendMessages.PlayForcedDeal:
+                break;
+            case ClientSendMessages.PlayDealBreaker:
                 break;
             case ClientSendMessages.PlayRentCard:
                 PlayerActions.RentCardPlayed(player, data);
                 break;
+            case ClientSendMessages.PlayWildRentCard:
+                break;
+            case ClientSendMessages.PlayBuildingRentCard:
+                break;
             case ClientSendMessages.PlayWildCard:
                 PlayerActions.WildCardPlayed(player, data);
+                break;
+            case ClientSendMessages.PlayMoneyCard:
+                break;
+            case ClientSendMessages.PlayPropertyCard:
+                PlayerActions.PropertyCardPlayed(player, data);
+                break;
+            case ClientSendMessages.PlayActionCard:
+                break;
+            case ClientSendMessages.ActionGotDenied:
                 break;
             case ClientSendMessages.RequestCards:
                 break;
@@ -51,11 +65,12 @@ public static class GameManager
             case ClientSendMessages.MoveCard:
                 break;
             case ClientSendMessages.PayPlayer:
-
                 break;
             case ClientSendMessages.OnEndTurn:
                 TurnManager.EndTurn(sDeck);
                 TurnManager.StartTurn(sDeck);
+                break;
+            case ClientSendMessages.SendUsername:
                 break;
             case ClientSendMessages.ReadyForNextTurn:
                 break;

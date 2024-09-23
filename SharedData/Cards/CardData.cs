@@ -151,7 +151,7 @@ public static class CardData
         if (typeof(T) != typeof(Card))
         {
             if (card is not Copy<T> copyable)
-                return null;
+                throw new NotImplementedException();
 
             return copyable.Copy();
         }
@@ -212,29 +212,15 @@ public static class CardData
     }
 
     public static byte[] LoadToMemory()
-    {
-        List<PropertyCardSaveValues> propertyCards = new();
-        List<WildPropertySaveValues> wildPropertyCards = new();
-        List<ActionCardSaveValues> actionCards = new();
-        List<MoneyValues> moneyCards = new();
-        List<RentCardSaveValues> rentCards = new();
-        List<CardValues> cardValues = new();
-
-        XMLSerializer.Load(Files.PropertyCardData, ref propertyCards);
-        XMLSerializer.Load(Files.WildPropertyCardData, ref wildPropertyCards);
-        XMLSerializer.Load(Files.ActionCardData, ref actionCards);
-        XMLSerializer.Load(Files.MoneyValues, ref moneyCards);
-        XMLSerializer.Load(Files.RentCardData, ref rentCards);
-        XMLSerializer.Load(Files.CardValues, ref cardValues);
-
+    {        
         List<byte[]> dataWrapper =
         [
-            XMLSerializer.SaveObjectToXMLMemory(ref propertyCards),
-            XMLSerializer.SaveObjectToXMLMemory(ref wildPropertyCards),
-            XMLSerializer.SaveObjectToXMLMemory(ref actionCards),
-            XMLSerializer.SaveObjectToXMLMemory(ref moneyCards),
-            XMLSerializer.SaveObjectToXMLMemory(ref rentCards),
-            XMLSerializer.SaveObjectToXMLMemory(ref cardValues),
+            File.ReadAllBytes(Files.PropertyCardData),
+            File.ReadAllBytes(Files.WildPropertyCardData),
+            File.ReadAllBytes(Files.ActionCardData),
+            File.ReadAllBytes(Files.MoneyValues),
+            File.ReadAllBytes(Files.RentCardData),
+            File.ReadAllBytes(Files.CardValues)
         ];
 
         StringBuilder builder = new StringBuilder();

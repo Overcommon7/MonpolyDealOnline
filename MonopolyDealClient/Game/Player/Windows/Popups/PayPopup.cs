@@ -104,10 +104,10 @@ namespace MonopolyDeal
 
 #region DrawFunctions
 
-            void PropertyLogic(Card value)
+            bool PropertyLogic(Card value, int id)
             {
                 if (value is not PropertyCard card)
-                    return;
+                    return false;
 
                 ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
                 bool invalid = playedCards.HasHouse(card.SetType);
@@ -121,17 +121,19 @@ namespace MonopolyDeal
                 if (invalid)
                     ImGui.BeginDisabled();
 
-                if (ImGui.Button($"Pay##{card.ID}"))
+                if (ImGui.Button($"Pay##{id}"))
                     mCardsPaying.Add(card);
 
                 if (invalid)
                     ImGui.EndDisabled();
+
+                return false;
             }
 
-            void BuildingLogic(Card value)
+            bool BuildingLogic(Card value, int id)
             {
                 if (value is not BuildingCard card)
-                    return;
+                    return false;
 
                 ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
                 bool valid = true;
@@ -148,19 +150,23 @@ namespace MonopolyDeal
                 if (!valid)
                     ImGui.BeginDisabled();
 
-                if (ImGui.Button($"Pay##{card.ID}"))
+                if (ImGui.Button($"Pay##{id}"))
                     mCardsPaying.Add(card);
 
                 if (!valid)
                     ImGui.EndDisabled();
 
+                return false;
+
             }
 
-            void MoneyLogic(Card card)
+            bool MoneyLogic(Card card, int id)
             {
                 ImGui.SameLine();
-                if (ImGui.Button($"Pay##{card.ID}"))
+                if (ImGui.Button($"Pay##{id}"))
                     mCardsPaying.Add(card);
+
+                return false;
             }
 
 #endregion

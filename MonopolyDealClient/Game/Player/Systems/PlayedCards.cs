@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace MonopolyDeal
 {
@@ -171,13 +172,14 @@ namespace MonopolyDeal
         }
 
         public void ImGuiDraw(
-            Action<Card>? propertyLogic = null, 
-            Action<Card>? buildingLogic = null, 
-            Action<Card>? moneyLogic = null,
+            Func<Card, int, bool>? propertyLogic = null,
+            Func<Card, int, bool>? buildingLogic = null,
+            Func<Card, int, bool>? moneyLogic = null,
             string identifier = "1")
         {
             ImGui.SeparatorText("Properties");
 
+            int id = 0;
             foreach (var setType in mSetTypes.Keys)
             {
                 if (setType == SetType.None)
@@ -189,18 +191,21 @@ namespace MonopolyDeal
                 foreach (var card in GetCardsOfType(setType))
                 {
                     ImGui.Text(card.Name);
-                    propertyLogic?.Invoke(card);
+                    if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
+                        break;
                 }
 
                 foreach (var buildingCard in mBuildingCards.FindAll(building => building.CurrentSetType == setType))
                 {
                     ImGui.Text(buildingCard.Name);
-                    buildingLogic?.Invoke(buildingCard);
+                    if (buildingLogic is not null && buildingLogic.Invoke(buildingCard, id++))
+                        break;
                 }
 
                 ImGui.TreePop();
             }
 
+            ImGui.Spacing();
             ImGui.SeparatorText("Money");
 
             if (isLocalPlayer)
@@ -212,7 +217,8 @@ namespace MonopolyDeal
                         if (card is ActionCard action)
                         {
                             ImGui.Text($"M{card.Value} - {card.Name}");
-                            moneyLogic?.Invoke(action);
+                            if (moneyLogic is not null && moneyLogic.Invoke(action, id++))
+                                break;
                         }
                     }
 
@@ -226,7 +232,8 @@ namespace MonopolyDeal
                         if (card is MoneyCard money)
                         {
                             ImGui.Text($"M{card.Name}");
-                            moneyLogic?.Invoke(money);
+                            if(moneyLogic is not null && moneyLogic.Invoke(card, id++))
+                                break;
                         }                            
                     }
 

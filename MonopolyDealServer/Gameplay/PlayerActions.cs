@@ -51,4 +51,18 @@ public static class PlayerActions
     {
         //PaymentManager.StartNewPayment(player, )
     }
+
+    public static void PropertyCardPlayed(Player player, byte[] data)
+    {
+        int cardID = int.Parse(Format.ToString(data));
+        var property = CardData.CreateNewCard<PropertyCard>(cardID);
+
+        if (property is null) 
+            return;
+
+        player.RemoveCardFromHand(property);
+        player.AddCardToHand(property);
+
+        Server.SendMessageExcluding(ServerSendMessages.PropertyCardPlayed, player.Number, data, player.Number);
+    }
 }

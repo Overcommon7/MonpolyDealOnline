@@ -184,14 +184,19 @@ internal static class Server
 
     private static void ClientConnected(object? sender, TcpClient e)
     {
+        ulong id = e.GetID();
+        var status = PlayerManager.TryGetPlayer(id, out var player);
+        if (status == ConnectionStatus.Connected)
+            return;
+
         StringBuilder builder = new StringBuilder();
         builder
-            .Append(e.GetID())
+            .Append(id)
             .Append('|');
 
         for (int i = 0; i < PlayerManager.TotalPlayers; ++i)
         {
-            var status = PlayerManager.TryGetPlayer(i, out var player);
+            status = PlayerManager.TryGetPlayer(i, out player);
             if (status != ConnectionStatus.Connected)
                 continue;
 

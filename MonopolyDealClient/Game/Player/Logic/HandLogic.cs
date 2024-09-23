@@ -4,11 +4,11 @@ namespace MonopolyDeal
 {
     public partial class LocalPlayer
     {
-        void OnTurn_HandLogic(Card card)
+        bool OnTurn_HandLogic(Card card, int id)
         {
             ImGui.SameLine();
-            if (!ImGui.Button($"Play##{card.ID}"))
-                return;
+            if (!ImGui.Button($"Play##{id}"))
+                return false;
 
             if (card is ActionCard action)
             {
@@ -47,7 +47,7 @@ namespace MonopolyDeal
                         break;
                 }
 
-                return;
+                return false;
             }
 
             if (card is PropertyCard property)
@@ -55,12 +55,13 @@ namespace MonopolyDeal
                 if (property is WildCard)
                 {
                     mGameplay.GetWindow<PlayWildCardPopup>().Open(this, card);
-                    return;
+                    return false;
                 }
 
                 Hand.RemoveCard(card);
                 PlayedCards.AddPropertyCard(property);
                 Client.SendData(ClientSendMessages.PlayPropertyCard, card.ID.ToString(), Number);
+                return true;
             }
 
             if (card is MoneyCard money)
@@ -68,17 +69,19 @@ namespace MonopolyDeal
                 Hand.RemoveCard(card);
                 PlayedCards.AddMoneyCard(money);
                 Client.SendData(ClientSendMessages.PlayMoneyCard, card.ID.ToString(), Number);
+                return true;
             }
 
+            return false;
               
         }
-        void RespondToAction_HandLogic(Card card)
+        bool RespondToAction_HandLogic(Card card, int id)
         {
-
+            return false;
         }
-        void NotTurn_HandLogic(Card card)
+        bool NotTurn_HandLogic(Card card, int id)
         {
-
+            return false;
         }
     }
 }

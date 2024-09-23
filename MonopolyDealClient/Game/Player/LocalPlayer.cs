@@ -7,13 +7,13 @@ namespace MonopolyDeal
     public partial class LocalPlayer : Player
     {
         Hand mHand;
-        readonly Dictionary<State, Action<Card>[]> mLogic;
+        readonly Dictionary<State, Func<Card, int, bool>[]> mLogic;
         public Hand Hand => mHand;
         public LocalPlayer(int playerNumber, ulong id, string name)
             : base(playerNumber, id, name) 
         { 
             mHand = new Hand();
-            mLogic = new Dictionary<State, Action<Card>[]>
+            mLogic = new Dictionary<State, Func<Card, int, bool>[]>
             {
                 { State.NotTurn, [NotTurn_PropertyLogic, NotTurn_BuildingCards, NotTurn_HandLogic] },
                 { State.PlayingCards, [OnTurn_PropertyLogic, OnTurn_BuildingCards, OnTurn_HandLogic] },
@@ -26,8 +26,10 @@ namespace MonopolyDeal
             var extraLogic = mLogic[mGameplay.State];
             ImGui.SeparatorText("Hand");
             mHand.ImGuiDraw(extraLogic[2]);
+            ImGui.Spacing();
 
             ImGui.SeparatorText("Played Cards");
+            ImGui.Spacing();
             PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1]);
         }
 

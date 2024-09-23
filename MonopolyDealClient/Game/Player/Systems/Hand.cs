@@ -56,13 +56,15 @@ namespace MonopolyDeal
             card = mCards[index] as T;
             return true;
         }
-
-        public void ImGuiDraw(Action<Card>? extraLogic = null)
+        
+        public void ImGuiDraw(Func<Card, int, bool>? extraLogic = null)
         {
+            int id = 0;
             foreach (var card in mCards)
             {
                 ImGui.Text(card.Name);
-                extraLogic?.Invoke(card);
+                if (extraLogic is not null && extraLogic.Invoke(card, id++))
+                    return;
             }
         }
 

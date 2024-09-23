@@ -2,25 +2,29 @@
 {
     public partial class LocalPlayer
     {
-        void OnTurn_BuildingCards(Card card)
+        bool OnTurn_BuildingCards(Card card, int id)
         {
             if (card is not BuildingCard building)
-                return;
+                return false;
+
+            return false;
 
         }
 
-        void RespondToAction_BuildingCards(Card card)
+        bool RespondToAction_BuildingCards(Card card, int id)
         {
             if (card is not BuildingCard building)
-                return;
+                return false;
 
+            return false;
         }
 
-        void NotTurn_BuildingCards(Card card)
+        bool NotTurn_BuildingCards(Card card, int id)
         {
             if (card is not BuildingCard building)
-                return;
+                return false;
 
+            return false;
         }
 
     }

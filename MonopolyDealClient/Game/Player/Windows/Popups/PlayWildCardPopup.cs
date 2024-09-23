@@ -20,8 +20,11 @@ namespace MonopolyDeal
         {
             if (mCard is WildPropertyCard property)
             {
-                ImGui.RadioButton($"{property.SetType1}##PU", ref mSelectedButton, 0);
-                ImGui.RadioButton($"{property.SetType2}##PU", ref mSelectedButton, 1);
+                if (ImGui.RadioButton($"{property.SetType1}##PU", ref mSelectedButton, 0))
+                    mSelectedSetType = property.SetType1;
+
+                if (ImGui.RadioButton($"{property.SetType2}##PU", ref mSelectedButton, 1))
+                    mSelectedSetType = property.SetType2;
             }
             else if (mCard is WildCard wild)
             {
@@ -65,7 +68,11 @@ namespace MonopolyDeal
                 mSetTypes[index++] = setType.ToString();                
             }
 
-            mSelectedSetType = SetType.None;
+            if (card is WildPropertyCard propertyCard)
+                mSelectedSetType = propertyCard.SetType1;
+            else if (card is WildCard wild)
+                mSelectedSetType = player.PlayedCards.SetTypesPlayed.FirstOrDefault();
+
             mSelectedButton = 0;
             base.Open(card);
         }

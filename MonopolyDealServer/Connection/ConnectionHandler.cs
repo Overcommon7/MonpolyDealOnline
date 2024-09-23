@@ -2,7 +2,6 @@
 using SimpleTCP;
 using System.Diagnostics;
 using System.Net.Sockets;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class ConnectionHandler
 {
@@ -99,20 +98,25 @@ public static class ConnectionHandler
 
             Thread.Sleep(50);
 
+            bool valid = false;
             for (int i = 0; i < PlayerManager.ConnectedPlayerCount; ++i)
             {
                 if (PlayerManager.ConnectedPlayers[i].Name.Contains('7'))
                 {
                     TurnManager.StartGame(PlayerManager.ConnectedPlayers[i].Number);
-                    Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), PlayerManager.ConnectedPlayers[i].Number);
-                    return;
+                    Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), PlayerManager.ConnectedPlayers[i].Number); 
+                    valid = true;
+                    break;
                 }
             }
 
-            var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
-            TurnManager.StartGame(startingPlayerNumber);
+            if (!valid)
+            {
+                var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
+                TurnManager.StartGame(startingPlayerNumber);
 
-            Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
+                Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
+            }           
         }
 
         if (invalid)
