@@ -21,16 +21,16 @@ public static class ConnectionHandler
         Server.mOnDataRecieved -= Server_OnDataRecieved;
     }
 
-    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data, Message extra)
+    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data)
     {
         if (message != ClientSendMessages.SendUsername)
             return;
 
         var name = Format.ToString(data);
-        if (PlayerManager.TryGetPlayer(extra.TcpClient, out var player) != ConnectionStatus.Connected)
+        if (PlayerManager.TryGetPlayer(clientID, out var player) != ConnectionStatus.Connected)
             return;
 
-        Interlocked.Increment(ref sReadiedPlayers);
+        ++sReadiedPlayers;
         Console.WriteLine("Players Ready: {0}", sReadiedPlayers);
 
         Server.BroadcastMessage(ServerSendMessages.PlayerUsername, name + ',' + clientID, player.Number);

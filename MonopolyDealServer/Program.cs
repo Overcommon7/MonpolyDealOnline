@@ -24,7 +24,7 @@ public class Program
         rlImGui.Setup();
 
         while (!Raylib.WindowShouldClose())
-        {
+        {           
             Raylib.BeginDrawing();
             {
                 Raylib.ClearBackground(Color.Black);
@@ -45,6 +45,8 @@ public class Program
 
             }
             Raylib.EndDrawing();
+
+            Server.ProcessClientRequests();
         }
 
         Server.Close();

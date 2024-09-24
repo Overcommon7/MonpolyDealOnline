@@ -3,20 +3,30 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
+struct ClientRequest
+{
+    public ulong mPlayerID;
+    public ClientSendMessages mMessage;
+    public byte[] mData;
+}
 internal static class Server
 {
     static SimpleTcpServer mServer;
-    public delegate void DataRecieved(ulong clientID, ClientSendMessages message, byte[] data, Message extra);
+    public delegate void DataRecieved(ulong clientID, ClientSendMessages message, byte[] data);
 
     public static event DataRecieved? mOnDataRecieved;
     public static event Action<SimpleTcpServer, TcpClient>? mOnClientDisconnected; 
     public static event Action<SimpleTcpServer, TcpClient>? mOnClientConnected;
+    private static List<ClientRequest> mRequests;
+    private static bool mProcessingRequests = false;
 
     public static IPAddress? Address { get; private set; } = null;
 
     static Server()
     {
+        mRequests = new List<ClientRequest>();
         mServer = new SimpleTcpServer();
     }
     public static void Start(int port = 25565)
@@ -165,21 +175,46 @@ internal static class Server
         }
     }
 
+    public static void ProcessClientRequests()
+    {
+        mProcessingRequests = true;
+
+        foreach (var request in mRequests)
+        {
+            if (PlayerManager.TryGetPlayer(request.mPlayerID, out var player) != ConnectionStatus.Invalid)
+                Console.WriteLine($"[SERVER] R: {player.Name} - Type: {request.mMessage} - #: {player.Number}");
+
+            mOnDataRecieved?.Invoke(request.mPlayerID, request.mMessage, request.mData);
+        }
+
+        mRequests.Clear();
+        mProcessingRequests = false;
+    }
+
     private static void DataReceived(object? sender, Message e)
     {
-        ulong id = e.TcpClient.GetID();
-        var messsage = Format.GetMessageType<ClientSendMessages>(e.Data);
-        if (PlayerManager.TryGetPlayer(id, out var player) != ConnectionStatus.Invalid)
-            Console.WriteLine($"[SERVER] R: {player.Name} - Type: {messsage} - #: {player.Number}");
+        ClientRequest clientRequest = new();
 
-        byte[] data;
+        clientRequest.mPlayerID = e.TcpClient.GetID();
+        clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
 
-        if ((int)messsage < Format.HEADER_SIZE)
-            data = Format.GetByteDataFromMessage(e.Data);
+        if (e.Data.Length > Format.HEADER_SIZE)
+            clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
         else
-            data = e.Data;
+            clientRequest.mData = e.Data;
 
-        mOnDataRecieved?.Invoke(id, messsage, data, e);
+        if (mProcessingRequests)
+        {
+            Task.Run(() =>
+            {
+                while (mProcessingRequests)
+                    Thread.Sleep(33);
+
+            }).Wait();
+        }
+
+        lock (mRequests)
+            mRequests.Add(clientRequest);
     }
 
     private static void ClientConnected(object? sender, TcpClient e)

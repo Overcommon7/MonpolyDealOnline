@@ -1,15 +1,14 @@
 ﻿using System.Text;
 using SimpleTCP;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class PlayerActions
 {
-    public static void OnHandRequested(Deck deck, Player player, byte[] data, Message extra)
+    public static void OnHandRequested(Deck deck, Player player, byte[] data)
     {
         var cards = DataMarshal.GetCards(deck, Constants.PICK_UP_AMOUNT_ON_HAND_EMPTY);
         player.AddCardsToHand(cards);
         var message = Format.ToData(ServerSendMessages.HandReturned, Serializer.SerializeListOfCards(cards), player.Number);
-        extra.Reply(message);
+        player.Client.GetStream().Write(message);
     }
 
     public static void CardPlayed(Deck deck, Player player, int cardID)
@@ -49,7 +48,7 @@ public static class PlayerActions
     public static void PropertyCardPlayed(Player player, byte[] data)
     {
         int cardID = int.Parse(Format.ToString(data));
-        CardPlayed<MoneyCard>(player, cardID, data, ServerSendMessages.PropertyCardPlayed);
+        CardPlayed<PropertyCard>(player, cardID, data, ServerSendMessages.PropertyCardPlayed);
     }
 
     public static void MoneyCardPlayed(Player player, byte[] data)

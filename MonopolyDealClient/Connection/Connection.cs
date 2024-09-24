@@ -23,14 +23,12 @@ namespace MonopolyDeal
 
         public void AddOnlinePlayer(int playerNumber, ulong id, string name)
         {
-            lock (mOtherPlayers)
-                mOtherPlayers.TryAdd(playerNumber, (name, id));
+            mOtherPlayers.TryAdd(playerNumber, (name, id));
         }
 
         public void RemovePlayer(int playerNumber)
         {
-            lock (mOtherPlayers)
-                mOtherPlayers.Remove(playerNumber);
+            mOtherPlayers.Remove(playerNumber);
         }
 
         public override void OnClose()
@@ -179,11 +177,9 @@ namespace MonopolyDeal
             if (mIsReady)
                 ImGui.Text($"You: {mUsername}");
 
-            lock (mOtherPlayers)
-            {
-                foreach (var player in mOtherPlayers.Values)
-                    ImGui.Text(player.Item1 + " - " + player.Item2);
-            }
+
+            foreach (var player in mOtherPlayers.Values)
+                ImGui.Text(player.Item1 + " - " + player.Item2);
                 
             ImGui.SeparatorText("Debug Info");
 

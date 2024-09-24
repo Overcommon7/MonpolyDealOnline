@@ -115,6 +115,8 @@ namespace MonopolyDeal
 
                 }
                 Raylib.EndDrawing();
+
+                Client.ProcessIncomingRequests();
             }
 
             camera.Dispose();

@@ -35,8 +35,7 @@ public static class PaymentManager
 
         deck.AddCardToRemainingPile(dealBreaker);
 
-        lock (sPlayersWhoSaidNo)
-            sPlayersWhoSaidNo.Add(player.Number);
+        sPlayersWhoSaidNo.Add(player.Number);
 
         CheckForAllPlayersPaid();
     }

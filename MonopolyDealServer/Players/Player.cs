@@ -57,18 +57,15 @@ public class Player : IEquatable<Player>
     }
     public void AddCardToHand(Card card)
     {
-        lock (mHand)
-            mHand.Add(card);
+        mHand.Add(card);
     }
     public void AddCardsToHand(IEnumerable<Card> cards)
     {
-        lock (mHand)
-            mHand.AddRange(cards);
+        mHand.AddRange(cards);
     }
     public void AddCardToPlayArea(Card card)
     {
-        lock (mPlayArea)
-            mPlayArea.Add(card);
+        mPlayArea.Add(card);
     }
     public bool RemoveCardFromHand(Card card)
     {
@@ -76,14 +73,12 @@ public class Player : IEquatable<Player>
         if (index == -1)
             return false;
 
-        lock (mHand)
-            mHand.RemoveAt(index);
+        mHand.RemoveAt(index);
         return true;
     }
     public bool RemoveCardFromPlayArea(Card card)
     {
-        lock (mPlayArea)
-            return mPlayArea.Remove(card);
+        return mPlayArea.Remove(card);
     }
     public bool RemoveCardFromPlayArea(Predicate<Card> predicate)
     {
@@ -91,8 +86,7 @@ public class Player : IEquatable<Player>
         if (index == -1)
             return false;
 
-        lock (mPlayArea)
-            mPlayArea.RemoveAt(index);
+        mPlayArea.RemoveAt(index);
         return true;
     }
 }

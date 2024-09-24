@@ -24,7 +24,7 @@ public static class GameManager
         sDeck.LoadCardsFromFile();
     }
 
-    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data, Message extra)
+    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data)
     {
         var status = PlayerManager.TryGetPlayer(clientID, out var player);
         if (status != ConnectionStatus.Connected) 
@@ -76,7 +76,7 @@ public static class GameManager
             case ClientSendMessages.ReadyForNextTurn:
                 break;
             case ClientSendMessages.RequestHand:
-                PlayerActions.OnHandRequested(sDeck, player, data, extra);
+                PlayerActions.OnHandRequested(sDeck, player, data);
                 break;
         }
     }

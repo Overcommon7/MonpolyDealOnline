@@ -98,12 +98,9 @@ public class Deck
 
     public Card RemoveCardFromDeck()
     {
-        lock (cards)
+        if (cards.TryPop(out Card? card))
         {
-            if (cards.TryPop(out Card? card))
-            {
-                return card;
-            }
+            return card;
         }
 
         ReloadCards();
@@ -121,21 +118,14 @@ public class Deck
 
     public void AddCardToRemainingPile(Card card)
     {
-        lock (remainingCards)
-            remainingCards.Add(card);
+        remainingCards.Add(card);
     }
 
     private void ReloadCards()
     {
-        lock (remainingCards)
-        {
-            Shuffle(remainingCards);
-            lock (cards)
-            {
-                cards = new(remainingCards);
-            }
-            remainingCards.Clear();
-        }
+        Shuffle(remainingCards);
+        cards = new(remainingCards);
+        remainingCards.Clear();
     }
 
     void Shuffle(List<Card> source)

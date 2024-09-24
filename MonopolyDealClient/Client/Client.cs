@@ -1,9 +1,18 @@
 ﻿using SimpleTCP;
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MonopolyDeal
 {
+    struct ServerRequest
+    {
+        public int mPlayerNumber;
+        public ServerSendMessages mMessage;
+        public byte[] mData;
+    }
     public static class Client
     {
         static SimpleTcpClient mClient;
@@ -17,9 +26,12 @@ namespace MonopolyDeal
         public static bool IsConnected => mClient.TcpClient?.Connected ?? false;
         public static ulong ID { get; set; } = 0;
         public static string EndPoint { get; private set; } = string.Empty;
+        private static List<ServerRequest> mRequests;
+        private static bool mProcessingRequests = false;
 
         static Client()
         {
+            mRequests = new();
             mClient = new SimpleTcpClient();
 
             mClient.Delimiter = (byte)'\0';
@@ -74,12 +86,36 @@ namespace MonopolyDeal
             if (e.Data.Length < Format.HEADER_SIZE)
                 return;
 
-            var data = Format.GetByteDataFromMessage(e.Data);
-            var message = Format.GetMessageType<ServerSendMessages>(e.Data);
-            var playerNumber = Format.GetPlayerNumber(e.Data);
+            ServerRequest request = new();
 
-            mOnMessageRecieved?.Invoke(message, playerNumber, data);
+            request.mData = Format.GetByteDataFromMessage(e.Data);
+            request.mMessage = Format.GetMessageType<ServerSendMessages>(e.Data);
+            request.mPlayerNumber = Format.GetPlayerNumber(e.Data);
+
+            if (mProcessingRequests)
+            {
+                Task.Run(() =>
+                {
+                    while (mProcessingRequests)
+                        Thread.Sleep(33);
+
+                }).Wait();
+            }
+
+            lock (mRequests)
+                mRequests.Add(request);
         }
 
+        public static void ProcessIncomingRequests()
+        {
+            mProcessingRequests = true;
+
+            foreach (var request in mRequests)
+                mOnMessageRecieved?.Invoke(request.mMessage, request.mPlayerNumber, request.mData);
+
+            mRequests.Clear();
+
+            mProcessingRequests = false;
+        }
     }
 }

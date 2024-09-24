@@ -2,7 +2,6 @@
 
 public partial class RentCard : ActionCard, Copy<RentCard>
 {
-    protected string displayName;
     public SetType TargetType1 {get; private set; }   
     public SetType TargetType2 { get; private set;  }
 
@@ -33,9 +32,9 @@ public partial class RentCard : ActionCard, Copy<RentCard>
         TargetType2 = setType2;
 
         displayName = 
-            "Rent " +
+            "Rent - " +
             EnumSeperator().Replace(setType1.ToString(), " $1") + 
-            " - " +
+            "/" +
             EnumSeperator().Replace(setType2.ToString(), " $1");
     }
 
