@@ -47,7 +47,9 @@ namespace MonopolyDeal
             mIsOpen = false;
             if (mIsPopup)
             {
-                ImGui.CloseCurrentPopup();
+                if (ImGui.IsPopupOpen(mTitle))
+                    ImGui.CloseCurrentPopup();
+
                 Appstate.ClosePopup();
             }
                 
@@ -92,7 +94,9 @@ namespace MonopolyDeal
                 }
 
                 if (!mIsOpen && Appstate.CurrentPopup is not null && Appstate.CurrentPopup == this)
-                    Appstate.ClosePopup();
+                {
+                    Close();
+                }                    
             }
             else
             {

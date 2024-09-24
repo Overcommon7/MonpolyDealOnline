@@ -89,6 +89,9 @@ namespace MonopolyDeal
             if (playerNumber == playerManager.LocalPlayer.Number)
                 return;
 
+            App.GetState<Gameplay>().SetToRespondingState();
+            PaymentHandler.BeginPaymentProcess(false);
+
             var rentValues = Format.ToStruct<RentPlayValues>(data);
             if (!CardData.TryGetCard<RentCard>(rentValues.cardID, out var card))
                 return;

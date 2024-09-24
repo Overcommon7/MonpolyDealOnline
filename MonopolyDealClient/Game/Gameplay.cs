@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace MonopolyDeal
 {
@@ -63,7 +64,7 @@ namespace MonopolyDeal
                 case ServerSendMessages.MoneyCardPlayed:
                     SystemMessageHandler.MoneyCardPlayed(PlayerManager, playerNumber, data);
                     break;
-                case ServerSendMessages.RentCardPlayed:
+                case ServerSendMessages.RentCardPlayed:                      
                     SystemMessageHandler.RentCardPlayed(GetWindow<PayPopup>(), PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.SlyDealPlayed:
@@ -77,8 +78,16 @@ namespace MonopolyDeal
                 case ServerSendMessages.ActionCardPlayed:
                     break;
                 case ServerSendMessages.JustSayNoPlayed:
+                    if (!PaymentHandler.PaymentInProcess)
+                        break;
+
+                    PaymentHandler.OnPlayerSaidNo(GetWindow<GettingPaidWindow>(), PlayerManager, playerNumber);
                     break;
                 case ServerSendMessages.PlayerPaid:
+                    if (!PaymentHandler.PaymentInProcess)
+                        break;
+
+                    PaymentHandler.OnPlayerPaid(PlayerManager, playerNumber, data);
 
                     break;
                 case ServerSendMessages.OnAllPlayersPaid:
@@ -136,14 +145,15 @@ namespace MonopolyDeal
             AddWindow<ChargeRentPopup>();
             AddWindow<DealBreakerPopup>();
             AddWindow<ForcedDealPopup>();
+            AddWindow<GettingPaidWindow>();
             AddWindow<MoveCardPopup>();
             AddWindow<PayPopup>();
             AddWindow<PlayActionCardPopup>();
-            AddWindow<PlayWildCardPopup>();
-            AddWindow<WildRentPopup>(); 
+            AddWindow<PlayBuildingCardPopup>();
+            AddWindow<PlayWildCardPopup>();            
             AddWindow<SlyDealPopup>();
             AddWindow<TooManyCardsPopup>();
-            AddWindow<PayPopup>();
+            AddWindow<WildRentPopup>();
         }
     }
 }

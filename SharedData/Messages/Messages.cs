@@ -12,6 +12,8 @@
     PlayActionCard,
 
     ActionGotDenied,
+    PaymentAccepted,
+    RejectedNo,
 
     RequestCards,
     PutCardsBack,
@@ -39,7 +41,8 @@ public enum ServerSendMessages : short
 
     PlayerPaid,
     OnAllPlayersPaid,
-    PlayersUsedSayNo,
+    PaymentComplete,
+    PlayerUsedSayNo,
 
     CardMoved,
     CardsSent,

@@ -38,13 +38,9 @@ namespace MonopolyDeal
                 values.chargingSetType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
                 values.cardID = mRent.ID;
 
+                PaymentHandler.BeginPaymentProcess(true);
                 Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
 
-                Close();
-            }
-
-            if (ImGui.Button("Cancel##CPP"))
-            {
                 Close();
             }
         }

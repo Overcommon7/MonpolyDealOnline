@@ -57,6 +57,7 @@ public static class GameManager
             case ClientSendMessages.PlayActionCard:
                 break;
             case ClientSendMessages.ActionGotDenied:
+                PaymentManager.PlayerUsedSayNo(sDeck, player);
                 break;
             case ClientSendMessages.RequestCards:
                 break;

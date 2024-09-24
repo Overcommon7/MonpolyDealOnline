@@ -6,7 +6,6 @@ public static class PaymentManager
     static TargetType sTargetType;
     static int sPlayersPaid;
     static Player? sPlayerBeingPaid;
-    static List<int> sPlayersWhoSaidNo = new();
     public static bool IsPaymentInProgress { get; private set; } = false;
     public static void StartNewPayment(Player playerBeingPayed, TargetType targetType)
     {
@@ -14,7 +13,6 @@ public static class PaymentManager
         sPlayersPaid = 0;
         sPlayerBeingPaid = playerBeingPayed;
         IsPaymentInProgress = true;
-        sPlayersWhoSaidNo.Clear();
     }
 
     public static void EndPayment()
@@ -23,20 +21,17 @@ public static class PaymentManager
         sTargetType = TargetType.None;
         sPlayersPaid = 0;
         IsPaymentInProgress = false;
-        sPlayersWhoSaidNo.Clear();
     }
     public static void PlayerUsedSayNo(Deck deck, Player player)
     {
-        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DealBreaker, out var dealBreaker))
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo))
             return;
 
-        if (!player.RemoveCardFromHand(dealBreaker))
+        if (!player.RemoveCardFromHand(justSayNo))
             return;
 
-        deck.AddCardToRemainingPile(dealBreaker);
-
-        sPlayersWhoSaidNo.Add(player.Number);
-
+        deck.AddCardToRemainingPile(justSayNo);
+        Server.BroadcastMessage(ServerSendMessages.PlayerUsedSayNo, player.Number);
         CheckForAllPlayersPaid();
     }
     public static void PlayerPaidCards(Player player, byte[] data)
@@ -72,16 +67,7 @@ public static class PaymentManager
         ++sPlayersPaid;
         if (sTargetType == TargetType.One || (sTargetType == TargetType.All && sPlayersPaid >= PlayerManager.ConnectedPlayerCount))
         {
-            Thread.Sleep(250);
-            if (sPlayersWhoSaidNo.Count == 0)
-            {
-                Server.BroadcastMessage(ServerSendMessages.OnAllPlayersPaid, sPlayerBeingPaid.Number);
-            }
-            else
-            {
-                string playerIDs = string.Join(',', sPlayersWhoSaidNo);
-                Server.BroadcastMessage(ServerSendMessages.PlayersUsedSayNo, playerIDs, sPlayerBeingPaid.Number);
-            }
+            Server.BroadcastMessage(ServerSendMessages.OnAllPlayersPaid, sPlayerBeingPaid.Number);
         }
     }
 }
