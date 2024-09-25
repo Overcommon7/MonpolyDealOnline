@@ -95,7 +95,7 @@ public static class CardData
 
     public static int GetRentAmount(SetType type, int cardsOwnedInSet)
     {
-        if (cardValues.TryGetValue(type, out var values))
+        if (!cardValues.TryGetValue(type, out var values))
             return 0;
 
         int index = Array.FindIndex(values.Prices, rent => rent.cardsOwned == cardsOwnedInSet);
@@ -234,7 +234,7 @@ public static class CardData
             builder.Append(array.Length.ToString().PadRight(Constants.CARD_DATA_SIZE_DIGITS));
         }
 
-        return Format.CombineByteArrays(Format.Encode(builder.ToString().PadRight(Constants.CARD_DATA_HEADER_SIZE)), rv);
+        return Format.CombineByteArrays(Format.Encode(builder.ToString().PadRight(Constants.CARD_DATA_HEADER_SIZE)), rv, true);
     }
 
     public static void LoadFromData(byte[] externalData)

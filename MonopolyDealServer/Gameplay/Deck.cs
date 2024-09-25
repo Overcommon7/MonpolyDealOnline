@@ -66,7 +66,7 @@ public class Deck
                 int amount = actionValues.Find(value => value.type == card.type).amount;
                 for (int i = 0; i < amount; ++i)
                 {
-                    ActionCard actionCard = new(card.type, card.value, card.requiresOutsideAction, card.requiresAllPlayerAction, card.requiresOnePlayerAction);
+                    ActionCard actionCard = new(card.type, card.value);
                     fullDeck.Add(actionCard);
                 }
             }

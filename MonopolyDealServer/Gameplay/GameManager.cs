@@ -72,11 +72,13 @@ public static class GameManager
             case ClientSendMessages.PayPlayer:
                 PaymentManager.PlayerPaidCards(player, data);
                 break;
+            case ClientSendMessages.PaymentAccepted:
+                PaymentManager.EndPayment();
+                Server.BroadcastMessage(ServerSendMessages.PaymentComplete, player.Number);
+                break;
             case ClientSendMessages.OnEndTurn:
                 TurnManager.EndTurn(sDeck);
                 TurnManager.StartTurn(sDeck);
-                break;
-            case ClientSendMessages.SendUsername:
                 break;
             case ClientSendMessages.ReadyForNextTurn:
                 break;
@@ -101,9 +103,10 @@ public static class GameManager
 
         if (ImGui.TreeNode("Give Card To Player"))
         {
+            int i = 0;
             foreach (var card in CardData.Cards)
             {
-                if (!ImGui.Button($"Give {card.DisplayName()}##{card.ID}"))
+                if (!ImGui.Button($"Give {card.DisplayName()}##{i++}"))
                     continue;
 
                 Server.SendMessageToPlayers(ServerSendMessages.DebugSendCard, 0, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);

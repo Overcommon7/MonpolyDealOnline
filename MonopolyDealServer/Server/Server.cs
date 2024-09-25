@@ -55,10 +55,11 @@ internal static class Server
             return;
         }
 
+        mServer.Delimiter = Format.DELIMITER;
         mServer.Start(Address, port);
         mServer.ClientDisconnected += ClientDisconnected;
         mServer.ClientConnected += ClientConnected;
-        mServer.DataReceived += DataReceived;
+        mServer.DelimiterDataReceived += DataReceived;
         mServer.AutoTrimStrings = false;
         Console.WriteLine($"Server started on Address: {Address} - Port: {port}");
     }
@@ -102,19 +103,19 @@ internal static class Server
         Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
 
         var header = Format.CreateHeader(message, playerNumber);
-        mServer.Broadcast(Format.CombineByteArrays(header, data));
+        mServer.Broadcast(Format.CombineByteArrays(header, data, true));
     }
 
     public static void BroadcastMessage(ServerSendMessages message, int playerNumber)
     {
         Console.WriteLine($"[SERVER] S: {message} - #{playerNumber}");
-        mServer.Broadcast(Format.CreateHeader(message, playerNumber));
+        mServer.Broadcast(Format.CreateHeader(message, playerNumber).AddDelimiter());
     }
 
     public static void SendMessageExcluding(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, int excludedPlayer)
     {
         var header = Format.CreateHeader(message, sentFromPlayerNumber);
-        var byteData = Format.CombineByteArrays(header, data);
+        var byteData = Format.CombineByteArrays(header, data, true);
 
         foreach (var player in PlayerManager.ConnectedPlayers)
         {
@@ -128,7 +129,7 @@ internal static class Server
     public static void SendMessageToPlayers(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, params int[] playerNumbers)
     {
         var header = Format.CreateHeader(message, sentFromPlayerNumber);
-        var byteData = Format.CombineByteArrays(header, data);
+        var byteData = Format.CombineByteArrays(header, data, true);
 
         foreach (var playerNumber in playerNumbers)
         {
@@ -157,7 +158,7 @@ internal static class Server
     public static void SendMessageToPlayers(ServerSendMessages message, int sentFromPlayerNumber, byte[] data, params TcpClient[] players)
     {
         var header = Format.CreateHeader(message, sentFromPlayerNumber);
-        var byteData = Format.CombineByteArrays(header, data);
+        var byteData = Format.CombineByteArrays(header, data, true);
 
         foreach (var player in players)
         {

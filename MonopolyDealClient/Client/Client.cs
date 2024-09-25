@@ -34,10 +34,9 @@ namespace MonopolyDeal
             mRequests = new();
             mClient = new SimpleTcpClient();
 
-            mClient.Delimiter = (byte)'\0';
-            mClient.AutoTrimStrings = true;
+            mClient.Delimiter = Format.DELIMITER;
+            mClient.AutoTrimStrings = false;
 
-            mClient.DataReceived += Client_DataReceived;
             mClient.DelimiterDataReceived += Client_DataReceived;
         }
 
@@ -76,7 +75,7 @@ namespace MonopolyDeal
 
         public static void SendData(ClientSendMessages message, int playerNumber)
         {
-            mClient.Write(Format.CreateHeader(message, playerNumber));
+            mClient.Write(Format.CreateHeader(message, playerNumber).AddDelimiter());
             mOnMessageSent?.Invoke(mClient, message, playerNumber, new object());
         }
 

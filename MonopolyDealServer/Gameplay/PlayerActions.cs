@@ -35,7 +35,7 @@ public static class PlayerActions
     public static void WildCardPlayed(Player player, byte[] data)
     {
         var wildCard = Format.ToStruct<PlayWildCard>(data);
-        CardPlayed<WildCard>(player, wildCard.cardID, data, ServerSendMessages.PropertyCardPlayed, card => {
+        CardPlayed<WildCard>(player, wildCard.cardID, data, ServerSendMessages.WildCardPlayed, card => {
             card.SetCurrentType(wildCard.setType);
         });       
     }

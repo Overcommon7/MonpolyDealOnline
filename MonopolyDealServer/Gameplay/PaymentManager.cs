@@ -78,7 +78,7 @@ public static class PaymentManager
             return;
 
         ++sPlayersPaid;
-        if (sTargetType == TargetType.One || (sTargetType == TargetType.All && sPlayersPaid >= PlayerManager.ConnectedPlayerCount))
+        if (sTargetType == TargetType.One || (sTargetType == TargetType.All && sPlayersPaid >= PlayerManager.ConnectedPlayerCount - 1))
         {
             Server.BroadcastMessage(ServerSendMessages.OnAllPlayersPaid, sPlayerBeingPaid.Number);
         }

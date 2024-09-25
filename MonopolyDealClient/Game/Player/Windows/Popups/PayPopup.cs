@@ -87,8 +87,15 @@ namespace MonopolyDeal
             }
 
             var playedCards = mPlayer.PlayedCards;
+            bool invalidPayment = value < PaymentHandler.AmountDue;
+            if (invalidPayment && playedCards.IsEmpty)
+                invalidPayment = false;
+
+            if (invalidPayment && playedCards.TotalCardsPlayed - mCardsPaying.Count <= 0)
+                invalidPayment = false;
+
             ImGui.Spacing();
-            if (value < PaymentHandler.AmountDue)
+            if (invalidPayment)
                 ImGui.BeginDisabled();
 
             if (ImGui.Button($"Pay {PaymentHandler.PlayerNameBeingPaid}"))
@@ -134,11 +141,12 @@ namespace MonopolyDeal
                     }
                 }
 
+                App.GetState<Gameplay>().RevertState();
                 Client.SendData(ClientSendMessages.PayPlayer, stringBuilder.ToString(), mPlayer.Number);
                 Close();
             }
 
-            if (value < PaymentHandler.AmountDue)
+            if (invalidPayment)
                 ImGui.EndDisabled();
         }
     }

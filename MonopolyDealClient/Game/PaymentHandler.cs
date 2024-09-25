@@ -58,8 +58,14 @@ namespace MonopolyDeal
             int buildingTypesIndex = 0;
             List<SetType> buildingTypes = new List<SetType>();
 
-            foreach (var setType in strs[3].Split(','))
-                buildingTypes.Add(Enum.Parse<SetType>(setType));
+            if (strs.Length > 2)
+            {
+                foreach (var setType in strs[3].Split(','))
+                {
+                    buildingTypes.Add(Enum.Parse<SetType>(setType));
+                }                    
+            }
+            
 
             foreach (var card in notMoneyCards)
             {

@@ -6,6 +6,8 @@ public static class Format
     public const int MESSAGE_SIZE = 20;
     public const int PLAYER_ID_LENGTH = 4;
     public const int HEADER_SIZE = MESSAGE_SIZE + PLAYER_ID_LENGTH;
+    public const byte DELIMITER = (byte)'@';
+
     public static byte[] CreateHeader<T>(T messageName) where T : struct, Enum
     {
         var header = messageName.ToString().PadRight(HEADER_SIZE);
@@ -51,7 +53,7 @@ public static class Format
         var structure = StructToByteArray(ref data);
         var header = CreateHeader(message);
 
-        return CombineByteArrays(header, structure);
+        return CombineByteArrays(header, structure, true);
     }
 
     public static byte[] ToData<T1, T2>(T1 message, ref T2 data, int playerNumber)
@@ -60,7 +62,7 @@ public static class Format
         var structure = StructToByteArray(ref data);
         var header = CreateHeader(message, playerNumber);
 
-        return CombineByteArrays(header, structure);
+        return CombineByteArrays(header, structure, true);
     }
 
     public static byte[] ToData<T1, T2>(T1 message, T2[] data, int playerNumber)
@@ -69,7 +71,7 @@ public static class Format
         var structures = MarshalStructArrayToByteArray(data);
         var header = CreateHeader(message, playerNumber);
 
-        return CombineByteArrays(header, structures);
+        return CombineByteArrays(header, structures, true);
     }
 
     public static byte[] ToData<T>(T message, string data, int playerNumber)
@@ -78,14 +80,14 @@ public static class Format
         var header = CreateHeader(message, playerNumber);
         var content = Encode(data);
 
-        return CombineByteArrays(header, content);
+        return CombineByteArrays(header, content, true);
     }
 
     public static byte[] ToData<T>(T message, byte[] data, int playerNumber)
        where T : struct, Enum
     {
         var header = CreateHeader(message, playerNumber);
-        return CombineByteArrays(header, data);
+        return CombineByteArrays(header, data, true);
     }
 
     public static T ToStruct<T>(byte[] data, bool parseFromMessage = false) where T : struct
@@ -243,12 +245,29 @@ public static class Format
         return structArray;
     }
 
-    public static byte[] CombineByteArrays(byte[] array1, byte[] array2)
+    public static byte[] AddDelimiter(this byte[] data)
     {
-        byte[] combinedArray = new byte[array1.Length + array2.Length];
+        if (data[^1] == DELIMITER)
+            return data;
+
+        Array.Resize(ref data, data.Length + 1);
+        data[^1] = DELIMITER;
+        return data;
+    }
+
+    public static byte[] CombineByteArrays(byte[] array1, byte[] array2, bool withDelimiter)
+    {
+        int length = array1.Length + array2.Length;
+        if (withDelimiter)
+            ++length;
+
+        byte[] combinedArray = new byte[length];
 
         Buffer.BlockCopy(array1, 0, combinedArray, 0, array1.Length);
         Buffer.BlockCopy(array2, 0, combinedArray, array1.Length, array2.Length);
+
+        if (withDelimiter)
+            combinedArray[^1] = DELIMITER;
 
         return combinedArray;
     }

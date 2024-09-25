@@ -21,6 +21,8 @@ namespace MonopolyDeal
         public IReadOnlyList<BuildingCard> BuildingCards => mBuildingCards;
         public IReadOnlyList<Card> MoneyCards => mMoneyCards;
         public IReadOnlyCollection<SetType> SetTypesPlayed => mSetTypes.Keys;
+        public bool IsEmpty => mPropertyCards.Count == 0 && mBuildingCards.Count == 0 && mMoneyCards.Count == 0;
+        public int TotalCardsPlayed => mPropertyCards.Count + mBuildingCards.Count + mMoneyCards.Count;
 
         public PlayedCards(Player player)
         {
