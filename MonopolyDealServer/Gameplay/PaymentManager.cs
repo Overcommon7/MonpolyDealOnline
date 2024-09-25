@@ -32,7 +32,7 @@ public static class PaymentManager
             return;
 
         deck.AddCardToRemainingPile(justSayNo);
-
+        --sPlayersPaid;
         Server.BroadcastMessage(ServerSendMessages.NoWasRejected, targetPlayer.Number);
     }
     public static void PlayerUsedSayNo(Deck deck, Player player)
@@ -41,7 +41,11 @@ public static class PaymentManager
             return;
 
         if (!player.RemoveCardFromHand(justSayNo))
+        {
+            Console.WriteLine("[SERVER] L: Say No Not Found");
             return;
+        }
+           
 
         deck.AddCardToRemainingPile(justSayNo);
         Server.BroadcastMessage(ServerSendMessages.JustSayNoPlayed, player.Number);

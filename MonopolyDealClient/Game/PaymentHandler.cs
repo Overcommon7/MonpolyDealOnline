@@ -29,7 +29,7 @@ namespace MonopolyDeal
             AllPlayersPaid = false;
             PaymentInProcess = true;
             PlayerNumberBeingPaid = playerNumberBeingPaid;
-            PlayerNameBeingPaid = playerManager.LocalPlayer.Name;
+            PlayerNameBeingPaid = playerManager.GetPlayer(playerNumberBeingPaid).Name;
             IsBeingPaid = PlayerNumberBeingPaid == playerManager.LocalPlayer.Number;
             AmountDue = amountDue;
             mPayments.Clear();
@@ -93,7 +93,10 @@ namespace MonopolyDeal
         public static void OnPlayerSaidNo(GettingPaidWindow gettingPaidWindow, PlayerManager playerManager, int playerNumber)
         {
             if (playerNumber == playerManager.LocalPlayer.Number)
+            {
                 return;
+            }
+               
 
             PaymentInfo info = new PaymentInfo();
             info.mPlayerNumber = playerNumber;
@@ -104,6 +107,8 @@ namespace MonopolyDeal
 
         public static void RejectedNo(PlayerManager playerManager, int playerNumber)
         {
+            AllPlayersPaid = false;
+
             if (IsBeingPaid)
                 return;
 

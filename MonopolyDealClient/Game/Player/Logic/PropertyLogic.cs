@@ -6,7 +6,10 @@ namespace MonopolyDeal
     {
         PayPopup mPayPopup;
         bool OnTurn_PropertyLogic(Card card, int id)
-        {            
+        {
+            if (PaymentHandler.PaymentInProcess)
+                return false;
+
             if (card is WildCard)
             {
                 ImGui.SameLine();

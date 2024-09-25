@@ -22,6 +22,7 @@ public static class GameManager
         CurrentState = GameState.InGame;
         sDeck = new(Configuration.mDecksToUse);
         sDeck.LoadCardsFromFile();
+        mValues.targetPlayerNumber = 1;
     }
 
     private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data)
@@ -97,11 +98,13 @@ public static class GameManager
 
     public static void ImGuiDraw()
     {
-        ImGui.Begin("Debug Window");
+        ImGui.Begin("Target Player", ImGuiWindowFlags.AlwaysAutoResize);
+        {
+            ImGui.InputInt("Target Player", ref mValues.targetPlayerNumber);
+        }        
+        ImGui.End();    
 
-        ImGui.InputInt("Target Player", ref mValues.targetPlayerNumber);
-
-        if (ImGui.TreeNode("Give Card To Player"))
+        ImGui.Begin("Give Cards");
         {
             int i = 0;
             foreach (var card in CardData.Cards)
@@ -111,10 +114,7 @@ public static class GameManager
 
                 Server.SendMessageToPlayers(ServerSendMessages.DebugSendCard, 0, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);
             }
-
-            ImGui.TreePop();
-        }
-
+        }        
         ImGui.End();
     }
 }

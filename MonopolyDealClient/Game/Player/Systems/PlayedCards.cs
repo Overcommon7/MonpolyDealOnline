@@ -207,8 +207,12 @@ namespace MonopolyDeal
                 ImGui.TreePop();
             }
 
+            int value = 0;
+            foreach (var card in mMoneyCards)
+                value += card.Value;
+
             ImGui.Spacing();
-            ImGui.SeparatorText("Money");
+            ImGui.SeparatorText($"Money: M{value}");
 
             if (isLocalPlayer)
             {
@@ -241,14 +245,7 @@ namespace MonopolyDeal
 
                     ImGui.TreePop();
                 }
-            }
-
-            int value = 0;
-            foreach (var card in mMoneyCards)
-                value += card.Value;
-
-            ImGui.Text($"Total: {value}");
-              
+            }                        
         }
     }
 }

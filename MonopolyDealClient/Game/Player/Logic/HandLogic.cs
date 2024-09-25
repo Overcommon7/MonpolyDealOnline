@@ -6,6 +6,9 @@ namespace MonopolyDeal
     {
         bool OnTurn_HandLogic(Card card, int id)
         {
+            if (PaymentHandler.PaymentInProcess)
+                return false;
+
             ImGui.SameLine();
             if (!ImGui.Button($"Play##{id}"))
                 return false;

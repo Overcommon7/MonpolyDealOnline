@@ -28,6 +28,7 @@ namespace MonopolyDeal
         public static string EndPoint { get; private set; } = string.Empty;
         private static List<ServerRequest> mRequests;
         private static bool mProcessingRequests = false;
+        private static readonly object mEmptyObject = new();
 
         static Client()
         {
@@ -76,7 +77,7 @@ namespace MonopolyDeal
         public static void SendData(ClientSendMessages message, int playerNumber)
         {
             mClient.Write(Format.CreateHeader(message, playerNumber).AddDelimiter());
-            mOnMessageSent?.Invoke(mClient, message, playerNumber, new object());
+            mOnMessageSent?.Invoke(mClient, message, playerNumber, mEmptyObject);
         }
 
 
@@ -96,7 +97,7 @@ namespace MonopolyDeal
                 Task.Run(() =>
                 {
                     while (mProcessingRequests)
-                        Thread.Sleep(33);
+                        Thread.Sleep(10);
 
                 }).Wait();
             }
