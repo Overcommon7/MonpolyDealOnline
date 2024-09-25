@@ -2,58 +2,34 @@
 <ArrayOfActionCardSaveValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ActionCardSaveValues>
     <type>DealBreaker</type>
-    <requiresOutsideAction>true</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>true</requiresOnePlayerAction>
     <value>5</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>JustSayNo</type>
-    <requiresOutsideAction>false</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>false</requiresOnePlayerAction>
     <value>4</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>SlyDeal</type>
-    <requiresOutsideAction>true</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>true</requiresOnePlayerAction>
     <value>3</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>ForcedDeal</type>
-    <requiresOutsideAction>true</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>true</requiresOnePlayerAction>
     <value>3</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>ItsMyBirthday</type>
-    <requiresOutsideAction>true</requiresOutsideAction>
-    <requiresAllPlayerAction>true</requiresAllPlayerAction>
-    <requiresOnePlayerAction>false</requiresOnePlayerAction>
     <value>2</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>DebtCollector</type>
-    <requiresOutsideAction>true</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>true</requiresOnePlayerAction>
     <value>3</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>DoubleRent</type>
-    <requiresOutsideAction>false</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>false</requiresOnePlayerAction>
     <value>1</value>
   </ActionCardSaveValues>
   <ActionCardSaveValues>
     <type>PassGo</type>
-    <requiresOutsideAction>false</requiresOutsideAction>
-    <requiresAllPlayerAction>false</requiresAllPlayerAction>
-    <requiresOnePlayerAction>false</requiresOnePlayerAction>
     <value>1</value>
   </ActionCardSaveValues>
 </ArrayOfActionCardSaveValues>

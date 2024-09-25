@@ -4,24 +4,17 @@ public partial class ActionCard : Card, Copy<ActionCard>
 {
     protected ActionType actionType;
     protected bool asMoney;
-    protected bool requiresOutsideAction;
-    protected bool requiresAllPlayerAction;
-    protected bool requiresOnePlayerAction;
     protected string displayName;
     public ActionType ActionType => actionType;
     public bool AsMoney => asMoney;
-    public bool RequiresOutsideAction => requiresOutsideAction;
-    public bool RequiresAllPlayerAction => requiresOutsideAction && requiresAllPlayerAction;
-    public bool RequiresOnePersonAction => requiresOutsideAction && requiresOnePlayerAction;
-    public ActionCard(ActionType type, int value, bool outsideAction, bool allPlayerAction, bool onePlayerAction) 
-        : base(type.ToString(), value)
+    public ActionCard(ActionType type, int value)
+        : this(type, type.ToString(), value) { }
+
+    public ActionCard(ActionType type, string name, int value)
+        : base(name, value)
     {
         actionType = type;
         asMoney = false;
-        requiresOutsideAction = outsideAction;
-        requiresAllPlayerAction = allPlayerAction;
-        requiresOnePlayerAction = onePlayerAction;
-
         displayName = SeperateEnums().Replace(actionType.ToString(), " $1");
     }
     public void SetAsMoney(bool asMoney)
@@ -36,7 +29,7 @@ public partial class ActionCard : Card, Copy<ActionCard>
 
     public new ActionCard Copy()
     {
-        return new ActionCard(actionType, Value, requiresOutsideAction, requiresAllPlayerAction, requiresOnePlayerAction);
+        return new ActionCard(actionType, Value);
     }
 
     public override string DisplayName()

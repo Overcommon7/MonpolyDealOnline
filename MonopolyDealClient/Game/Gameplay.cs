@@ -78,19 +78,26 @@ namespace MonopolyDeal
                 case ServerSendMessages.ActionCardPlayed:
                     break;
                 case ServerSendMessages.JustSayNoPlayed:
-                    if (!PaymentHandler.PaymentInProcess)
-                        break;
+                    if (PaymentHandler.PaymentInProcess)
+                        PaymentHandler.OnPlayerSaidNo(GetWindow<GettingPaidWindow>(), PlayerManager, playerNumber);
 
-                    PaymentHandler.OnPlayerSaidNo(GetWindow<GettingPaidWindow>(), PlayerManager, playerNumber);
+                    break;
+
+                case ServerSendMessages.NoWasRejected:
+                    if (PaymentHandler.PaymentInProcess)
+                        PaymentHandler.RejectedNo(PlayerManager, playerNumber);
+
                     break;
                 case ServerSendMessages.PlayerPaid:
-                    if (!PaymentHandler.PaymentInProcess)
-                        break;
-
-                    PaymentHandler.OnPlayerPaid(PlayerManager, playerNumber, data);
+                    if (PaymentHandler.PaymentInProcess)
+                        PaymentHandler.OnPlayerPaid(PlayerManager, playerNumber, data);
 
                     break;
                 case ServerSendMessages.OnAllPlayersPaid:
+                    PaymentHandler.OnAllPlayersPaid();
+                    break;
+                case ServerSendMessages.PaymentComplete:
+                    PaymentHandler.PaymentComplete(PlayerManager.LocalPlayer, playerNumber);
                     break;
                 case ServerSendMessages.CardMoved:
                     break;

@@ -1,4 +1,7 @@
-﻿namespace MonopolyDeal
+﻿using ImGuiNET;
+using static CardData;
+
+namespace MonopolyDeal
 {
     public partial class LocalPlayer
     {
@@ -11,10 +14,31 @@
 
         }
 
-        bool RespondToAction_BuildingCards(Card card, int id)
+        bool RespondToAction_BuildingCards(Card value, int id)
         {
-            if (card is not BuildingCard building)
+            if (value is not BuildingCard card)
                 return false;
+
+            ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
+            bool valid = true;
+            if (card.ActionType == ActionType.House)
+            {
+                if (PlayedCards.HasHotel(card.CurrentSetType))
+                {
+                    var building = PlayedCards.GetBuildingCard(ActionType.Hotel, card.CurrentSetType);
+                    if (building is not null && !mPayPopup.IsPayingCard(building))
+                        valid = false;
+                }
+            }
+
+            if (!valid)
+                ImGui.BeginDisabled();
+
+            if (ImGui.Button($"Pay##{id}"))
+                mPayPopup.AddToCardsPaying(card);
+
+            if (!valid)
+                ImGui.EndDisabled();
 
             return false;
         }

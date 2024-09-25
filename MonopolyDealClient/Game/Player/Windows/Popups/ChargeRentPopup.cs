@@ -24,13 +24,31 @@ namespace MonopolyDeal
             if (mRent is null)
                 return;
 
+            if (mCardsOwnedInSetOne == 0)
+                ImGui.BeginDisabled();
+
             ImGui.RadioButton(mRent.TargetType1.ToString(), ref mRadioButton, 0);
+
+            if (mCardsOwnedInSetOne == 0)
+                ImGui.EndDisabled();
+
+            if (mCardsOwnedInSetTwo == 0)
+                ImGui.BeginDisabled();
+
             ImGui.RadioButton(mRent.TargetType2.ToString(), ref mRadioButton, 1);
 
+            if (mCardsOwnedInSetTwo == 0)
+                ImGui.EndDisabled();
+
+            ImGui.Spacing();
+
             if (mHasDoubleRent)
+            {
                 ImGui.Checkbox("Use Double Rent##CPP", ref mUseDoubleRent);
-                
-            if (ImGui.Button("Play##CPP"))
+                ImGui.Spacing();
+            }
+                                
+            if ((mCardsOwnedInSetTwo > 0 || mCardsOwnedInSetOne > 0) && ImGui.Button("Play##CPP"))
             {
                 RentPlayValues values = new RentPlayValues();
                 values.withDoubleRent = mUseDoubleRent;
@@ -38,9 +56,23 @@ namespace MonopolyDeal
                 values.chargingSetType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
                 values.cardID = mRent.ID;
 
-                PaymentHandler.BeginPaymentProcess(true);
+                var gameplay = App.GetState<Gameplay>();
+                var player = gameplay.PlayerManager.LocalPlayer;
+                int cardsInSet = player.PlayedCards.GetNumberOfCardsInSet(values.chargingSetType);
+
+                int rentAmount = CardData.GetRentAmount(values.chargingSetType, cardsInSet);
+                if (mUseDoubleRent)
+                    rentAmount *= 2;
+
+                PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount);                
                 Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
 
+                Close();
+                gameplay.GetWindow<GettingPaidWindow>().Open();
+            }
+
+            if (ImGui.Button("Close##CPP"))
+            {
                 Close();
             }
         }
@@ -57,6 +89,13 @@ namespace MonopolyDeal
 
             mCardsOwnedInSetOne = player.PlayedCards.GetNumberOfCardsInSet(mRent.TargetType1);
             mCardsOwnedInSetTwo = player.PlayedCards.GetNumberOfCardsInSet(mRent.TargetType2);
+
+            if (mCardsOwnedInSetOne == 0 && mCardsOwnedInSetTwo > 0)
+                mRadioButton = 1;
+
+            if (mCardsOwnedInSetOne == 0 && mCardsOwnedInSetTwo == 0)
+                mRadioButton = 10;
+
             mPlayerNumber = player.Number;
         }
 

@@ -2,7 +2,7 @@
 {
     public SetType SetType { get; set; } = SetType.None;
     public WildRentCard() 
-        : base(ActionType.WildRent, 3, true, false, true)
+        : base(ActionType.WildRent, 3)
     {
     }
 

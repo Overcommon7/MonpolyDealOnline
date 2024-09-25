@@ -31,7 +31,7 @@ namespace MonopolyDeal
             playerNumber = player.Number;
             isLocalPlayer = player is LocalPlayer;
             mBuildingTypes = new Dictionary<SetType, ActionType>();
-            mSetTypes = new() { { SetType.None, -10000 } };
+            mSetTypes = new() { { SetType.None, -100000 } };
         }
         public void RemovePropertyCard(PropertyCard card)
         {

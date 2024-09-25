@@ -7,10 +7,8 @@ namespace MonopolyDeal
 {
     public class PayPopup : IWindow
     {
-        int mPayAmount = 0;
         bool mHasSayNo = false;
         bool mUsingSayNo = false;
-        string mChargingPlayerName = string.Empty;
         string[] mMessages = [];
         LocalPlayer? mPlayer;
         List<Card> mCardsPaying;
@@ -20,18 +18,26 @@ namespace MonopolyDeal
             mCardsPaying = new();
         }
 
-        public void Open(LocalPlayer player, string chargingPlayerName, string[] messages, int value)
+        public void Open(LocalPlayer player, string[] messages)
         {
             mPlayer = player;
-            mChargingPlayerName = chargingPlayerName;
             mMessages = messages;
-            mPayAmount = value;
             mCardsPaying.Clear();
 
             mHasSayNo = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var sayNoCard);
             mUsingSayNo = false;
 
             base.Open();
+        }
+
+        public bool IsPayingCard(Card card)
+        {
+            return mCardsPaying.Contains(card);
+        }
+
+        public void AddToCardsPaying(Card card)
+        {
+            mCardsPaying.Add(card);
         }
 
         public override void ImGuiDraw()
@@ -82,13 +88,10 @@ namespace MonopolyDeal
 
             var playedCards = mPlayer.PlayedCards;
             ImGui.Spacing();
-            playedCards.ImGuiDraw(PropertyLogic, BuildingLogic, MoneyLogic, "Pay");
-
-            ImGui.Spacing();
-            if (value < mPayAmount)
+            if (value < PaymentHandler.AmountDue)
                 ImGui.BeginDisabled();
 
-            if (ImGui.Button($"Pay {mChargingPlayerName}"))
+            if (ImGui.Button($"Pay {PaymentHandler.PlayerNameBeingPaid}"))
             {
                 List<Card> notMoney = new();
                 List<Card> asMoney = new();
@@ -135,77 +138,8 @@ namespace MonopolyDeal
                 Close();
             }
 
-            if (value < mPayAmount)
+            if (value < PaymentHandler.AmountDue)
                 ImGui.EndDisabled();
-
-#region DrawFunctions
-
-            bool PropertyLogic(Card value, int id)
-            {
-                if (value is not PropertyCard card)
-                    return false;
-
-                ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
-                bool invalid = playedCards.HasHouse(card.SetType);
-                if (!invalid)
-                {
-                    var building = playedCards.GetBuildingCard(ActionType.House, card.SetType);
-                    if (building is not null)
-                        invalid = !mCardsPaying.Contains(building);
-                }
-
-                if (invalid)
-                    ImGui.BeginDisabled();
-
-                if (ImGui.Button($"Pay##{id}"))
-                    mCardsPaying.Add(card);
-
-                if (invalid)
-                    ImGui.EndDisabled();
-
-                return false;
-            }
-
-            bool BuildingLogic(Card value, int id)
-            {
-                if (value is not BuildingCard card)
-                    return false;
-
-                ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
-                bool valid = true;
-                if (card.ActionType == ActionType.House)
-                {
-                    if (playedCards.HasHotel(card.CurrentSetType))
-                    {
-                        var building = playedCards.GetBuildingCard(ActionType.Hotel, card.CurrentSetType);
-                        if (building is not null && !mCardsPaying.Contains(building))
-                            valid = false;
-                    }
-                }
-
-                if (!valid)
-                    ImGui.BeginDisabled();
-
-                if (ImGui.Button($"Pay##{id}"))
-                    mCardsPaying.Add(card);
-
-                if (!valid)
-                    ImGui.EndDisabled();
-
-                return false;
-
-            }
-
-            bool MoneyLogic(Card card, int id)
-            {
-                ImGui.SameLine();
-                if (ImGui.Button($"Pay##{id}"))
-                    mCardsPaying.Add(card);
-
-                return false;
-            }
-
-#endregion
         }
     }
 }

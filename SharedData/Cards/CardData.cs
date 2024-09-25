@@ -3,7 +3,7 @@ using System.Text;
 
 public enum SetType
 {
-    None,
+    None = 0,
     Brown,
     LightBlue,
     Purple,
@@ -320,7 +320,7 @@ public static class CardData
 
         foreach (var card in actionCards)
         {
-            ActionCard actionCard = new(card.type, card.value, card.requiresOutsideAction, card.requiresAllPlayerAction, card.requiresOnePlayerAction);
+            ActionCard actionCard = new(card.type, card.value);
             cards.Add(actionCard);
         }
 

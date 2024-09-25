@@ -8,7 +8,7 @@ public static class PlayerActions
         var cards = DataMarshal.GetCards(deck, Constants.PICK_UP_AMOUNT_ON_HAND_EMPTY);
         player.AddCardsToHand(cards);
         var message = Format.ToData(ServerSendMessages.HandReturned, Serializer.SerializeListOfCards(cards), player.Number);
-        player.Client.GetStream().Write(message);
+        player.Client.GetStream().Write(message, 0, message.Length);
     }
 
     public static void CardPlayed(Deck deck, Player player, int cardID)
@@ -42,7 +42,8 @@ public static class PlayerActions
 
     public static void RentCardPlayed(Player player, byte[] data)
     {
-        //PaymentManager.StartNewPayment(player, )
+        PaymentManager.StartNewPayment(player, TargetType.All);
+        Server.BroadcastMessage(ServerSendMessages.RentCardPlayed, data, player.Number);
     }
 
     public static void PropertyCardPlayed(Player player, byte[] data)

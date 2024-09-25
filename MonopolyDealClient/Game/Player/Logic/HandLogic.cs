@@ -27,7 +27,7 @@ namespace MonopolyDeal
                         mGameplay.GetWindow<ForcedDealPopup>().Open(card);
                         break;
                     case ActionType.Rent:
-                        mGameplay.GetWindow<ChargeRentPopup>().Open(card);
+                        mGameplay.GetWindow<ChargeRentPopup>().Open(this, card);
                         break;
                     case ActionType.Hotel:
                     case ActionType.House:

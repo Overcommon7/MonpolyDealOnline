@@ -42,7 +42,7 @@ public enum ServerSendMessages : short
     PlayerPaid,
     OnAllPlayersPaid,
     PaymentComplete,
-    PlayerUsedSayNo,
+    NoWasRejected,
 
     CardMoved,
     CardsSent,

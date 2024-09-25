@@ -38,7 +38,7 @@ namespace MonopolyDeal
         {
             foreach (var window in mWindows)
             {
-                if (window.IsClosable && !window.IsOpen)
+                if (!window.IsOpen)
                     continue;
 
                 if (window.IsPopup)

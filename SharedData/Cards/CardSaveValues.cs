@@ -29,9 +29,6 @@ public struct WildPropertySaveValues
 public struct ActionCardSaveValues
 {
     public ActionType type;
-    public bool requiresOutsideAction;
-    public bool requiresAllPlayerAction;
-    public bool requiresOnePlayerAction;
     public int value;
 }
 

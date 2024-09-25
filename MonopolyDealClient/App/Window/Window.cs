@@ -21,9 +21,16 @@ namespace MonopolyDeal
                 mTitle = name;
 
             mIsPopup = isPopup;
-            mIsOpen = !startClosed || !isPopup;
-            mIsClosable = isClosable || isPopup;
-            mHasMenuBar = hasMenuBar && !isPopup;
+            mIsOpen = !startClosed;
+            mIsClosable = isClosable;
+            mHasMenuBar = hasMenuBar;
+
+            if (isPopup)
+            {
+                mHasMenuBar = false;
+                mIsClosable = false;
+                mIsOpen = false;
+            }
         }
 
         public virtual void OnStateOpened() { }

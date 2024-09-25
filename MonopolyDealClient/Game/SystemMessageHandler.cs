@@ -89,15 +89,18 @@ namespace MonopolyDeal
             if (playerNumber == playerManager.LocalPlayer.Number)
                 return;
 
-            App.GetState<Gameplay>().SetToRespondingState();
-            PaymentHandler.BeginPaymentProcess(false);
-
             var rentValues = Format.ToStruct<RentPlayValues>(data);
             if (!CardData.TryGetCard<RentCard>(rentValues.cardID, out var card))
                 return;
 
             int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet);
             var player = playerManager.GetOnlinePlayer(playerNumber);
+            if (rentValues.withDoubleRent)
+                rentAmount *= 2;
+
+            App.GetState<Gameplay>().SetToRespondingState();
+            PaymentHandler.BeginPaymentProcess(playerNumber, rentAmount);
+
             --player.CardsInHand;
 
             string[] messages =
@@ -106,7 +109,7 @@ namespace MonopolyDeal
                     $"You Owe M{rentAmount}"
                 ];
 
-            pay.Open(playerManager.LocalPlayer, player.Name, messages, rentAmount);
+            pay.Open(playerManager.LocalPlayer, messages);
         }
 
         static void OnlinePlayerPlayedCard<T>(PlayerManager playerManager, int playerNumber, int cardID, Action<OnlinePlayer, T> action) where T : Card

@@ -11,11 +11,21 @@ namespace StartupProject
 
             const int clientsToCreate = 1;
 
+
+            var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
+            while (directory is not null && !directory.GetFiles("*.sln").Any())
+                directory = directory.Parent;
+
+            if (directory is null)
+                return;
+
+            string path = directory.FullName;
+
             void CreateServer()
             {
                 server = new();
-                server.FileName = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealServer\\bin\\Debug\\net8.0-windows10.0.22000.0\\MonopolyDealServer.exe";
-                server.WorkingDirectory = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealServer\\bin\\Debug\\net8.0-windows10.0.22000.0\\";
+                server.FileName = Path.Combine(path, "MonopolyDealServer\\bin\\Debug\\net8.0-windows10.0.22000.0\\MonopolyDealServer.exe");
+                server.WorkingDirectory = Path.Combine(path, "MonopolyDealServer\\bin\\Debug\\net8.0-windows10.0.22000.0\\");
                 server.WindowStyle = ProcessWindowStyle.Normal;
                 server.CreateNoWindow = false;
 
@@ -30,8 +40,8 @@ namespace StartupProject
 
                     ProcessStartInfo info = new ProcessStartInfo();
 
-                    info.FileName = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\MonopolyDealClient\\bin\\Debug\\net8.0-windows10.0.22000.0\\MonopolyDealClient.exe";
-                    info.WorkingDirectory = "H:\\LaSalle\\VSProjects5\\MonopolyDealOnline\\WorkingDirForExtraClients\\";
+                    info.FileName = Path.Combine(path, "MonopolyDealClient\\bin\\Debug\\net8.0-windows10.0.22000.0\\MonopolyDealClient.exe");
+                    info.WorkingDirectory = Path.Combine(path, "WorkingDirForExtraClients\\");
                     info.WindowStyle = ProcessWindowStyle.Hidden;
                     info.CreateNoWindow = true;
                     info.ArgumentList.Clear();

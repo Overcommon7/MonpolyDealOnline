@@ -121,7 +121,7 @@ internal static class Server
             if (player.Number == excludedPlayer)
                 continue;
 
-            player.Client.GetStream().Write(byteData);
+            player.Client.GetStream().Write(byteData, 0, byteData.Length);
         }
     }
 
@@ -136,7 +136,7 @@ internal static class Server
             if (status != ConnectionStatus.Connected)
                 continue;
 
-            player.Client.GetStream().Write(byteData);
+            player.Client.GetStream().Write(byteData, 0, byteData.Length);
         }
     }
 
@@ -150,7 +150,7 @@ internal static class Server
             if (status != ConnectionStatus.Connected)
                 continue;
 
-            player.Client.GetStream().Write(byteData);
+            player.Client.GetStream().Write(byteData, 0, byteData.Length);
         }
     }
 
@@ -161,7 +161,7 @@ internal static class Server
 
         foreach (var player in players)
         {
-            player.GetStream().Write(byteData);
+            player.GetStream().Write(byteData, 0, byteData.Length);
         }
     }
 
@@ -171,7 +171,7 @@ internal static class Server
 
         foreach (var player in players)
         {
-            player.GetStream().Write(byteData);
+            player.GetStream().Write(byteData, 0, byteData.Length);
         }
     }
 
@@ -242,7 +242,7 @@ internal static class Server
         }
 
         var playerData = Format.ToData(ServerSendMessages.OnPlayerIDAssigned, builder.ToString(), PlayerManager.TotalPlayers + 1);
-        e.GetStream().Write(playerData);
+        e.GetStream().Write(playerData, 0, playerData.Length);
 
         mOnClientConnected?.Invoke(mServer, e);
     }

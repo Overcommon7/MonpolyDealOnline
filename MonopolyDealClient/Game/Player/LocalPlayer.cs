@@ -15,10 +15,12 @@ namespace MonopolyDeal
             mHand = new Hand();
             mLogic = new Dictionary<State, Func<Card, int, bool>[]>
             {
-                { State.NotTurn, [NotTurn_PropertyLogic, NotTurn_BuildingCards, NotTurn_HandLogic] },
-                { State.PlayingCards, [OnTurn_PropertyLogic, OnTurn_BuildingCards, OnTurn_HandLogic] },
-                { State.RespondingToAction, [RespondToAction_PropertyLogic, RespondToAction_BuildingCards, RespondToAction_HandLogic] }
+                { State.NotTurn, [NotTurn_PropertyLogic, NotTurn_BuildingCards, NotTurn_HandLogic, NotTurn_MoneyLogic] },
+                { State.PlayingCards, [OnTurn_PropertyLogic, OnTurn_BuildingCards, OnTurn_HandLogic, OnTurn_MoneyLogic] },
+                { State.RespondingToAction, [RespondToAction_PropertyLogic, RespondToAction_BuildingCards, RespondToAction_HandLogic, RespondToAction_MoneyLogic] }
             };
+
+            mPayPopup = App.GetState<Gameplay>().GetWindow<PayPopup>();
         }
 
         public override void ImGuiDraw()
@@ -30,7 +32,7 @@ namespace MonopolyDeal
 
             ImGui.SeparatorText("Played Cards");
             ImGui.Spacing();
-            PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1]);
+            PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1], extraLogic[3]);
         }
 
         public void OnHandReturned(int playerNumber, byte[] data)

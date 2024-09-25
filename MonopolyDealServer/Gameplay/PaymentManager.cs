@@ -22,6 +22,19 @@ public static class PaymentManager
         sPlayersPaid = 0;
         IsPaymentInProgress = false;
     }
+
+    public static void NoRejected(Deck deck, Player targetPlayer)
+    {
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo))
+            return;
+
+        if (sPlayerBeingPaid?.RemoveCardFromHand(justSayNo) == false)
+            return;
+
+        deck.AddCardToRemainingPile(justSayNo);
+
+        Server.BroadcastMessage(ServerSendMessages.NoWasRejected, targetPlayer.Number);
+    }
     public static void PlayerUsedSayNo(Deck deck, Player player)
     {
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo))
@@ -31,7 +44,7 @@ public static class PaymentManager
             return;
 
         deck.AddCardToRemainingPile(justSayNo);
-        Server.BroadcastMessage(ServerSendMessages.PlayerUsedSayNo, player.Number);
+        Server.BroadcastMessage(ServerSendMessages.JustSayNoPlayed, player.Number);
         CheckForAllPlayersPaid();
     }
     public static void PlayerPaidCards(Player player, byte[] data)

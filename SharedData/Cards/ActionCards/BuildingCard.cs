@@ -5,7 +5,7 @@
     public bool IsHotel => actionType == ActionType.Hotel;
     public bool IsHouse => actionType == ActionType.House;
     public BuildingCard(ActionType type) 
-        : base(type, type == ActionType.Hotel ? 4 : 3, false, false, false)
+        : base(type, type == ActionType.Hotel ? 4 : 3)
     {
         if (actionType != ActionType.Hotel && actionType != ActionType.House)
         {

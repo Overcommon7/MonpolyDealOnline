@@ -56,6 +56,9 @@ public static class GameManager
                 break;
             case ClientSendMessages.PlayActionCard:
                 break;
+            case ClientSendMessages.RejectedNo:
+                PaymentManager.NoRejected(sDeck, player);
+                break;
             case ClientSendMessages.ActionGotDenied:
                 PaymentManager.PlayerUsedSayNo(sDeck, player);
                 break;
@@ -67,6 +70,7 @@ public static class GameManager
             case ClientSendMessages.MoveCard:
                 break;
             case ClientSendMessages.PayPlayer:
+                PaymentManager.PlayerPaidCards(player, data);
                 break;
             case ClientSendMessages.OnEndTurn:
                 TurnManager.EndTurn(sDeck);

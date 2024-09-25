@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Windows.Media.PlayTo;
+using Windows.System;
 
 namespace MonopolyDeal
 {
@@ -15,14 +16,22 @@ namespace MonopolyDeal
             public List<Card> mNotMoney;
         }
         static List<PaymentInfo> mPayments = new();
+        public static string PlayerNameBeingPaid { get; private set; } = string.Empty;
+        public static int PlayerNumberBeingPaid { get; private set; } = -1;
+        public static int AmountDue { get; private set; } = 0;
         public static bool PaymentInProcess { get; private set; } = false;
         public static bool IsBeingPaid { get; private set; } = false;
         public static bool AllPlayersPaid { get; private set; } = false;
-        public static void BeginPaymentProcess(bool gettingPaid)
+        public static void BeginPaymentProcess(int playerNumberBeingPaid, int amountDue)
         {
+            var playerManager = App.GetState<Gameplay>().PlayerManager;
+
             AllPlayersPaid = false;
             PaymentInProcess = true;
-            IsBeingPaid = gettingPaid;
+            PlayerNumberBeingPaid = playerNumberBeingPaid;
+            PlayerNameBeingPaid = playerManager.LocalPlayer.Name;
+            IsBeingPaid = PlayerNumberBeingPaid == playerManager.LocalPlayer.Number;
+            AmountDue = amountDue;
             mPayments.Clear();
         }
 
@@ -69,7 +78,7 @@ namespace MonopolyDeal
             foreach (var card in asMoneyCards)
             {
                 player.PlayedCards.RemoveMoneyCard(card);
-                info.mNotMoney.Add(card);
+                info.mAsMoney.Add(card);
             }
 
             mPayments.Add(info);
@@ -80,9 +89,6 @@ namespace MonopolyDeal
             if (playerNumber == playerManager.LocalPlayer.Number)
                 return;
 
-            if (IsBeingPaid)
-                gettingPaidWindow.PlayerSaidNo(playerNumber);
-
             PaymentInfo info = new PaymentInfo();
             info.mPlayerNumber = playerNumber;
             info.mPlayedSayNo = true;
@@ -90,19 +96,100 @@ namespace MonopolyDeal
             mPayments.Add(info);
         }
 
+        public static void RejectedNo(PlayerManager playerManager, int playerNumber)
+        {
+            if (IsBeingPaid)
+                return;
+
+            if (playerManager.LocalPlayer.Number != playerNumber)
+            {
+                int index = mPayments.FindIndex(payment => payment.mPlayerNumber == playerNumber);
+                if (index >= 0)
+                    mPayments.RemoveAt(index);
+            }
+            else
+            {
+                var player = playerManager.GetOnlinePlayer(PlayerNumberBeingPaid);
+                App.GetState<Gameplay>().GetWindow<PayPopup>().Open(playerManager.LocalPlayer, [$"Player {player.Name} Has Rejected Your No"]);
+            }
+
+        }
+
         public static void OnAllPlayersPaid()
         {
             AllPlayersPaid = true;
         }
 
-        public static void PaymentComplete()
+        public static void PaymentComplete(LocalPlayer player, int playerNumber)
         {
+            if (playerNumber != player.Number)
+                return;
 
+            foreach (var payment in mPayments)
+            {
+                foreach (var card in payment.mAsMoney)
+                    player.PlayedCards.AddMoneyCard(card);
+
+                foreach (var card in payment.mNotMoney)
+                {
+                    if (card is BuildingCard building)
+                    {
+                        building.SetAsMoney(true);
+                        foreach (var setType in Constants.SET_TYPES)
+                        {
+                            if (player.PlayedCards.HasFullSetOfType(setType))
+                            {
+                                if (building.IsHotel && !player.PlayedCards.HasHotel(setType) ||
+                                   building.IsHouse && !player.PlayedCards.HasHouse(setType))
+                                {
+                                    building.SetAsMoney(false);
+                                    player.PlayedCards.AddBuildingCard(building, setType);
+                                    break;
+                                }
+                            } 
+                        }
+
+                        if (building.AsMoney)
+                            player.PlayedCards.AddMoneyCard(card);
+                    }
+                    else if (card is WildPropertyCard wildProperty)
+                    {
+                        if (!player.PlayedCards.HasFullSetOfType(wildProperty.SetType1))
+                            wildProperty.SetCurrentType(wildProperty.SetType1);
+
+                        if (!player.PlayedCards.HasFullSetOfType(wildProperty.SetType2))
+                            wildProperty.SetCurrentType(wildProperty.SetType2);
+
+                        player.PlayedCards.AddPropertyCard(wildProperty);
+                    }
+                    else if (card is WildCard wild)
+                    {
+                        wild.SetCurrentType(SetType.None);
+                        foreach (var setType in Constants.SET_TYPES)
+                        {
+                            if (!player.PlayedCards.HasFullSetOfType(setType))
+                            {
+                                wild.SetCurrentType(setType);
+                                break;
+                            }
+                        }
+
+                        player.PlayedCards.AddPropertyCard(wild);
+                    }
+                    else if (card is PropertyCard property)
+                    {
+                        player.PlayedCards.AddPropertyCard(property);
+                    }
+                    else
+                    {
+                        player.PlayedCards.AddMoneyCard(card);
+                    }                    
+                }
+            }
         }
 
-        public static void ImGuiDraw()
+        public static void ImGuiDraw(PlayerManager playerManager, Action<int>? sayNoLogic)
         {
-            var playerManager = App.GetState<Gameplay>().PlayerManager;
 
             foreach (var payment in mPayments)
             {
@@ -117,6 +204,7 @@ namespace MonopolyDeal
                 if (payment.mPlayedSayNo)
                 {
                     ImGui.Text("Played Just Say No");
+                    sayNoLogic?.Invoke(payment.mPlayerNumber);
                     ImGui.TreePop();
                     continue;
                 }

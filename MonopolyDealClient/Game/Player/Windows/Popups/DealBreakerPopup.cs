@@ -17,10 +17,10 @@ namespace MonopolyDeal
 
         }
 
-        public override void Open()
+        public override void Open(Card card)
         {
             mAsMoney = false;
-            base.Open();
+            base.Open(card);
         }
     }
 }

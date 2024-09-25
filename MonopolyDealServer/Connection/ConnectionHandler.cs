@@ -31,6 +31,7 @@ public static class ConnectionHandler
             return;
 
         ++sReadiedPlayers;
+        player.Name = name;
         Console.WriteLine("Players Ready: {0}", sReadiedPlayers);
 
         Server.BroadcastMessage(ServerSendMessages.PlayerUsername, name + ',' + clientID, player.Number);
