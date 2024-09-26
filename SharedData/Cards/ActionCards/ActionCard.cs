@@ -9,9 +9,15 @@ public partial class ActionCard : Card, Copy<ActionCard>
     public bool AsMoney => asMoney;
     public ActionCard(ActionType type, int value)
         : this(type, type.ToString(), value) { }
-
+    public ActionCard(ActionType type, string name, int value, CardColor cardColor)
+        : base(name, value, cardColor) 
+    {
+        actionType = type;
+        asMoney = false;
+        displayName = SeperateEnums().Replace(actionType.ToString(), " $1");
+    }
     public ActionCard(ActionType type, string name, int value)
-        : base(name, value)
+        : base(name, value, CardData.GetCardColor(type))
     {
         actionType = type;
         asMoney = false;

@@ -26,7 +26,7 @@ public partial class RentCard : ActionCard, Copy<RentCard>
         return false;
     }
     public RentCard(SetType setType1, SetType setType2) 
-        : base(ActionType.Rent, $"R - {setType1}{setType2}", 1)
+        : base(ActionType.Rent, $"R - {setType1}{setType2}", 1, CardData.GetCardColor(setType1))
     {
         TargetType1 = setType1;
         TargetType2 = setType2;

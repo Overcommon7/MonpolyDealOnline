@@ -19,7 +19,7 @@
     }
 
     public PropertyCard(SetType setType, string name, int value)
-        : base(name, value)
+        : base(name, value, CardData.GetCardColor(setType))
     {
        this.setType = setType;
     }

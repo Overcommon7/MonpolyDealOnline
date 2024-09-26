@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 
 public enum SetType
@@ -56,6 +57,20 @@ public struct Rent
     public int rentAmount;
 }
 
+public struct CardColor
+{
+    public byte r;
+    public byte g;
+    public byte b;
+
+    public CardColor(byte r, byte g, byte b)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+}
+
 public static class CardData
 {
     public struct Values
@@ -65,14 +80,65 @@ public static class CardData
     }
 
     static Dictionary<SetType, Values> cardValues = new();
+    static Dictionary<ActionType, CardColor> actionColors;
+    static Dictionary<SetType, CardColor> cardColors;
+    static Dictionary<int, CardColor> moneyColors;
     static Dictionary<Type, int> sortTypes = new();
     static List<Card> cards = new List<Card>();
 
-
     public static IReadOnlyDictionary<Type, int> SortTypes => sortTypes;
     public static IReadOnlyList<Card> Cards => cards;
-
     public static Values GetValues(SetType type) => cardValues[type];
+    public static CardColor GetCardColor(int value) => moneyColors[value];
+    public static CardColor GetCardColor(SetType type) => cardColors[type];    
+    public static CardColor GetCardColor(ActionType type) => actionColors[type];
+
+    static CardData()
+    {
+        cardColors = new Dictionary<SetType, CardColor>
+        {
+            { SetType.None, new(255, 255, 255) },
+            { SetType.Brown, new(124, 64, 59) },
+            { SetType.DarkBlue, new(31, 98, 172) },
+            { SetType.Green, new(38, 143, 71) },
+            { SetType.LightBlue, new(154, 190, 218) },
+            { SetType.Orange, new(210, 133, 55) },
+            { SetType.Purple, new(186, 68, 162) },
+            { SetType.Railroad, new(25, 26, 28) },
+            { SetType.Red, new(207, 31, 36) },
+            { SetType.Yellow, new(214, 224, 59) },
+            { SetType.Utilities, new(203, 220, 183) }
+        };
+
+        moneyColors = new Dictionary<int, CardColor>
+        {
+            { 1, new(180, 189, 173) },
+            { 2, new(206, 125, 31) },
+            { 3, new(118, 159, 28) },
+            { 4, new(0, 160, 255) },
+            { 5, new(111, 46, 110) },
+            { 10, new(174, 149, 63) },
+        };
+
+        actionColors = new Dictionary<ActionType, CardColor>
+        {
+            { ActionType.DealBreaker, new(144, 139, 195) },
+            { ActionType.JustSayNo, new(118, 169, 202) },
+            { ActionType.SlyDeal, new(183, 187, 191) },
+            { ActionType.ForcedDeal, new(191, 192, 194) },
+            { ActionType.WildRent, new(247, 45, 147) },
+            { ActionType.ItsMyBirthday, new(185, 176, 177) },
+            { ActionType.DebtCollector, new(191, 205, 205) },
+            { ActionType.Hotel, new(214, 47, 59) },
+            { ActionType.House, new(18, 102, 61) },
+            { ActionType.DoubleRent, new(204, 204, 187) },
+            { ActionType.PassGo, new(212, 212, 200) }
+        };
+    }
+    public static Vector4 ToVector4(this CardColor color)
+    {
+        return new Vector4(color.r / 255f, color.g / 255f, color.b / 255f, 1f);
+    }
     public static int SortAlgorithm(Card a, Card b)
     {
         if (a is PropertyCard apCard && b is PropertyCard bpCard)

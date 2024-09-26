@@ -8,6 +8,7 @@ namespace StartupProject
         {
             ProcessStartInfo? server = null;
             List<Process?> processes = new();
+            Process? serverProcess = null;
 
             const int clientsToCreate = 1;
 
@@ -28,8 +29,8 @@ namespace StartupProject
                 server.WorkingDirectory = Path.Combine(path, "MonopolyDealServer\\bin\\Debug\\net8.0-windows10.0.22000.0\\");
                 server.WindowStyle = ProcessWindowStyle.Normal;
                 server.CreateNoWindow = false;
-
-                processes.Add(Process.Start(server));
+                serverProcess = Process.Start(server);
+                processes.Add(serverProcess);
             }
 
             void CreateClients()
@@ -57,16 +58,6 @@ namespace StartupProject
 
             //CreateServer();
             CreateClients();
-           
-            for (int i = 0; i < processes.Count; i++)
-            {
-                processes[i]?.WaitForExit();
-            }
-
-            for (int i = 0; i < processes.Count; i++)
-            {
-                processes[i]?.Dispose();
-            }
         }
     }
 }

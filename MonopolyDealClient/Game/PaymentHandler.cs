@@ -105,7 +105,7 @@ namespace MonopolyDeal
             mPayments.Add(info);
         }
 
-        public static void RejectedNo(PlayerManager playerManager, int playerNumber)
+        public static void RejectedNo(Gameplay gameplay, int playerNumber)
         {
             AllPlayersPaid = false;
 
@@ -113,12 +113,14 @@ namespace MonopolyDeal
             if (index >= 0)
                 mPayments.RemoveAt(index);
 
-            if (playerManager.LocalPlayer.Number == playerNumber)
-            {
-                var player = playerManager.GetOnlinePlayer(PlayerNumberBeingPaid);
-                App.GetState<Gameplay>().GetWindow<PayPopup>().Open(playerManager.LocalPlayer, [$"Player {player.Name} Has Rejected Your No", $"You owe M{AmountDue}"]);
-            }
+            if (gameplay.PlayerManager.LocalPlayer.Number != playerNumber)
+                return;
 
+            var player = gameplay.PlayerManager.GetOnlinePlayer(PlayerNumberBeingPaid);                
+            gameplay.SetToRespondingState();
+
+            gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer, 
+                [$"Player {player.Name} Has Rejected Your No", $"You owe M{AmountDue}"]);
         }
 
         public static void OnAllPlayersPaid()
@@ -126,9 +128,9 @@ namespace MonopolyDeal
             AllPlayersPaid = true;
         }
 
-        public static void PaymentComplete(LocalPlayer player, int playerNumber)
+        public static void PaymentComplete(LocalPlayer player)
         {
-            if (playerNumber != player.Number)
+            if (player.Number != PlayerNumberBeingPaid)
                 return;
 
             foreach (var payment in mPayments)
@@ -194,6 +196,20 @@ namespace MonopolyDeal
             }
         }
 
+        public static void EndPayment(Gameplay gameplay)
+        {
+            if (gameplay.State != State.PlayingCards)
+                gameplay.RevertState();
+
+            AllPlayersPaid = false;
+            PaymentInProcess = false;
+            PlayerNumberBeingPaid = 0;
+            PlayerNameBeingPaid = string.Empty;
+            IsBeingPaid = false;
+            AmountDue = 0;
+            mPayments.Clear();
+        }
+
         public static void ImGuiDraw(PlayerManager playerManager, Action<int>? sayNoLogic)
         {
 
@@ -220,7 +236,7 @@ namespace MonopolyDeal
                 int value = 0;
                 foreach (var card in payment.mNotMoney)
                 {
-                    ImGui.Text(card.DisplayName());
+                    ImGui.TextColored(card.Color.ToVector4(), card.DisplayName());
                     value += card.Value;
                 }
 
@@ -229,7 +245,7 @@ namespace MonopolyDeal
 
                 foreach (var card in payment.mAsMoney)
                 {
-                    ImGui.Text(card.DisplayName());
+                    ImGui.TextColored(card.Color.ToVector4(), card.DisplayName());
                     value += card.Value;
                 }
 

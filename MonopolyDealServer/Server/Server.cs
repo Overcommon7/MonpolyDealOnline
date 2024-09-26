@@ -198,11 +198,13 @@ internal static class Server
 
         clientRequest.mPlayerID = e.TcpClient.GetID();
         
+        
 
         if (e.Data.Length >= Format.HEADER_SIZE)
         {
             clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
             clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
+            clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
         }            
         else
             clientRequest.mData = e.Data;

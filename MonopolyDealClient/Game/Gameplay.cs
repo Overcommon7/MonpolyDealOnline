@@ -81,23 +81,23 @@ namespace MonopolyDeal
                     if (PaymentHandler.PaymentInProcess)
                         PaymentHandler.OnPlayerSaidNo(GetWindow<GettingPaidWindow>(), PlayerManager, playerNumber);
 
-                    break;
-
+                break;
                 case ServerSendMessages.NoWasRejected:
                     if (PaymentHandler.PaymentInProcess)
-                        PaymentHandler.RejectedNo(PlayerManager, playerNumber);
+                        PaymentHandler.RejectedNo(this, playerNumber);
 
-                    break;
+                break;
                 case ServerSendMessages.PlayerPaid:
                     if (PaymentHandler.PaymentInProcess)
                         PaymentHandler.OnPlayerPaid(PlayerManager, playerNumber, data);
 
-                    break;
+                break;
                 case ServerSendMessages.OnAllPlayersPaid:
                     PaymentHandler.OnAllPlayersPaid();
                     break;
                 case ServerSendMessages.PaymentComplete:
-                    PaymentHandler.PaymentComplete(PlayerManager.LocalPlayer, playerNumber);
+                    PaymentHandler.PaymentComplete(PlayerManager.LocalPlayer);
+                    PaymentHandler.EndPayment(this);
                     break;
                 case ServerSendMessages.CardMoved:
                     break;
@@ -118,7 +118,7 @@ namespace MonopolyDeal
                         State = State.PlayingCards;
                     else
                         State = State.NotTurn;
-                    break;
+                break;
                 case ServerSendMessages.OnPlayerWin:
                     break;
                 case ServerSendMessages.OnPlayerConnected:
@@ -128,10 +128,19 @@ namespace MonopolyDeal
                 case ServerSendMessages.OnPlayerReconnected:
                     break;
                 case ServerSendMessages.DebugSendCard:
-                    int cardID = int.Parse(Format.ToString(data));
-                    if (CardData.TryGetCard<Card>(cardID, out var card))
-                        PlayerManager.LocalPlayer.Hand.AddCard(card);
-                    break;
+                    if (playerNumber == PlayerManager.LocalPlayer.Number)
+                    {
+                        int cardID = int.Parse(Format.ToString(data));
+                        var card = CardData.CreateNewCard<Card>(cardID);
+                        if (card is not null)
+                            PlayerManager.LocalPlayer.Hand.AddCard(card);
+                    }
+                    else
+                    {
+                        var player = PlayerManager.GetOnlinePlayer(playerNumber);
+                        ++player.CardsInHand;
+                    }                  
+                break;
             }
 
            

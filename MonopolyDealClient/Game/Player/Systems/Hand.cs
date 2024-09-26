@@ -62,7 +62,7 @@ namespace MonopolyDeal
             int id = 0;
             for (int i = 0; i < mCards.Count; i++)
             {
-                ImGui.Text(mCards[i].DisplayName());
+                ImGui.TextColored(mCards[i].Color.ToVector4(), mCards[i].DisplayName());
                 if (extraLogic is not null && extraLogic.Invoke(mCards[i], id++))
                     return;
             }

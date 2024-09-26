@@ -61,7 +61,9 @@ public static class GameManager
                 if (PaymentManager.IsPaymentInProgress)
                 {
                     var status1 = PlayerManager.TryGetPlayer(playerNumber, out var targetPlayer);
-                    if (status1 != ConnectionStatus.Connected) break;
+                    if (status1 != ConnectionStatus.Connected) 
+                        break;
+
                     PaymentManager.NoRejected(sDeck, targetPlayer);
                 }
                 break;
@@ -81,11 +83,14 @@ public static class GameManager
                     PaymentManager.PlayerPaidCards(player, data);
                 break;
             case ClientSendMessages.PaymentAccepted:
-                if (!PaymentManager.IsPaymentInProgress)
-                    break;
+                if (PaymentManager.IsPaymentInProgress)
+                {
+                    PaymentManager.EndPayment();                    
+                    Server.BroadcastMessage(ServerSendMessages.PaymentComplete, player.Number);
+                }
+                    
 
-                PaymentManager.EndPayment();
-                Server.BroadcastMessage(ServerSendMessages.PaymentComplete, player.Number);
+                
                 break;
             case ClientSendMessages.OnEndTurn:
                 TurnManager.EndTurn(sDeck);
@@ -122,7 +127,7 @@ public static class GameManager
                 if (!ImGui.Button($"Give {card.DisplayName()}##{i++}"))
                     continue;
 
-                Server.SendMessageToPlayers(ServerSendMessages.DebugSendCard, 0, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);
+                Server.BroadcastMessage(ServerSendMessages.DebugSendCard, Format.Encode(card.ID.ToString()), mValues.targetPlayerNumber);
             }
         }        
         ImGui.End();

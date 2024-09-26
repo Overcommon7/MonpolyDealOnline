@@ -16,6 +16,7 @@ namespace MonopolyDeal
         Dictionary<SetType, ActionType> mBuildingTypes;
         int playerNumber;
         bool isLocalPlayer;
+        int emptyWildCards;
         
         public IReadOnlyList<PropertyCard> PropertyCards => mPropertyCards;
         public IReadOnlyList<BuildingCard> BuildingCards => mBuildingCards;
@@ -23,6 +24,7 @@ namespace MonopolyDeal
         public IReadOnlyCollection<SetType> SetTypesPlayed => mSetTypes.Keys;
         public bool IsEmpty => mPropertyCards.Count == 0 && mBuildingCards.Count == 0 && mMoneyCards.Count == 0;
         public int TotalCardsPlayed => mPropertyCards.Count + mBuildingCards.Count + mMoneyCards.Count;
+
 
         public PlayedCards(Player player)
         {
@@ -34,6 +36,7 @@ namespace MonopolyDeal
             isLocalPlayer = player is LocalPlayer;
             mBuildingTypes = new Dictionary<SetType, ActionType>();
             mSetTypes = new() { { SetType.None, -100000 } };
+            emptyWildCards = 0;
         }
         public void RemovePropertyCard(PropertyCard card)
         {
@@ -48,6 +51,9 @@ namespace MonopolyDeal
             {
                 mSetTypes.Remove(card.SetType);
             }
+
+            if (SetType.None == card.SetType)
+                --emptyWildCards;
                
         }
 
@@ -117,6 +123,9 @@ namespace MonopolyDeal
 
             if (!mSetTypes.TryAdd(card.SetType, 1))
                 mSetTypes[card.SetType]++;
+
+            if (SetType.None == card.SetType && card is WildCard)
+                ++emptyWildCards;
         }       
 
         public bool HasPropertyCardOfType(SetType setType)
@@ -147,11 +156,25 @@ namespace MonopolyDeal
 
         public PropertyCard[] GetCardsOfType(SetType setType)
         {
-            if (setType == SetType.None || !mSetTypes.TryGetValue(setType, out var count))
+            int index = 0;
+            if (setType == SetType.None)
+            {
+                PropertyCard[] wildCards = new PropertyCard[emptyWildCards];
+                foreach (var card in mPropertyCards)
+                {
+                    if (card is WildCard wildCard && wildCard.SetType == SetType.None)
+                    {
+                        wildCards[index++] = card;
+                    }
+                }
+
+                return wildCards;
+            }
+
+            if (!mSetTypes.TryGetValue(setType, out var count))
                 return Array.Empty<PropertyCard>();
 
-            PropertyCard[] cards = new PropertyCard[count];
-            int index = 0;
+            PropertyCard[] cards = new PropertyCard[count];            
             foreach (var card in mPropertyCards)
             {
                 if (card.SetType != setType)
@@ -167,7 +190,10 @@ namespace MonopolyDeal
 
         public int GetNumberOfCardsInSet(SetType setType)
         {
-            if (setType == SetType.None || !mSetTypes.TryGetValue(setType, out var count))
+            if (setType == SetType.None)
+                return emptyWildCards;
+
+            if (!mSetTypes.TryGetValue(setType, out var count))
                 return 0;
 
             return count;
@@ -184,22 +210,19 @@ namespace MonopolyDeal
             int id = 0;
             foreach (var setType in mSetTypes.Keys)
             {
-                if (setType == SetType.None)
-                    continue;
-
                 if (!ImGui.TreeNode($"{setType}##{playerNumber}{identifier}"))
                     continue;
 
                 foreach (var card in GetCardsOfType(setType))
                 {
-                    ImGui.Text(card.Name);
+                    ImGui.TextColored(card.Color.ToVector4(), card.Name);
                     if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
                         break;
                 }
 
                 foreach (var buildingCard in mBuildingCards.FindAll(building => building.CurrentSetType == setType))
                 {
-                    ImGui.Text(buildingCard.DisplayName());
+                    ImGui.TextColored(buildingCard.Color.ToVector4(), buildingCard.DisplayName());
                     if (buildingLogic is not null && buildingLogic.Invoke(buildingCard, id++))
                         break;
                 }
@@ -222,7 +245,7 @@ namespace MonopolyDeal
                     {
                         if (card is ActionCard action)
                         {
-                            ImGui.Text($"M{card.Value} - {card.DisplayName()}");
+                            ImGui.TextColored(card.Color.ToVector4(), $"M{card.Value} - {card.DisplayName()}");
                             if (moneyLogic is not null && moneyLogic.Invoke(action, id++))
                                 break;
                         }
@@ -237,7 +260,7 @@ namespace MonopolyDeal
                     {
                         if (card is MoneyCard money)
                         {
-                            ImGui.Text(money.Name);
+                            ImGui.TextColored(money.Color.ToVector4(), money.Name);
                             if(moneyLogic is not null && moneyLogic.Invoke(card, id++))
                                 break;
                         }                            

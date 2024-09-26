@@ -74,7 +74,7 @@ namespace MonopolyDeal
             int value = 0;
             for (int i = 0; i < mCardsPaying.Count;)
             {
-                ImGui.Text(mCardsPaying[i].DisplayName());
+                ImGui.TextColored(mCardsPaying[i].Color.ToVector4(), mCardsPaying[i].DisplayName());
                 ImGui.SameLine();
                 if (!ImGui.Button($"Put Back##{i}"))
                 {

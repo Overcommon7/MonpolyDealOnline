@@ -1,7 +1,7 @@
 ﻿public class MoneyCard : Card, Copy<MoneyCard>
 {
     public MoneyCard(int value)
-        : base("M" + value, value) 
+        : base("M" + value, value, CardData.GetCardColor(value)) 
     { 
 
     }
