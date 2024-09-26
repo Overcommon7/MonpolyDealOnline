@@ -28,8 +28,7 @@ public static class PaymentManager
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo))
             return;
 
-        if (sPlayerBeingPaid?.RemoveCardFromHand(justSayNo) == false)
-            return;
+        sPlayerBeingPaid?.RemoveCardFromHand(justSayNo);
 
         deck.AddCardToRemainingPile(justSayNo);
         --sPlayersPaid;
@@ -40,14 +39,9 @@ public static class PaymentManager
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo))
             return;
 
-        if (!player.RemoveCardFromHand(justSayNo))
-        {
-            Console.WriteLine("[SERVER] L: Say No Not Found");
-            return;
-        }
-           
-
+        player.RemoveCardFromHand(justSayNo);          
         deck.AddCardToRemainingPile(justSayNo);
+
         Server.BroadcastMessage(ServerSendMessages.JustSayNoPlayed, player.Number);
         CheckForAllPlayersPaid();
     }

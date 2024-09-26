@@ -109,19 +109,14 @@ namespace MonopolyDeal
         {
             AllPlayersPaid = false;
 
-            if (IsBeingPaid)
-                return;
+            int index = mPayments.FindIndex(payment => payment.mPlayerNumber == playerNumber);
+            if (index >= 0)
+                mPayments.RemoveAt(index);
 
-            if (playerManager.LocalPlayer.Number != playerNumber)
-            {
-                int index = mPayments.FindIndex(payment => payment.mPlayerNumber == playerNumber);
-                if (index >= 0)
-                    mPayments.RemoveAt(index);
-            }
-            else
+            if (playerManager.LocalPlayer.Number == playerNumber)
             {
                 var player = playerManager.GetOnlinePlayer(PlayerNumberBeingPaid);
-                App.GetState<Gameplay>().GetWindow<PayPopup>().Open(playerManager.LocalPlayer, [$"Player {player.Name} Has Rejected Your No"]);
+                App.GetState<Gameplay>().GetWindow<PayPopup>().Open(playerManager.LocalPlayer, [$"Player {player.Name} Has Rejected Your No", $"You owe M{AmountDue}"]);
             }
 
         }

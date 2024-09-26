@@ -16,8 +16,8 @@ public static class PlayerActions
         if (!CardData.TryGetCard(cardID, out Card card))
             return;
 
-        if (player.RemoveCardFromHand(card))
-            deck.AddCardToRemainingPile(card);
+        player.RemoveCardFromHand(card);
+        deck.AddCardToRemainingPile(card);
     }
 
     public static void PutCardsBack(Deck deck, Player player, byte[] data)

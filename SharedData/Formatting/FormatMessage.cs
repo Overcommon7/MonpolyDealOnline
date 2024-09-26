@@ -6,7 +6,7 @@ public static class Format
     public const int MESSAGE_SIZE = 20;
     public const int PLAYER_ID_LENGTH = 4;
     public const int HEADER_SIZE = MESSAGE_SIZE + PLAYER_ID_LENGTH;
-    public const byte DELIMITER = (byte)'@';
+    public const byte DELIMITER = byte.MaxValue;
 
     public static byte[] CreateHeader<T>(T messageName) where T : struct, Enum
     {

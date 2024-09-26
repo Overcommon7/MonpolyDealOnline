@@ -3,18 +3,18 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 struct ClientRequest
 {
     public ulong mPlayerID;
+    public int mPlayerNumber;
     public ClientSendMessages mMessage;
     public byte[] mData;
 }
 internal static class Server
 {
     static SimpleTcpServer mServer;
-    public delegate void DataRecieved(ulong clientID, ClientSendMessages message, byte[] data);
+    public delegate void DataRecieved(ulong clientID, int playerNumber, ClientSendMessages message, byte[] data);
 
     public static event DataRecieved? mOnDataRecieved;
     public static event Action<SimpleTcpServer, TcpClient>? mOnClientDisconnected; 
@@ -185,7 +185,7 @@ internal static class Server
             if (PlayerManager.TryGetPlayer(request.mPlayerID, out var player) != ConnectionStatus.Invalid)
                 Console.WriteLine($"[SERVER] R: {player.Name} - Type: {request.mMessage} - #: {player.Number}");
 
-            mOnDataRecieved?.Invoke(request.mPlayerID, request.mMessage, request.mData);
+            mOnDataRecieved?.Invoke(request.mPlayerID, request.mPlayerNumber, request.mMessage, request.mData);
         }
 
         mRequests.Clear();
@@ -197,10 +197,13 @@ internal static class Server
         ClientRequest clientRequest = new();
 
         clientRequest.mPlayerID = e.TcpClient.GetID();
-        clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
+        
 
-        if (e.Data.Length > Format.HEADER_SIZE)
+        if (e.Data.Length >= Format.HEADER_SIZE)
+        {
+            clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
             clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
+        }            
         else
             clientRequest.mData = e.Data;
 
@@ -236,13 +239,17 @@ internal static class Server
             if (status != ConnectionStatus.Connected)
                 continue;
 
-            builder.Append(player.Number).Append(',').Append(player.ID).Append(',').Append(player.Name);
-
-            if (i + 1 != PlayerManager.TotalPlayers)
-                builder.Append('|');
+            builder
+                .Append(player.Number)
+                .Append(',')
+                .Append(player.ID)
+                .Append(',')
+                .Append(player.Name)
+                .Append('|');
         }
 
-        var playerData = Format.ToData(ServerSendMessages.OnPlayerIDAssigned, builder.ToString(), PlayerManager.TotalPlayers + 1);
+        string data = builder.ToString();
+        var playerData = Format.ToData(ServerSendMessages.OnPlayerIDAssigned, data, PlayerManager.TotalPlayers + 1);
         e.GetStream().Write(playerData, 0, playerData.Length);
 
         mOnClientConnected?.Invoke(mServer, e);

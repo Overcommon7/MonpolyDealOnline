@@ -78,11 +78,10 @@ namespace MonopolyDeal
         {
             if (Client.ID == 0)
             {
-                var connection = App.GetState<Connection>();
                 var strs = Format.ToString(data).Split('|', StringSplitOptions.RemoveEmptyEntries);
 
                 Client.ID = ulong.Parse(strs[0]);
-                connection.PlayerNumber = playerNumber;
+                PlayerNumber = playerNumber;
 
                 for (int i = 1; i < strs.Length; ++i)
                 {
@@ -92,9 +91,8 @@ namespace MonopolyDeal
 
                     int number = int.Parse(playerData[0]);
                     ulong id = ulong.Parse(playerData[1]);
-                    connection.AddOnlinePlayer(number, id, playerData[2]);
+                    AddOnlinePlayer(number, id, playerData[2]);
                 }
-                return;
             }
         }
 
@@ -184,6 +182,7 @@ namespace MonopolyDeal
             ImGui.SeparatorText("Debug Info");
 
             ImGui.TextDisabled(Client.ID.ToString());
+            ImGui.TextDisabled("Number: " + PlayerNumber.ToString());
             ImGui.TextDisabled(Client.EndPoint);
         }
         void ConnectToServer()

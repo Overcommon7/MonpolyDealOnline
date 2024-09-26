@@ -67,18 +67,15 @@ public class Player : IEquatable<Player>
     {
         mPlayArea.Add(card);
     }
-    public bool RemoveCardFromHand(Card card)
+    public void RemoveCardFromHand(Card card)
     {
         int index = mHand.FindIndex(c => c.ID == card.ID);
-        if (index == -1)
-            return false;
-
-        mHand.RemoveAt(index);
-        return true;
+        if (index != -1)
+            mHand.RemoveAt(index);
     }
-    public bool RemoveCardFromPlayArea(Card card)
+    public void RemoveCardFromPlayArea(Card card)
     {
-        return mPlayArea.Remove(card);
+        mPlayArea.Remove(card);
     }
     public bool RemoveCardFromPlayArea(Predicate<Card> predicate)
     {

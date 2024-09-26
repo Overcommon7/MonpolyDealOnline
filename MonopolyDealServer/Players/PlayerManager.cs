@@ -25,17 +25,16 @@ public static class PlayerManager
 
     public static Player AddPlayer(TcpClient client, string name = "")
     {
-        if (string.IsNullOrEmpty(name))
+        lock (mConnectedPlayers)
+        {
+            if (string.IsNullOrEmpty(name))
             name = $"Player {TotalPlayers + 1}";
 
-        Player player = new(client, name, TotalPlayers + 1);
+            Player player = new(client, name, TotalPlayers + 1);
 
-        lock (mConnectedPlayers) 
-        {
             mConnectedPlayers.Add(player);
-        }
-        
-        return player;
+            return player;
+        }        
     }
 
     public static ConnectionStatus TryGetPlayer(TcpClient client, out Player player)

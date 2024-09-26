@@ -21,7 +21,7 @@ public static class ConnectionHandler
         Server.mOnDataRecieved -= Server_OnDataRecieved;
     }
 
-    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data)
+    private static void Server_OnDataRecieved(ulong clientID, int playerNumber, ClientSendMessages message, byte[] data)
     {
         if (message != ClientSendMessages.SendUsername)
             return;

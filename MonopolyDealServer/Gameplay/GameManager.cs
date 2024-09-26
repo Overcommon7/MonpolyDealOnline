@@ -25,7 +25,7 @@ public static class GameManager
         mValues.targetPlayerNumber = 1;
     }
 
-    private static void Server_OnDataRecieved(ulong clientID, ClientSendMessages message, byte[] data)
+    private static void Server_OnDataRecieved(ulong clientID, int playerNumber, ClientSendMessages message, byte[] data)
     {
         var status = PlayerManager.TryGetPlayer(clientID, out var player);
         if (status != ConnectionStatus.Connected) 
@@ -58,10 +58,16 @@ public static class GameManager
             case ClientSendMessages.PlayActionCard:
                 break;
             case ClientSendMessages.RejectedNo:
-                PaymentManager.NoRejected(sDeck, player);
+                if (PaymentManager.IsPaymentInProgress)
+                {
+                    var status1 = PlayerManager.TryGetPlayer(playerNumber, out var targetPlayer);
+                    if (status1 != ConnectionStatus.Connected) break;
+                    PaymentManager.NoRejected(sDeck, targetPlayer);
+                }
                 break;
             case ClientSendMessages.ActionGotDenied:
-                PaymentManager.PlayerUsedSayNo(sDeck, player);
+                if (PaymentManager.IsPaymentInProgress)
+                    PaymentManager.PlayerUsedSayNo(sDeck, player);
                 break;
             case ClientSendMessages.RequestCards:
                 break;
@@ -71,9 +77,13 @@ public static class GameManager
             case ClientSendMessages.MoveCard:
                 break;
             case ClientSendMessages.PayPlayer:
-                PaymentManager.PlayerPaidCards(player, data);
+                if (PaymentManager.IsPaymentInProgress)
+                    PaymentManager.PlayerPaidCards(player, data);
                 break;
             case ClientSendMessages.PaymentAccepted:
+                if (!PaymentManager.IsPaymentInProgress)
+                    break;
+
                 PaymentManager.EndPayment();
                 Server.BroadcastMessage(ServerSendMessages.PaymentComplete, player.Number);
                 break;

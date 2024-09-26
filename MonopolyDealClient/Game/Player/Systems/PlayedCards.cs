@@ -212,7 +212,7 @@ namespace MonopolyDeal
                 value += card.Value;
 
             ImGui.Spacing();
-            ImGui.SeparatorText($"Money: M{value}");
+            ImGui.SeparatorText($"Money: M{value}"); 
 
             if (isLocalPlayer)
             {
