@@ -7,6 +7,7 @@ namespace MonopolyDeal
     public class LocalPlayerWindow : IWindow
     {
         public LocalPlayer ConnectedPlayer { get; init; }
+        public bool IsDisabled { get; set; } = false;
         public LocalPlayerWindow(LocalPlayer player) 
             : base(player.Name)
         {
@@ -15,6 +16,9 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
+            if (IsDisabled)
+                ImGui.BeginDisabled();
+
             ConnectedPlayer.ImGuiDraw();
 
             if (!ConnectedPlayer.IsTurn)
@@ -26,7 +30,10 @@ namespace MonopolyDeal
                 {
                     Client.SendData(ClientSendMessages.OnEndTurn, ConnectedPlayer.Number);
                 }                    
-            }                
+            }
+
+            if (IsDisabled)
+                ImGui.EndDisabled();
         }
     }
 }

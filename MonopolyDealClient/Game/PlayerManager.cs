@@ -7,7 +7,7 @@ namespace MonopolyDeal
         int mCurrentPlayerNumbersTurn;
         List<OnlinePlayer> mPlayers;
         public LocalPlayer LocalPlayer { get; private set; }
-        public IReadOnlyList<OnlinePlayer> OnlinePlayes => mPlayers;
+        public IReadOnlyList<OnlinePlayer> OnlinePlayers => mPlayers;
         public int CurrentPlayerNumbersTurn => mCurrentPlayerNumbersTurn;
         public Player GetPlayer(int playerNumber)
         {

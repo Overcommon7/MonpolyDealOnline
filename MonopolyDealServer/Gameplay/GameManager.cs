@@ -56,6 +56,7 @@ public static class GameManager
                 PlayerActions.PropertyCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayActionCard:
+                PlayerActions.ActionCardPlayed(player, data);
                 break;
             case ClientSendMessages.RejectedNo:
                 if (PaymentManager.IsPaymentInProgress)
@@ -72,6 +73,7 @@ public static class GameManager
                     PaymentManager.PlayerUsedSayNo(sDeck, player);
                 break;
             case ClientSendMessages.RequestCards:
+                PlayerActions.OnCardsRequested(sDeck, player, data);
                 break;
             case ClientSendMessages.PutCardsBack:
                 PlayerActions.PutCardsBack(sDeck, player, data);

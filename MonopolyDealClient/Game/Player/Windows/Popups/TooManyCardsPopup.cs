@@ -34,18 +34,15 @@ namespace MonopolyDeal
             int suffix = 0;
             foreach (var card in mPlayer.Hand.Cards)
             {
-                ++suffix;
-
                 if (mDiscardingCards.Contains(card))
                     continue;
 
                 ImGui.TextColored(card.Color.ToVector4(), card.DisplayName());
                 ImGui.SameLine();
-                if (!ImGui.Button("Discard##" + suffix))
+                if (!ImGui.Button("Discard##" + suffix++))
                     continue;
 
                 mDiscardingCards.Add(card);
-                break;
             }
 
             bool tooManyCards = mPlayer.Hand.NumberOfCards - mDiscardingCards.Count > Constants.MAX_CARDS_IN_HAND;

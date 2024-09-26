@@ -9,7 +9,9 @@
     PlayWildCard,
     PlayMoneyCard,
     PlayPropertyCard,
+    PlayBirthdayCard,
     PlayActionCard,
+    ActionAgainstOne,
 
     ActionGotDenied,
     PaymentAccepted,
@@ -34,6 +36,7 @@ public enum ServerSendMessages : short
     SlyDealPlayed,
     ForcedDealPlayed,
     DealBreakerPlayed,
+    BirthdayCardPlayed,
     SingleTargetActionCard,
     ActionCardPlayed,
     MoneyCardPlayed,

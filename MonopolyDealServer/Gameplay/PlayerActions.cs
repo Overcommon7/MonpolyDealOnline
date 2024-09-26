@@ -71,4 +71,18 @@ public static class PlayerActions
         player.AddCardToHand(card);       
         Server.SendMessageExcluding(message, player.Number, data, player.Number);
     }
+
+    public static void OnCardsRequested(Deck deck, Player player, byte[] data)
+    {
+        int numberOfCards = int.Parse(Format.ToString(data));
+        var cards = deck.RemoveMultipleCardsFromDeck(numberOfCards);
+
+        var cardsAsString = Serializer.SerializeListOfCards(cards);
+        Server.BroadcastMessage(ServerSendMessages.CardsSent, cardsAsString, player.Number);
+    }
+
+    public static void ActionCardPlayed(Player player, byte[] data)
+    {
+        
+    }
 }

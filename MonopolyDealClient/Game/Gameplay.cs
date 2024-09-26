@@ -23,7 +23,7 @@ namespace MonopolyDeal
 
             AddWindow<LocalPlayerWindow>(PlayerManager.LocalPlayer);           
 
-            foreach (var player in PlayerManager.OnlinePlayes)
+            foreach (var player in PlayerManager.OnlinePlayers)
                 AddWindow<OnlinePlayerWindow>(player);
 
             StartGame();
