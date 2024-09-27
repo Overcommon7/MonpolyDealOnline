@@ -90,14 +90,11 @@ namespace MonopolyDeal
             mPayments.Add(info);
         }
 
-        public static void OnPlayerSaidNo(GettingPaidWindow gettingPaidWindow, PlayerManager playerManager, int playerNumber)
+        public static void OnPlayerSaidNo(PlayerManager playerManager, int playerNumber)
         {
             if (playerNumber == playerManager.LocalPlayer.Number)
-            {
                 return;
-            }
                
-
             PaymentInfo info = new PaymentInfo();
             info.mPlayerNumber = playerNumber;
             info.mPlayedSayNo = true;
@@ -114,7 +111,10 @@ namespace MonopolyDeal
                 mPayments.RemoveAt(index);
 
             if (gameplay.PlayerManager.LocalPlayer.Number != playerNumber)
+            {
                 return;
+            }
+               
 
             var player = gameplay.PlayerManager.GetOnlinePlayer(PlayerNumberBeingPaid);                
             gameplay.SetToRespondingState();

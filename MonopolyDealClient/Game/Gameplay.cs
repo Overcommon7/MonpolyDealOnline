@@ -79,7 +79,7 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.JustSayNoPlayed:
                     if (PaymentHandler.PaymentInProcess)
-                        PaymentHandler.OnPlayerSaidNo(GetWindow<GettingPaidWindow>(), PlayerManager, playerNumber);
+                        PaymentHandler.OnPlayerSaidNo(PlayerManager, playerNumber);
 
                 break;
                 case ServerSendMessages.NoWasRejected:
@@ -172,6 +172,7 @@ namespace MonopolyDeal
             AddWindow<SlyDealPopup>();
             AddWindow<TooManyCardsPopup>();
             AddWindow<WildRentPopup>();
+            AddWindow<MessagePopup>();
         }
     }
 }

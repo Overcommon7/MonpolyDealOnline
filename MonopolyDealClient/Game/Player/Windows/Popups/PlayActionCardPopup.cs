@@ -13,7 +13,10 @@ namespace MonopolyDeal
         protected string[] mPlayerNames = Array.Empty<string>();
         protected int mPlayerCount;
         public PlayActionCardPopup()
-            : base(nameof(PlayActionCardPopup))
+            : this(nameof(PlayActionCardPopup)) { }
+
+        protected PlayActionCardPopup(string title)
+            : base(title) 
         {
             mIsPopup = false;
             mIsClosable = false;
@@ -23,15 +26,8 @@ namespace MonopolyDeal
         {
             if (mCard is not ActionCard action)
                 return;
-
-            ImGui.Checkbox("Play As Money##PACP", ref mAsMoney);
-
-            if (mAsMoney)
-            {
-                if (ImGui.Button("Play##PACP"))
-                    PlayAsMoney();                
-            }
-            else
+            
+            if (!mAsMoney)
             {
                 if (action.ActionType == ActionType.DebtCollector)
                     DebtCollectorLogic();
@@ -41,17 +37,33 @@ namespace MonopolyDeal
                     PassGoLogic();
             }
 
+           
+        }
+        protected void CloseLogic()
+        {
             if (ImGui.Button("Cancel##PACP"))
                 Close();
         }
+        protected void AsMoneyLogic()
+        {
+            ImGui.Checkbox("Play As Money##PACP", ref mAsMoney);
 
-        protected void SelectPlayer()
+            if (mAsMoney)
+            {
+                if (ImGui.Button("Play##PACP"))
+                    PlayAsMoney();
+            }
+        }
+
+        protected bool SelectPlayer()
         {
             if (!ImGui.Combo("Target Player", ref mPlayerIndex, mPlayerNames, mPlayerNames.Length))
-                return;
+                return false;
 
             var onlinePlayer = App.GetState<Gameplay>().PlayerManager.OnlinePlayers[mPlayerIndex];
             mTargetPlayerNumber = onlinePlayer.Number;
+
+            return true;
         }
         void DebtCollectorLogic()
         {
