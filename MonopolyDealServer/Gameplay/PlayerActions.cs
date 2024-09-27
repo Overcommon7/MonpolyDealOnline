@@ -140,7 +140,7 @@ public static class PlayerActions
         CardPlayedToDeck<ActionCard>(deck, player, action.ID, data, message);
     }
 
-    public static void SlyDealPlayed(Deck sDeck, Player player, byte[] data)
+    public static void SlyDealPlayed(Deck deck, Player player, byte[] data)
     {
         var values = Format.ToStruct<SlyDealValues>(data);
         var status = PlayerManager.TryGetPlayer(values.targetPlayerNumber, out var takingFrom);
@@ -150,17 +150,48 @@ public static class PlayerActions
          
     }
 
-    public static void ForcedDealPlayed(Deck sDeck, Player player, byte[] data)
+    public static void ForcedDealPlayed(Deck deck, Player player, byte[] data)
     {
         throw new NotImplementedException();
     }
 
-    public static void DealBreakerPlayed(Deck sDeck, Player player, byte[] data)
+    public static void DealBreakerPlayed(Deck deck, Player player, byte[] data)
     {
-        throw new NotImplementedException();
+        var values = Format.ToStruct<DealBreakerValues>(data);
+        var status = PlayerManager.TryGetPlayer(values.targetPlayerNumber, out var target);
+        if (status != ConnectionStatus.Connected) 
+            return;
+
+        var cards = target.GetPropertyCardsInSet(values.setType);
+        var buildingCards = target.GetBuildingCardsInSet(values.setType);
+        var amountForSet = CardData.GetValues(values.setType).AmountForFullSet;
+
+        if (cards.Length > amountForSet)
+            Array.Sort(cards, CardData.SortAlgorithm);
+
+        for (int i = 0; i < amountForSet; ++i)
+        {
+            target.RemoveCardFromPlayArea(cards[i]);
+            player.AddCardToPlayArea(cards[i]);
+        }
+
+        foreach (var card in buildingCards)
+        {
+            target.RemoveCardFromPlayArea(card);
+            player.AddCardToPlayArea(card);
+        }
+
+        if (CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DealBreaker, out var dealBreaker))
+        {
+            deck.AddCardToRemainingPile(dealBreaker);
+            player.RemoveCardFromHand(dealBreaker);
+        }
+            
+                   
+        Server.BroadcastMessage(ServerSendMessages.DealBreakerPlayed, data, player.Number);
     }
 
-    public static void BirthdayPlayed(Deck sDeck, Player player, byte[] data)
+    public static void BirthdayPlayed(Deck deck, Player player, byte[] data)
     {
         throw new NotImplementedException();
     }
@@ -170,7 +201,7 @@ public static class PlayerActions
         throw new NotImplementedException();
     }
 
-    public static void WildRentPlayed(Deck sDeck, Player player, byte[] data)
+    public static void WildRentPlayed(Deck deck, Player player, byte[] data)
     {
         throw new NotImplementedException();
     }

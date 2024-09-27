@@ -5,3 +5,10 @@ public enum TargetType
     One,
     All
 }
+
+public enum SingleTargetActionType
+{
+    SlyDeal,
+    ForcedDeal,
+    DealBreaker
+}

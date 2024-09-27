@@ -86,4 +86,32 @@ public class Player : IEquatable<Player>
         mPlayArea.RemoveAt(index);
         return true;
     }
+    public Card? GetCard(int cardID)
+    {
+        return mPlayArea.Find(card => card.ID == cardID);
+    }
+    public Card[] GetPropertyCardsInSet(SetType type)
+    {
+        return mPlayArea.Where(card =>
+        {
+            if (card is not PropertyCard property)
+                return false;
+
+            return property.SetType == type;
+
+        }).ToArray();
+    }
+
+    public Card[] GetBuildingCardsInSet(SetType type)
+    {
+        return mPlayArea.Where(card =>
+        {
+            if (card is not BuildingCard building)
+                return false;
+
+            return building.CurrentSetType == type;
+
+        }).ToArray();
+    }
+
 }

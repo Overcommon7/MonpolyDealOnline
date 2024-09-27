@@ -154,7 +154,7 @@ namespace MonopolyDeal
             return type == ActionType.Hotel;
         }
 
-        public PropertyCard[] GetCardsOfType(SetType setType)
+        public PropertyCard[] GetPropertyCardsOfType(SetType setType)
         {
             int index = 0;
             if (setType == SetType.None)
@@ -213,7 +213,7 @@ namespace MonopolyDeal
                 if (!ImGui.TreeNode($"{setType}##{playerNumber}{identifier}"))
                     continue;
 
-                foreach (var card in GetCardsOfType(setType))
+                foreach (var card in GetPropertyCardsOfType(setType))
                 {
                     ImGui.TextColored(card.Color.ToVector4(), card.Name);
                     if (propertyLogic is not null && propertyLogic.Invoke(card, id++))

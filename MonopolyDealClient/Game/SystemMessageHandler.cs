@@ -128,6 +128,41 @@ namespace MonopolyDeal
             action(player, card);
         }
 
+        public static void DealBreakerPlayed(MessagePopup messagePopup, PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            
+            var values = Format.ToStruct<DealBreakerValues>(data);
 
+            var localPlayer = playerManager.LocalPlayer;
+            var targetPlayer = playerManager.GetPlayer(values.targetPlayerNumber);
+            var recievingPlayer = playerManager.GetPlayer(playerNumber);
+
+            var cards = targetPlayer.PlayedCards.GetPropertyCardsOfType(values.setType);
+
+            foreach (var card in cards)
+            {
+                targetPlayer.PlayedCards.RemovePropertyCard(card);
+                recievingPlayer.PlayedCards.AddPropertyCard(card);
+            }
+
+            var house = targetPlayer.PlayedCards.GetBuildingCard(ActionType.House, values.setType);
+            if (house is not null)
+            {
+                targetPlayer.PlayedCards.RemoveBuildingCard(house);
+                recievingPlayer.PlayedCards.AddBuildingCard(house, values.setType);
+            }
+
+            var hotel = targetPlayer.PlayedCards.GetBuildingCard(ActionType.Hotel, values.setType);
+            if (hotel is not null)
+            {
+                targetPlayer.PlayedCards.RemoveBuildingCard(hotel);
+                recievingPlayer.PlayedCards.AddBuildingCard(hotel, values.setType);
+            }
+
+            if (localPlayer.Number != recievingPlayer.Number && localPlayer.Number != targetPlayer.Number)
+            {
+                messagePopup.Open(["Deal Breaker Played", $"{recievingPlayer.Name} Took The {values.setType} Properties From {targetPlayer.Name}"]);
+            }          
+        }
     }
 }

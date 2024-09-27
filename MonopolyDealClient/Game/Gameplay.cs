@@ -72,6 +72,7 @@ namespace MonopolyDeal
                 case ServerSendMessages.ForcedDealPlayed:
                     break;
                 case ServerSendMessages.DealBreakerPlayed:
+                    SystemMessageHandler.DealBreakerPlayed(GetWindow<MessagePopup>(), PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.DebtCollectorPlayed:
                     break;

@@ -25,16 +25,21 @@ namespace MonopolyDeal
                 if (SelectPlayer())
                     GetTypes();
 
-                if (ImGui.Combo("Steal Set", ref mSetIndex, mSetTypes, mSetTypes.Length))
+                if (ImGui.Combo("Set", ref mSetIndex, mSetTypes, mSetTypes.Length))
                     mSetType = Enum.Parse<SetType>(mSetTypes[mSetIndex]);
 
-                if (ImGui.Button($"Steal Set {mSetType}"))
+                if (ImGui.Button($"Steal Set: {mSetType}"))
                 {
                     DealBreakerValues values = new DealBreakerValues();
                     values.targetPlayerNumber = mTargetPlayerNumber;
                     values.setType = mSetType;
 
-                    Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, App.GetState<Gameplay>().PlayerManager.LocalPlayer.Number);
+                    var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+
+                    if (mCard is not null)
+                        player.Hand.RemoveCard(mCard);
+
+                    Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, player.Number);
                     Close();
                 }
             }    

@@ -83,7 +83,7 @@ public static class CardData
     static Dictionary<ActionType, CardColor> actionColors;
     static Dictionary<SetType, CardColor> cardColors;
     static Dictionary<int, CardColor> moneyColors;
-    static Dictionary<Type, int> sortTypes = new();
+    static Dictionary<Type, int> sortTypes;
     static List<Card> cards = new List<Card>();
 
     public static IReadOnlyDictionary<Type, int> SortTypes => sortTypes;
@@ -134,6 +134,19 @@ public static class CardData
             { ActionType.DoubleRent, new(204, 204, 187) },
             { ActionType.PassGo, new(212, 212, 200) }
         };
+
+        sortTypes = new Dictionary<Type, int>
+        {
+            { typeof(BuildingCard), 8 },
+            { typeof(WildCard), 7 },
+            { typeof(ActionCard), 6 },
+            { typeof(WildRentCard), 5 },
+            { typeof(RentCard), 4 },
+            { typeof(MoneyCard), 3 },
+            { typeof(WildPropertyCard), 2 },
+            { typeof(PropertyCard), 1 },
+            { typeof(Card), 0 }
+        };
     }
     public static Vector4 ToVector4(this CardColor color)
     {
@@ -141,9 +154,9 @@ public static class CardData
     }
     public static int SortAlgorithm(Card a, Card b)
     {
-        if (a is PropertyCard apCard && b is PropertyCard bpCard)
+        if (a.GetType() == typeof(PropertyCard) && b.GetType() == typeof(PropertyCard))
         {
-            return apCard.SetType.CompareTo(bpCard.SetType);
+            return ((PropertyCard)a).SetType.CompareTo(((PropertyCard)b).SetType);
         }
 
         if (a is ActionCard aaCard && b is ActionCard abCard)
@@ -156,7 +169,7 @@ public static class CardData
             return maCard.Value.CompareTo(mbCard.Value);
         }       
 
-        return SortTypes[a.GetType()].CompareTo(SortTypes[b.GetType()]);
+        return sortTypes[a.GetType()].CompareTo(sortTypes[b.GetType()]);
     }
 
     public static int GetRentAmount(SetType type, int cardsOwnedInSet)
@@ -354,19 +367,7 @@ public static class CardData
         List<RentCardSaveValues> rentCards,
         List<CardValues> cardValues)
     {
-        sortTypes = new Dictionary<Type, int>
-        {
-            { typeof(BuildingCard), 8 },
-            { typeof(WildCard), 7 },
-            { typeof(ActionCard), 6 },
-            { typeof(WildRentCard), 5 },
-            { typeof(RentCard), 4 },
-            { typeof(MoneyCard), 3 },
-            { typeof(WildPropertyCard), 2 },
-            { typeof(PropertyCard), 1 },
-            { typeof(Card), 0 }
-        };
-
+      
         cards.Add(new BuildingCard(ActionType.House));
         cards.Add(new BuildingCard(ActionType.Hotel));
         cards.Add(new WildRentCard());
