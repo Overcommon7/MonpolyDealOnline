@@ -34,17 +34,25 @@ public static class GameManager
         switch (message)
         {
             case ClientSendMessages.PlaySlyDeal:
+                PlayerActions.SlyDealPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayForcedDeal:
+                PlayerActions.ForcedDealPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayDealBreaker:
+                PlayerActions.DealBreakerPlayed(sDeck, player, data);
+                break;
+            case ClientSendMessages.PlayBirthdayCard:
+                PlayerActions.BirthdayPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayRentCard:
-                PlayerActions.RentCardPlayed(player, data);
+                PlayerActions.RentCardPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayWildRentCard:
+                PlayerActions.WildRentPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayBuildingRentCard:
+                PlayerActions.BuildingCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayWildCard:
                 PlayerActions.WildCardPlayed(player, data);
@@ -56,7 +64,10 @@ public static class GameManager
                 PlayerActions.PropertyCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayActionCard:
-                PlayerActions.ActionCardPlayed(player, data);
+                PlayerActions.ActionCardPlayed(sDeck, player, data);
+                break;
+            case ClientSendMessages.ActionAgainstOne:
+                PlayerActions.ActionAgainstOne(sDeck, player, data);
                 break;
             case ClientSendMessages.RejectedNo:
                 if (PaymentManager.IsPaymentInProgress)
@@ -79,6 +90,7 @@ public static class GameManager
                 PlayerActions.PutCardsBack(sDeck, player, data);
                 break;
             case ClientSendMessages.MoveCard:
+                PlayerActions.MoveCard(player, data);
                 break;
             case ClientSendMessages.PayPlayer:
                 if (PaymentManager.IsPaymentInProgress)

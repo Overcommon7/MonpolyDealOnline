@@ -10,7 +10,8 @@ namespace MonopolyDeal
         protected bool mAsMoney = false;
         protected int mPlayerIndex = 0;
         protected int mTargetPlayerNumber = 0;
-        protected string mPlayerNames = string.Empty;
+        protected string[] mPlayerNames = Array.Empty<string>();
+        protected int mPlayerCount;
         public PlayActionCardPopup()
             : base(nameof(PlayActionCardPopup))
         {
@@ -46,7 +47,7 @@ namespace MonopolyDeal
 
         protected void SelectPlayer()
         {
-            if (!ImGui.Combo("Target Player", ref mPlayerIndex, mPlayerNames))
+            if (!ImGui.Combo("Target Player", ref mPlayerIndex, mPlayerNames, mPlayerNames.Length))
                 return;
 
             var onlinePlayer = App.GetState<Gameplay>().PlayerManager.OnlinePlayers[mPlayerIndex];
@@ -137,7 +138,10 @@ namespace MonopolyDeal
             var onlinePlayers = gameplay.PlayerManager.OnlinePlayers;
             mPlayerIndex = 0;
             mTargetPlayerNumber = onlinePlayers[mPlayerIndex].Number;
-            mPlayerNames = string.Join('0', onlinePlayers.Select(x => x.Name));
+
+            mPlayerNames = new string[onlinePlayers.Count];
+            for (int i = 0; i < onlinePlayers.Count; i++)
+                mPlayerNames[i] = onlinePlayers[i].Name;
 
             base.Open(card);
         }

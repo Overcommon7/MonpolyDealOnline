@@ -73,7 +73,7 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.DealBreakerPlayed:
                     break;
-                case ServerSendMessages.SingleTargetActionCard:
+                case ServerSendMessages.DebtCollectorPlayed:
                     break;
                 case ServerSendMessages.ActionCardPlayed:
                     break;
@@ -106,6 +106,8 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.UpdateCardsInHand:
                     SystemMessageHandler.OnlinePlayerHandUpdate(PlayerManager, data, playerNumber);
+                    break;
+                case ServerSendMessages.RemoveCard:
                     break;
                 case ServerSendMessages.HandReturned:
                     PlayerManager.LocalPlayer.OnHandReturned(playerNumber, data);

@@ -37,7 +37,7 @@ public enum ServerSendMessages : short
     ForcedDealPlayed,
     DealBreakerPlayed,
     BirthdayCardPlayed,
-    SingleTargetActionCard,
+    DebtCollectorPlayed,
     ActionCardPlayed,
     MoneyCardPlayed,
     JustSayNoPlayed,
@@ -50,6 +50,7 @@ public enum ServerSendMessages : short
     CardMoved,
     CardsSent,
     UpdateCardsInHand,
+    RemoveCard,
 
     OnGameStarted,
     HandReturned,

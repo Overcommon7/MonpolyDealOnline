@@ -66,8 +66,11 @@ namespace MonopolyDeal
                 return;
 
             int cardID = int.Parse(Format.ToString(data));
-            OnlinePlayerPlayedCard<MoneyCard>(playerManager, playerNumber, cardID, (player, card) =>
+            OnlinePlayerPlayedCard<Card>(playerManager, playerNumber, cardID, (player, card) =>
             {
+                if (card is ActionCard action)
+                    action.SetAsMoney(true);
+
                 player.PlayedCards.AddMoneyCard(card);
             });
         }
