@@ -240,6 +240,7 @@ namespace MonopolyDeal
                     value += card.Value;
                 }
 
+
                 ImGui.Spacing();
                 ImGui.SeparatorText("Money");
 
@@ -251,7 +252,8 @@ namespace MonopolyDeal
 
                 ImGui.Spacing();
                 ImGui.Text($"Total Value: {value}");
-
+             
+              
                 ImGui.TreePop();
             }
         }

@@ -6,8 +6,9 @@ public enum TargetType
     All
 }
 
-public enum SingleTargetActionType
+public enum DealType
 {
+    None,
     SlyDeal,
     ForcedDeal,
     DealBreaker

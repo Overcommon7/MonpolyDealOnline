@@ -53,8 +53,8 @@ public struct SlyDealValues
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ForcedDealValues
 {
-    public SetType givingToPlayer;
-    public SetType takingFromPlayer;
+    public int givingToPlayerID;
+    public int takingFromPlayerID;
     public int playerTradingWithNumber;
 }
 

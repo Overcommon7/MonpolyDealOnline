@@ -5,7 +5,7 @@
     public const int PICK_UP_AMOUNT_ON_HAND_EMPTY = 5;
     public const int MAX_CARDS_IN_HAND = 7;
     public const int MAX_PLAYS_PER_TURN = 3;
-    public const int ALL_PLAYER_NUMBER = 100;
+    public const int ALL_PLAYER_NUMBER = 99;
 
     public const int CARD_DATA_FILE_COUNT = 6;
     public const int CARD_DATA_SIZE_DIGITS = 5;

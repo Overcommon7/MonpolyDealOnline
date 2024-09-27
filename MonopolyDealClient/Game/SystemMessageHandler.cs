@@ -130,7 +130,6 @@ namespace MonopolyDeal
 
         public static void DealBreakerPlayed(MessagePopup messagePopup, PlayerManager playerManager, int playerNumber, byte[] data)
         {
-            
             var values = Format.ToStruct<DealBreakerValues>(data);
 
             var localPlayer = playerManager.LocalPlayer;
@@ -138,7 +137,6 @@ namespace MonopolyDeal
             var recievingPlayer = playerManager.GetPlayer(playerNumber);
 
             var cards = targetPlayer.PlayedCards.GetPropertyCardsOfType(values.setType);
-
             foreach (var card in cards)
             {
                 targetPlayer.PlayedCards.RemovePropertyCard(card);
@@ -162,7 +160,8 @@ namespace MonopolyDeal
             if (localPlayer.Number != recievingPlayer.Number && localPlayer.Number != targetPlayer.Number)
             {
                 messagePopup.Open(["Deal Breaker Played", $"{recievingPlayer.Name} Took The {values.setType} Properties From {targetPlayer.Name}"]);
-            }          
+            }
+
         }
     }
 }
