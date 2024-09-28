@@ -84,7 +84,7 @@ public static class ConnectionHandler
             GameManager.Configuration = config;
 
         bool invalid = PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize ||
-            sReadiedPlayers < GameManager.Configuration.mLobbySize;
+            sReadiedPlayers < GameManager.Configuration.mLobbySize || GameManager.Configuration.mLobbySize == 1;
 
         if (invalid)
         {

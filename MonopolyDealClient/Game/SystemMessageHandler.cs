@@ -99,7 +99,11 @@ namespace MonopolyDeal
             int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet);
             var player = playerManager.GetOnlinePlayer(playerNumber);
             if (rentValues.withDoubleRent)
+            {
+                --player.CardsInHand;
                 rentAmount *= 2;
+            }
+                
 
             App.GetState<Gameplay>().SetToRespondingState();
             PaymentHandler.BeginPaymentProcess(playerNumber, rentAmount);
@@ -162,6 +166,22 @@ namespace MonopolyDeal
                 messagePopup.Open(["Deal Breaker Played", $"{recievingPlayer.Name} Took The {values.setType} Properties From {targetPlayer.Name}"]);
             }
 
+        }
+
+        public static void OnActionCardPlayed(PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            if (playerNumber == playerManager.LocalPlayer.Number)
+                return;
+
+            var player = playerManager.GetOnlinePlayer(playerNumber);
+            var values = Format.ToStruct<PlayActionCardValues>(data);
+            if (values.asMoney)
+            {
+                if (CardData.TryGetCard<ActionCard>(values.cardID, out var card))
+                    player.PlayedCards.AddMoneyCard(card);
+            }
+
+            --player.CardsInHand;
         }
     }
 }

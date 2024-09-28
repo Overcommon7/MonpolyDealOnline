@@ -44,7 +44,17 @@ public static class PlayerActions
     {
         PaymentManager.StartNewPayment(player, TargetType.All);
         var values = Format.ToStruct<RentPlayValues>(data);
-        CardPlayedToDeck<RentCard>(deck, player, values.cardID, data, ServerSendMessages.RentCardPlayed);        
+       
+        if (values.withDoubleRent)
+        {
+            if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var action))
+                return;
+
+            player.RemoveCardFromHand(action);
+            deck.AddCardToRemainingPile(action);
+        }
+
+        CardPlayedToDeck<RentCard>(deck, player, values.cardID, data, ServerSendMessages.RentCardPlayed);
     }
 
     public static void PropertyCardPlayed(Player player, byte[] data)
@@ -74,7 +84,7 @@ public static class PlayerActions
         Server.SendMessageExcluding(message, player.Number, data, player.Number);
     }
 
-    static void CardPlayedToDeck<T>(Deck deck, Player player, int cardID, byte[] data, ServerSendMessages message, Action<T>? action = null) where T : Card
+    static void CardPlayedToDeck<T>(Deck deck, Player player, int cardID, byte[]? data, ServerSendMessages message, Action<T>? action = null) where T : Card
     {
         var card = CardData.CreateNewCard<T>(cardID);
 
@@ -86,7 +96,10 @@ public static class PlayerActions
         player.RemoveCardFromHand(card);
         deck.AddCardToRemainingPile(card);
 
-        Server.SendMessageExcluding(message, player.Number, data, player.Number);
+        if (data is null)
+            Server.BroadcastMessage(message, player.Number);
+        else
+            Server.SendMessageExcluding(message, player.Number, data, player.Number);
     }
 
     public static void OnCardsRequested(Deck deck, Player player, byte[] data)
@@ -104,7 +117,7 @@ public static class PlayerActions
 
         if (values.asMoney)
         {
-            CardPlayedToPlayArea<ActionCard>(player, values.cardID, data, ServerSendMessages.MoneyCardPlayed, (card) =>
+            CardPlayedToPlayArea<ActionCard>(player, values.cardID, data, ServerSendMessages.ActionCardPlayed, (card) =>
             {
                 card.SetAsMoney(true);
             });
@@ -147,7 +160,16 @@ public static class PlayerActions
         if (status != ConnectionStatus.Connected)
             return;
 
-         
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.SlyDeal, out var slyDeal))
+            return;
+
+        if (!CardData.TryGetCard<ActionCard>(values.cardID, out var card))
+            return;
+
+        takingFrom.RemoveCardFromPlayArea(card);
+        player.AddCardToPlayArea(card);
+
+        CardPlayedToDeck<ActionCard>(deck, player, slyDeal.ID, data, ServerSendMessages.SlyDealPlayed); 
     }
 
     public static void ForcedDealPlayed(Deck deck, Player player, byte[] data)
@@ -191,14 +213,17 @@ public static class PlayerActions
         Server.BroadcastMessage(ServerSendMessages.DealBreakerPlayed, data, player.Number);
     }
 
-    public static void BirthdayPlayed(Deck deck, Player player, byte[] data)
+    public static void BirthdayPlayed(Deck deck, Player player)
     {
-        throw new NotImplementedException();
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ItsMyBirthday, out var card))
+            return;
+
+        CardPlayedToDeck<ActionCard>(deck, player, card.ID, )
     }
 
     public static void BuildingCardPlayed(Player player, byte[] data)
     {
-        throw new NotImplementedException();
+        
     }
 
     public static void WildRentPlayed(Deck deck, Player player, byte[] data)

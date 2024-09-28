@@ -62,8 +62,13 @@ namespace MonopolyDeal
 
                 int rentAmount = CardData.GetRentAmount(values.chargingSetType, cardsInSet);
                 if (mUseDoubleRent)
+                {
                     rentAmount *= 2;
+                    CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var card);
+                    player.Hand.RemoveCard(card, false);
+                }
 
+                player.Hand.RemoveCard(mRent);
                 PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount);                
                 Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
 

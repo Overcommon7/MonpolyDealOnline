@@ -93,7 +93,10 @@ public class Deck
         }
 
         Shuffle(fullDeck);
-        cards = new(fullDeck);
+        foreach (var card in fullDeck)
+        {
+            cards.Push(CardData.CreateNewCard);
+        }
     }
 
     public Card RemoveCardFromDeck()

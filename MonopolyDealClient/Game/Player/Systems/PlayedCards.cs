@@ -103,7 +103,17 @@ namespace MonopolyDeal
 
         public void RemoveMoneyCard(Card card)
         {
-            mMoneyCards.Remove(card);   
+            if (!mMoneyCards.Remove(card))
+                RemoveMoneyCard(card.ID);
+        }
+
+        public void RemoveMoneyCard(int cardID)
+        {
+            int index = mMoneyCards.FindIndex(card => cardID == card.ID);
+            if (index == -1)
+                return;
+
+            mMoneyCards.RemoveAt(index);
         }
 
         public void AddMoneyCard(Card card)
@@ -210,6 +220,9 @@ namespace MonopolyDeal
             int id = 0;
             foreach (var setType in mSetTypes.Keys)
             {
+                if (setType == SetType.None && emptyWildCards == 0)
+                    continue;
+
                 if (!ImGui.TreeNode($"{setType}##{playerNumber}{identifier}"))
                     continue;
 

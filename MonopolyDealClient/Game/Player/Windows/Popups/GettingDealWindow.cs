@@ -8,29 +8,76 @@ namespace MonopolyDeal
     {
         string mMessage = string.Empty;
         bool mHasSayNo = false;
-        LocalPlayer? mPlayer;
-        OnlinePlayer? mTargetPlayer;
+        bool mIsUsingSayNo = false;
+        bool mIsTarget = false;
+        bool mIsReciever = false;
+        bool mIsCountered = false;
+
+        Player? mReciever;
+        Player? mTarget;
         public GettingDealWindow()
-            : base("Getting Paid", true, false, false, false) { }
+            : base("Getting Deal", true) { }
 
         
         public override void ImGuiDraw()
         {
             ImGui.Text(mMessage);
 
-        }
+            if (mHasSayNo && mIsCountered)
+            {
+                if (ImGui.Button("Use Say No"))
+                {
 
-        public void Open(LocalPlayer player, OnlinePlayer targetPlayer, string message)
+                }
+            }
+
+            if (mIsReciever && )
+            if (ImGui.)
+            
+        }
+        public void GotRejected()
         {
-            mPlayer = player;
-            mTargetPlayer = targetPlayer;
+            mIsCountered = true;
+            CheckForSayNo();
+        }
+        
+        public void Open(Player reciever, Player targetPlayer, string message, int localPlayerNumber)
+        {
+            mReciever = reciever;
+            mTarget = targetPlayer;
             mMessage = message;
+
+            mIsReciever = reciever.Number == localPlayerNumber;
+            mIsTarget = mTarget.Number == localPlayerNumber;
+
+            mIsUsingSayNo = false;
+
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = true;
+
+            CheckForSayNo();
             Open();
         }
 
         public void CheckForSayNo()
         {
+            LocalPlayer? player = null;
 
+            if (mIsTarget)
+                player = mTarget as LocalPlayer;
+
+            if (mIsReciever)
+                player = mReciever as LocalPlayer;
+
+            if (player is null)
+                return;
+
+            mHasSayNo = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var sayNoCard);
+        }
+
+        public override void Close()
+        {
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = false;
+            base.Close();
         }
     }
 }

@@ -75,7 +75,11 @@ public class Player : IEquatable<Player>
     }
     public void RemoveCardFromPlayArea(Card card)
     {
-        mPlayArea.Remove(card);
+        if (mPlayArea.Remove(card))
+            return;
+
+        RemoveCardFromPlayArea(c => c.ID == card.ID);
+
     }
     public bool RemoveCardFromPlayArea(Predicate<Card> predicate)
     {

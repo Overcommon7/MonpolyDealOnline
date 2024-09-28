@@ -26,7 +26,9 @@ namespace MonopolyDeal
         {
             if (mCard is not ActionCard action)
                 return;
-            
+
+            AsMoneyLogic();
+
             if (!mAsMoney)
             {
                 if (action.ActionType == ActionType.DebtCollector)
@@ -50,7 +52,7 @@ namespace MonopolyDeal
 
             if (mAsMoney)
             {
-                if (ImGui.Button("Play##PACP"))
+                if (ImGui.Button("As Money##PACP"))
                     PlayAsMoney();
             }
         }
@@ -69,7 +71,7 @@ namespace MonopolyDeal
         {
             SelectPlayer();
             ImGui.Spacing();
-            if (ImGui.Button("Play##PACP"))
+            if (ImGui.Button("Play Debt Collector##PACP"))
             {
                 ActionAgainstOne(ActionType.DebtCollector, 5);
             }
@@ -77,7 +79,7 @@ namespace MonopolyDeal
 
         void BirthdayLogic()
         {
-            if (!ImGui.Button("Play##PACP"))
+            if (!ImGui.Button("Play Birthday##PACP"))
                 return;
 
             var gameplay = App.GetState<Gameplay>();
@@ -95,7 +97,7 @@ namespace MonopolyDeal
 
         void PassGoLogic()
         {
-            if (!ImGui.Button("Play##PACP"))
+            if (!ImGui.Button("Play Pass Go##PACP"))
                 return;
 
             var gameplay = App.GetState<Gameplay>();
@@ -105,6 +107,7 @@ namespace MonopolyDeal
                 player.Hand.RemoveCard(mCard);
 
             Client.SendData(ClientSendMessages.RequestCards, "2", player.Number);
+            Close();
         }
         
         protected void ActionAgainstOne(ActionType actionType, int amountDue)
@@ -137,6 +140,7 @@ namespace MonopolyDeal
             player.PlayedCards.AddMoneyCard(mCard);
 
             Client.SendData(ClientSendMessages.PlayActionCard, ref values, player.Number);
+            Close();
         }
 
         public void Open(Card card, TargetType targetType)

@@ -9,6 +9,7 @@ namespace MonopolyDeal
         int mSelectedButton = 0;
         int mSelectedTypeIndex = 0;
         string[] mSetTypes;
+        bool mAsMoney = false;
         SetType mSelectedSetType;
         public PlayWildCardPopup()
             : base(nameof(PlayWildCardPopup)) 
@@ -18,24 +19,44 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
-            if (mCard is WildPropertyCard property)
-            {
-                if (ImGui.RadioButton($"{property.SetType1}##PU", ref mSelectedButton, 0))
-                    mSelectedSetType = property.SetType1;
+            if (mCard is WildPropertyCard)
+                ImGui.Checkbox("Play As Money", ref mAsMoney);
 
-                if (ImGui.RadioButton($"{property.SetType2}##PU", ref mSelectedButton, 1))
-                    mSelectedSetType = property.SetType2;
-            }
-            else if (mCard is WildCard wild)
+            if (!mAsMoney)
             {
-                if (ImGui.Combo("Set To Play On", ref mSelectedTypeIndex, mSetTypes, mSetTypes.Length))
-                    mSelectedSetType = Enum.Parse<SetType>(mSetTypes[mSelectedTypeIndex]);
-            }
+                if (mCard is WildPropertyCard property)
+                {
+                    if (ImGui.RadioButton($"{property.SetType1}##PU", ref mSelectedButton, 0))
+                        mSelectedSetType = property.SetType1;
 
-            if (ImGui.Button("Play##WildPopup"))
-            {
-                PlayCard();
+                    if (ImGui.RadioButton($"{property.SetType2}##PU", ref mSelectedButton, 1))
+                        mSelectedSetType = property.SetType2;
+                }
+                else if (mCard is WildCard wild)
+                {
+                    if (ImGui.Combo("Set To Play On", ref mSelectedTypeIndex, mSetTypes, mSetTypes.Length))
+                        mSelectedSetType = Enum.Parse<SetType>(mSetTypes[mSelectedTypeIndex]);
+                }
             }
+           
+            if (ImGui.Button(mAsMoney ? "Use As Money##WildPopup" : "Play##WildPopup"))
+            {
+                if (!mAsMoney && mCard is WildPropertyCard)
+                    PlayCard();
+                else
+                    PlayAsMoney();
+            }
+        }
+
+        private void PlayAsMoney()
+        {
+            if (mCard is null)
+                return;
+
+            var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+            player.PlayedCards.AddMoneyCard(mCard);
+            player.Hand.RemoveCard(mCard);
+            Client.SendData(ClientSendMessages.PlayMoneyCard, mCard.ID.ToString(), player.Number);
         }
 
         void PlayCard()
@@ -74,6 +95,7 @@ namespace MonopolyDeal
                 mSelectedSetType = player.PlayedCards.SetTypesPlayed.FirstOrDefault();
 
             mSelectedButton = 0;
+            mAsMoney = false;
             base.Open(card);
         }
     }

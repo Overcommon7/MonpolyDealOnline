@@ -68,6 +68,11 @@ namespace MonopolyDeal
                     SystemMessageHandler.RentCardPlayed(GetWindow<PayPopup>(), PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.SlyDealPlayed:
+                    if (DealManager.IsDealInProgress)
+                        break;
+
+                    DealManager.ActionPlayed(PlayerManager, message, playerNumber, data);
+                    
                     break;
                 case ServerSendMessages.ForcedDealPlayed:
                     break;
@@ -77,6 +82,7 @@ namespace MonopolyDeal
                 case ServerSendMessages.DebtCollectorPlayed:
                     break;
                 case ServerSendMessages.ActionCardPlayed:
+                    SystemMessageHandler.OnActionCardPlayed(PlayerManager, playerNumber, data);
                     break;
                 case ServerSendMessages.JustSayNoPlayed:
                     if (PaymentHandler.PaymentInProcess)
@@ -97,7 +103,7 @@ namespace MonopolyDeal
                     PaymentHandler.OnAllPlayersPaid();
                     break;
                 case ServerSendMessages.PaymentComplete:
-                    PaymentHandler.PaymentComplete(PlayerManager.LocalPlayer);
+                    PaymentHandler.PaymentComplete(PlayerManager);
                     PaymentHandler.EndPayment(this);
                     break;
                 case ServerSendMessages.CardMoved:

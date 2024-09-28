@@ -5,7 +5,7 @@
     PlayDealBreaker,
     PlayRentCard,
     PlayWildRentCard,
-    PlayBuildingRentCard,
+    PlayBuildingCard,
     PlayWildCard,
     PlayMoneyCard,
     PlayPropertyCard,

@@ -43,7 +43,7 @@ public static class GameManager
                 PlayerActions.DealBreakerPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayBirthdayCard:
-                PlayerActions.BirthdayPlayed(sDeck, player, data);
+                PlayerActions.BirthdayPlayed(sDeck, player);
                 break;
             case ClientSendMessages.PlayRentCard:
                 PlayerActions.RentCardPlayed(sDeck, player, data);
@@ -51,7 +51,7 @@ public static class GameManager
             case ClientSendMessages.PlayWildRentCard:
                 PlayerActions.WildRentPlayed(sDeck, player, data);
                 break;
-            case ClientSendMessages.PlayBuildingRentCard:
+            case ClientSendMessages.PlayBuildingCard:
                 PlayerActions.BuildingCardPlayed(player, data);
                 break;
             case ClientSendMessages.PlayWildCard:

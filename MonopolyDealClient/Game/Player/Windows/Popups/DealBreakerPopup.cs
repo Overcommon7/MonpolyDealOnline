@@ -20,10 +20,13 @@ namespace MonopolyDeal
             ImGui.Checkbox("Play As Money", ref mAsMoney);
             AsMoneyLogic();
 
-            if (mAsMoney)
+            if (!mAsMoney)
             {
                 if (SelectPlayer())
                     GetTypes();
+
+                if (mSetTypes.Length == 0)
+                    return;
 
                 if (ImGui.Combo("Set", ref mSetIndex, mSetTypes, mSetTypes.Length))
                     mSetType = Enum.Parse<SetType>(mSetTypes[mSetIndex]);
@@ -34,13 +37,18 @@ namespace MonopolyDeal
                     values.targetPlayerNumber = mTargetPlayerNumber;
                     values.setType = mSetType;
 
-                    var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+                    var gameplay = App.GetState<Gameplay>();
+                    var player = gameplay.PlayerManager.LocalPlayer;
+                    var targetPlayer = gameplay.PlayerManager.GetOnlinePlayer(values.targetPlayerNumber);
 
                     if (mCard is not null)
                         player.Hand.RemoveCard(mCard);
 
                     Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, player.Number);
                     Close();
+
+                    gameplay.GetWindow<GettingDealWindow>().Open(player, targetPlayer,
+                        $"Deal Broke {targetPlayer.Name}'s {mSetType} properties", player.Number);
                 }
             }    
 
@@ -62,6 +70,9 @@ namespace MonopolyDeal
 
             foreach (var type in Constants.SET_TYPES)
             {
+                if (type == SetType.None)
+                    continue;
+
                 var count = player.PlayedCards.GetNumberOfCardsInSet(type);
                 if (count >= CardData.GetValues(type).AmountForFullSet)
                     types.Add(type.ToString());

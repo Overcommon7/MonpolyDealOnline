@@ -111,9 +111,7 @@ namespace MonopolyDeal
                 mPayments.RemoveAt(index);
 
             if (gameplay.PlayerManager.LocalPlayer.Number != playerNumber)
-            {
                 return;
-            }
                
 
             var player = gameplay.PlayerManager.GetOnlinePlayer(PlayerNumberBeingPaid);                
@@ -128,10 +126,9 @@ namespace MonopolyDeal
             AllPlayersPaid = true;
         }
 
-        public static void PaymentComplete(LocalPlayer player)
+        public static void PaymentComplete(PlayerManager playerManager)
         {
-            if (player.Number != PlayerNumberBeingPaid)
-                return;
+            var player = playerManager.GetPlayer(PlayerNumberBeingPaid);
 
             foreach (var payment in mPayments)
             {
@@ -212,7 +209,6 @@ namespace MonopolyDeal
 
         public static void ImGuiDraw(PlayerManager playerManager, Action<int>? sayNoLogic)
         {
-
             foreach (var payment in mPayments)
             {
                 if (playerManager.LocalPlayer.Number == payment.mPlayerNumber)

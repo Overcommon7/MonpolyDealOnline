@@ -58,10 +58,11 @@ namespace MonopolyDeal
         }
         public T GetWindow<T>() where T : IWindow
         {
+            var type = typeof(T);
             foreach (var window in mWindows)
             {
-                if (window is T value)
-                    return value;
+                if (window.GetType() == type)
+                    return (T)window;
             }
 
             throw new InvalidOperationException("Window Does Not Exist");
