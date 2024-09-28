@@ -132,42 +132,6 @@ namespace MonopolyDeal
             action(player, card);
         }
 
-        public static void DealBreakerPlayed(MessagePopup messagePopup, PlayerManager playerManager, int playerNumber, byte[] data)
-        {
-            var values = Format.ToStruct<DealBreakerValues>(data);
-
-            var localPlayer = playerManager.LocalPlayer;
-            var targetPlayer = playerManager.GetPlayer(values.targetPlayerNumber);
-            var recievingPlayer = playerManager.GetPlayer(playerNumber);
-
-            var cards = targetPlayer.PlayedCards.GetPropertyCardsOfType(values.setType);
-            foreach (var card in cards)
-            {
-                targetPlayer.PlayedCards.RemovePropertyCard(card);
-                recievingPlayer.PlayedCards.AddPropertyCard(card);
-            }
-
-            var house = targetPlayer.PlayedCards.GetBuildingCard(ActionType.House, values.setType);
-            if (house is not null)
-            {
-                targetPlayer.PlayedCards.RemoveBuildingCard(house);
-                recievingPlayer.PlayedCards.AddBuildingCard(house, values.setType);
-            }
-
-            var hotel = targetPlayer.PlayedCards.GetBuildingCard(ActionType.Hotel, values.setType);
-            if (hotel is not null)
-            {
-                targetPlayer.PlayedCards.RemoveBuildingCard(hotel);
-                recievingPlayer.PlayedCards.AddBuildingCard(hotel, values.setType);
-            }
-
-            if (localPlayer.Number != recievingPlayer.Number && localPlayer.Number != targetPlayer.Number)
-            {
-                messagePopup.Open(["Deal Breaker Played", $"{recievingPlayer.Name} Took The {values.setType} Properties From {targetPlayer.Name}"]);
-            }
-
-        }
-
         public static void OnActionCardPlayed(PlayerManager playerManager, int playerNumber, byte[] data)
         {
             if (playerNumber == playerManager.LocalPlayer.Number)
@@ -182,6 +146,33 @@ namespace MonopolyDeal
             }
 
             --player.CardsInHand;
+        }
+
+        public static void DebtCollectorPlayed(Gameplay gameplay, int playerNumber, byte[] data)
+        {
+            var localPlayerNumber = gameplay.PlayerManager.LocalPlayer.Number;
+            if (playerNumber == localPlayerNumber)
+                return;
+
+            PaymentHandler.BeginPaymentProcess(playerNumber, Constants.DEBT_COLLECTOR_AMOUNT);
+            var player = gameplay.PlayerManager.GetPlayer(playerNumber);
+
+            var values = Format.ToStruct<DebtCollectorValues>(data);
+
+            if (values.targetPlayerNumber == localPlayerNumber)
+            {
+                gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer,
+                    [$"{player.Name} Has Played Debt Collector",
+                    $"You Owe M{Constants.DEBT_COLLECTOR_AMOUNT}"]);
+            }                
+            else
+            {
+                var targetPlayer = gameplay.PlayerManager.GetPlayer(values.targetPlayerNumber);
+                gameplay.GetWindow<MessagePopup>().Open(
+                    [$"{player.Name} Has Played Debt Collector On {targetPlayer.Name}",
+                    $"{targetPlayer.Name} Owes M{Constants.DEBT_COLLECTOR_AMOUNT} To {player.Name}"]);
+            }
+              
         }
     }
 }

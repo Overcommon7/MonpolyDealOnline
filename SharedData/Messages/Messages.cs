@@ -10,11 +10,12 @@
     PlayMoneyCard,
     PlayPropertyCard,
     PlayBirthdayCard,
+    PlayDebtCollector,
     PlayActionCard,
-    ActionAgainstOne,
 
     ActionGotDenied,
     PaymentAccepted,
+    DealAccepted,
     RejectedNo,
 
     RequestCards,
@@ -45,6 +46,7 @@ public enum ServerSendMessages : short
     PlayerPaid,
     OnAllPlayersPaid,
     PaymentComplete,
+    DealComplete,
     NoWasRejected,
 
     CardMoved,

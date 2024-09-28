@@ -66,8 +66,8 @@ public static class GameManager
             case ClientSendMessages.PlayActionCard:
                 PlayerActions.ActionCardPlayed(sDeck, player, data);
                 break;
-            case ClientSendMessages.ActionAgainstOne:
-                PlayerActions.ActionAgainstOne(sDeck, player, data);
+            case ClientSendMessages.PlayDebtCollector:
+                PlayerActions.DebtCollectorPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.RejectedNo:
                 if (PaymentManager.IsPaymentInProgress)

@@ -132,85 +132,49 @@ public static class PlayerActions
        
     }
 
-    public static void ActionAgainstOne(Deck deck, Player player, byte[] data)
+    public static void DebtCollectorPlayed(Deck deck, Player player, byte[] data)
     {
-        var values = Format.ToStruct<ActionAgainstOne>(data);
+        var values = Format.ToStruct<DebtCollectorValues>(data);
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == values.actionType, out var action))
             return;
 
-        ServerSendMessages message = new ServerSendMessages();
-        switch (values.actionType)
-        {
-            case ActionType.DealBreaker: message = ServerSendMessages.DealBreakerPlayed; break;
-            case ActionType.SlyDeal: message = ServerSendMessages.SlyDealPlayed; break;
-            case ActionType.ForcedDeal: message = ServerSendMessages.ForcedDealPlayed; break;
-            case ActionType.DebtCollector: 
-                message = ServerSendMessages.DebtCollectorPlayed;
-                PaymentManager.StartNewPayment(player, TargetType.One);
-                break;
-        }
-
-        CardPlayedToDeck<ActionCard>(deck, player, action.ID, data, message);
+        PaymentManager.StartNewPayment(player, TargetType.One);
+        CardPlayedToDeck<ActionCard>(deck, player, action.ID, data, ServerSendMessages.DebtCollectorPlayed);
     }
 
     public static void SlyDealPlayed(Deck deck, Player player, byte[] data)
     {
         var values = Format.ToStruct<SlyDealValues>(data);
-        var status = PlayerManager.TryGetPlayer(values.targetPlayerNumber, out var takingFrom);
-        if (status != ConnectionStatus.Connected)
-            return;
 
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.SlyDeal, out var slyDeal))
             return;
-
-        if (!CardData.TryGetCard<ActionCard>(values.cardID, out var card))
-            return;
-
-        takingFrom.RemoveCardFromPlayArea(card);
-        player.AddCardToPlayArea(card);
 
         CardPlayedToDeck<ActionCard>(deck, player, slyDeal.ID, data, ServerSendMessages.SlyDealPlayed); 
     }
 
     public static void ForcedDealPlayed(Deck deck, Player player, byte[] data)
     {
-        throw new NotImplementedException();
+        var values = Format.ToStruct<DealBreakerValues>(data);
+
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ForcedDeal, out var forcedDeal))
+            return;
+
+        CardPlayedToDeck<ActionCard>(deck, player, forcedDeal.ID, data, ServerSendMessages.DealBreakerPlayed);
     }
 
     public static void DealBreakerPlayed(Deck deck, Player player, byte[] data)
     {
         var values = Format.ToStruct<DealBreakerValues>(data);
-        var status = PlayerManager.TryGetPlayer(values.targetPlayerNumber, out var target);
-        if (status != ConnectionStatus.Connected) 
+
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DealBreaker, out var dealBreaker))
             return;
 
-        var cards = target.GetPropertyCardsInSet(values.setType);
-        var buildingCards = target.GetBuildingCardsInSet(values.setType);
-        var amountForSet = CardData.GetValues(values.setType).AmountForFullSet;
+        CardPlayedToDeck<ActionCard>(deck, player, dealBreaker.ID, data, ServerSendMessages.DealBreakerPlayed);
+    }
 
-        if (cards.Length > amountForSet)
-            Array.Sort(cards, CardData.SortAlgorithm);
+    public static void DealComplete()
+    {
 
-        for (int i = 0; i < amountForSet; ++i)
-        {
-            target.RemoveCardFromPlayArea(cards[i]);
-            player.AddCardToPlayArea(cards[i]);
-        }
-
-        foreach (var card in buildingCards)
-        {
-            target.RemoveCardFromPlayArea(card);
-            player.AddCardToPlayArea(card);
-        }
-
-        if (CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DealBreaker, out var dealBreaker))
-        {
-            deck.AddCardToRemainingPile(dealBreaker);
-            player.RemoveCardFromHand(dealBreaker);
-        }
-            
-                   
-        Server.BroadcastMessage(ServerSendMessages.DealBreakerPlayed, data, player.Number);
     }
 
     public static void BirthdayPlayed(Deck deck, Player player)
@@ -218,7 +182,7 @@ public static class PlayerActions
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ItsMyBirthday, out var card))
             return;
 
-        CardPlayedToDeck<ActionCard>(deck, player, card.ID, )
+        CardPlayedToDeck<ActionCard>(deck, player, card.ID, null, ServerSendMessages.BirthdayCardPlayed);
     }
 
     public static void BuildingCardPlayed(Player player, byte[] data)

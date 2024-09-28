@@ -73,7 +73,10 @@ namespace MonopolyDeal
             ImGui.Spacing();
             if (ImGui.Button("Play Debt Collector##PACP"))
             {
-                ActionAgainstOne(ActionType.DebtCollector, 5);
+                DebtCollectorValues values = new();
+                values.targetPlayerNumber = mTargetPlayerNumber;
+                values.actionType = ActionType.DebtCollector;
+                SinglePlayerCharged(ClientSendMessages.PlayDebtCollector, values.actionType, ref values, Constants.DEBT_COLLECTOR_AMOUNT);
             }
         }
 
@@ -110,17 +113,14 @@ namespace MonopolyDeal
             Close();
         }
         
-        protected void ActionAgainstOne(ActionType actionType, int amountDue)
+        protected void SinglePlayerCharged<T>(ClientSendMessages message, ActionType actionType, ref T values, int amountDue)
+            where T : struct
         {
             var gameplay = App.GetState<Gameplay>();
             var player = gameplay.PlayerManager.LocalPlayer;
             PaymentHandler.BeginPaymentProcess(player.Number, amountDue);
 
-            ActionAgainstOne values = new();
-            values.targetPlayerID = mTargetPlayerNumber;
-            values.actionType = actionType;
-
-            Client.SendData(ClientSendMessages.ActionAgainstOne, ref values, player.Number);
+            Client.SendData(message, ref values, player.Number);
             Close();
             gameplay.GetWindow<GettingPaidWindow>().Open();
         }

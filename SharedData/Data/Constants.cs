@@ -11,6 +11,9 @@
     public const int CARD_DATA_SIZE_DIGITS = 5;
     public const int CARD_DATA_HEADER_SIZE = CARD_DATA_FILE_COUNT * CARD_DATA_SIZE_DIGITS;
 
+    public const int DEBT_COLLECTOR_AMOUNT = 5;
+    public const int BIRTHDAY_AMOUNT = 2;
+
     public static readonly SetType[] SET_TYPES = (SetType[])Enum.GetValues(typeof(SetType)); 
 
 

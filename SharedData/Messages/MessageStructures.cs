@@ -73,9 +73,9 @@ public struct PlayBuildingCard
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct ActionAgainstOne
+public struct DebtCollectorValues
 {
     public ActionType actionType;
-    public int targetPlayerID;
+    public int targetPlayerNumber;
 }
 

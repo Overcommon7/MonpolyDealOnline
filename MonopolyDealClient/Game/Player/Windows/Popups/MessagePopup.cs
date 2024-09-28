@@ -1,12 +1,13 @@
 ﻿using ImGuiNET;
 using System;
+using System.Collections.Generic;
 
 namespace MonopolyDeal
 {
     public class MessagePopup : IWindow
     {
-        string[] mMessages = Array.Empty<string>();
-        bool mShowCloseButton = true;
+        List<string> mMessages = [];
+        public bool ShowCloseButton { get; set; } = false;
         public MessagePopup()
             : base("Messages", true, false, true, false)
         {
@@ -17,7 +18,7 @@ namespace MonopolyDeal
             foreach (var message in mMessages)
                 ImGui.Text(message);
 
-            if (mShowCloseButton)
+            if (ShowCloseButton)
             {
                 ImGui.Spacing();
                 if (ImGui.Button("OK##MPU"))
@@ -29,18 +30,23 @@ namespace MonopolyDeal
 
         public void Open(string[] messages, bool showCloseButton = true)
         {
-            mMessages = messages;
-            mShowCloseButton = showCloseButton;
+            mMessages = new(messages);
+            ShowCloseButton = showCloseButton;
             IsClosable = showCloseButton;
             base.Open();
         }
 
         public void ChangeMessage(string message, int messageIndex) 
         {
-            if (mMessages.Length < messageIndex)
-                return;
+            if (mMessages.Count < messageIndex)
+                AddMessage(message);
 
             mMessages[messageIndex] = message;
+        }
+
+        public void AddMessage(string message)
+        {
+            mMessages.Add(message);
         }
     }
 }

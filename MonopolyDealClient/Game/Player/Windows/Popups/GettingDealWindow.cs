@@ -13,6 +13,8 @@ namespace MonopolyDeal
         bool mIsReciever = false;
         bool mIsCountered = false;
 
+        public bool ShowAcceptButton { get; set; } = false;
+
         Player? mReciever;
         Player? mTarget;
         public GettingDealWindow()
@@ -31,8 +33,14 @@ namespace MonopolyDeal
                 }
             }
 
-            if (mIsReciever && )
-            if (ImGui.)
+            if (!mHasSayNo || mIsCountered)
+            {
+                if (mIsTarget && ImGui.Button("Accept Deal"))
+                {
+                    var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+                    Client.SendData(ClientSendMessages.DealAccepted, player.Number);
+                }
+            }
             
         }
         public void GotRejected()
@@ -51,6 +59,7 @@ namespace MonopolyDeal
             mIsTarget = mTarget.Number == localPlayerNumber;
 
             mIsUsingSayNo = false;
+            ShowAcceptButton = false;
 
             App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = true;
 
@@ -76,6 +85,7 @@ namespace MonopolyDeal
 
         public override void Close()
         {
+            ShowAcceptButton = false;
             App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = false;
             base.Close();
         }
