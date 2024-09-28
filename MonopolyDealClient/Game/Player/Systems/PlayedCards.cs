@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
 
 namespace MonopolyDeal
 {
@@ -47,9 +46,23 @@ namespace MonopolyDeal
             mPropertyCards.RemoveAt(index);
             --mSetTypes[card.SetType];
 
-            if (card.SetType != SetType.None && mSetTypes[card.SetType] == 0)
+            if (card.SetType != SetType.None)
             {
-                mSetTypes.Remove(card.SetType);
+                if (mSetTypes[card.SetType] == 0)
+                {
+                    mSetTypes.Remove(card.SetType);
+                }                    
+                else if (mSetTypes[card.SetType] == 1)
+                {
+                    var value = GetPropertyCardsOfType(card.SetType)[0];
+                    if (value.GetType() == typeof(WildCard))
+                    {
+                        mSetTypes.Remove(card.SetType);
+                        ++emptyWildCards;
+                        var wild = (WildCard)value;
+                        wild.SetCurrentType(SetType.None);
+                    }
+                }
             }
 
             if (SetType.None == card.SetType)
@@ -134,7 +147,7 @@ namespace MonopolyDeal
             if (!mSetTypes.TryAdd(card.SetType, 1))
                 mSetTypes[card.SetType]++;
 
-            if (SetType.None == card.SetType && card is WildCard)
+            if (SetType.None == card.SetType && card.GetType() == typeof(WildCard))
                 ++emptyWildCards;
         }       
 

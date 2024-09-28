@@ -27,6 +27,7 @@ namespace MonopolyDeal
             mHasSayNo = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var sayNoCard);
             mUsingSayNo = false;
 
+            App.GetState<Gameplay>().SetToRespondingState();
             base.Open();
         }
 

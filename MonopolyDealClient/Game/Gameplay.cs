@@ -70,10 +70,10 @@ namespace MonopolyDeal
                 case ServerSendMessages.SlyDealPlayed:
                 case ServerSendMessages.DealBreakerPlayed:
                 case ServerSendMessages.ForcedDealPlayed:
-                    if (DealManager.IsDealInProgress)
+                    if (DealHandler.IsDealInProgress)
                         break;
 
-                    DealManager.StartDeal(PlayerManager, message, playerNumber, data);                    
+                    DealHandler.StartDeal(PlayerManager, message, playerNumber, data);                    
                     break;
                 case ServerSendMessages.DebtCollectorPlayed:
                     if (PaymentHandler.PaymentInProcess)
@@ -167,19 +167,20 @@ namespace MonopolyDeal
 
         public override void AddWindows()
         {
-            AddWindow<ChargeRentPopup>();
-            AddWindow<DealBreakerPopup>();
-            AddWindow<ForcedDealPopup>();
-            AddWindow<GettingPaidWindow>();
-            AddWindow<MoveCardPopup>();
-            AddWindow<PayPopup>();
-            AddWindow<PlayActionCardPopup>();
-            AddWindow<PlayBuildingCardPopup>();
-            AddWindow<PlayWildCardPopup>();            
-            AddWindow<SlyDealPopup>();
-            AddWindow<TooManyCardsPopup>();
-            AddWindow<WildRentPopup>();
-            AddWindow<MessagePopup>();
+            _ = AddWindow<ChargeRentPopup>();
+            _ = AddWindow<DealBreakerPopup>();
+            _ = AddWindow<ForcedDealPopup>();
+            _ = AddWindow<GettingDealWindow>();
+            _ = AddWindow<GettingPaidWindow>();
+            _ = AddWindow<MessagePopup>();
+            _ = AddWindow<MoveCardPopup>();
+            _ = AddWindow<PayPopup>();
+            _ = AddWindow<PlayActionCardPopup>();
+            _ = AddWindow<PlayBuildingCardPopup>();
+            _ = AddWindow<PlayWildCardPopup>();            
+            _ = AddWindow<SlyDealPopup>();
+            _ = AddWindow<TooManyCardsPopup>();
+            _ = AddWindow<WildRentPopup>();
         }
     }
 }

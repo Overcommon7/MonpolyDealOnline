@@ -115,7 +115,6 @@ namespace MonopolyDeal
                
 
             var player = gameplay.PlayerManager.GetOnlinePlayer(PlayerNumberBeingPaid);                
-            gameplay.SetToRespondingState();
 
             gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer, 
                 [$"Player {player.Name} Has Rejected Your No", $"You owe M{AmountDue}"]);

@@ -14,7 +14,8 @@
     public const int DEBT_COLLECTOR_AMOUNT = 5;
     public const int BIRTHDAY_AMOUNT = 2;
 
+    public const int HOUSE_RENT_INCREASE = 3;
+    public const int HOTEL_RENT_INCREASE = 4;
+
     public static readonly SetType[] SET_TYPES = (SetType[])Enum.GetValues(typeof(SetType)); 
-
-
 }

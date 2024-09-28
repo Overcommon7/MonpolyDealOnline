@@ -34,13 +34,16 @@ public static class GameManager
         switch (message)
         {
             case ClientSendMessages.PlaySlyDeal:
-                PlayerActions.SlyDealPlayed(sDeck, player, data);
+                DealManager.SlyDealPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayForcedDeal:
-                PlayerActions.ForcedDealPlayed(sDeck, player, data);
+                DealManager.ForcedDealPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.PlayDealBreaker:
-                PlayerActions.DealBreakerPlayed(sDeck, player, data);
+                DealManager.DealBreakerPlayed(sDeck, player, data);
+                break;
+            case ClientSendMessages.DealAccepted:
+                DealManager.DealComplete();
                 break;
             case ClientSendMessages.PlayBirthdayCard:
                 PlayerActions.BirthdayPlayed(sDeck, player);

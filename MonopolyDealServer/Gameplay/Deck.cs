@@ -95,7 +95,9 @@ public class Deck
         Shuffle(fullDeck);
         foreach (var card in fullDeck)
         {
-            cards.Push(CardData.CreateNewCard);
+            var value = CardData.CreateNewCard<Card>(card.ID);
+            if (value is not null)
+                cards.Push(value);
         }
     }
 
@@ -121,13 +123,23 @@ public class Deck
 
     public void AddCardToRemainingPile(Card card)
     {
-        remainingCards.Add(card);
+        var value = CardData.CreateNewCard<Card>(card.ID);
+        if (value is not null)
+            remainingCards.Add(value);
     }
 
     private void ReloadCards()
     {
         Shuffle(remainingCards);
-        cards = new(remainingCards);
+        cards.Clear();
+
+        foreach (var card in remainingCards)
+        {
+            var value = CardData.CreateNewCard<Card>(card.ID);
+            if (value is not null)
+                cards.Push(value);
+        }
+            
         remainingCards.Clear();
     }
 

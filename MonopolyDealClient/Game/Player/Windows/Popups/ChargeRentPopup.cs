@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using System.Threading.Tasks;
+using Windows.System;
 
 namespace MonopolyDeal
 {
@@ -11,8 +12,10 @@ namespace MonopolyDeal
         int mPlayerNumber = 0;
         bool mUseDoubleRent = false;
         bool mHasDoubleRent = false;
+        bool mAsMoney = false;
         
         RentCard? mRent = null;
+        LocalPlayer? mPlayer = null;
         public ChargeRentPopup() 
             : base(nameof(ChargeRentPopup))
         {
@@ -42,39 +45,56 @@ namespace MonopolyDeal
 
             ImGui.Spacing();
 
-            if (mHasDoubleRent)
+            ImGui.Checkbox("Use As Money#CPP", ref mAsMoney);
+            if (mAsMoney)
             {
-                ImGui.Checkbox("Use Double Rent##CPP", ref mUseDoubleRent);
-                ImGui.Spacing();
+                mPlayer.Hand.RemoveCard(mRent);
+                mPlayer.PlayedCards.AddMoneyCard(mRent);
+
+                Client.SendData(ClientSendMessages.PlayMoneyCard, mRent.ID.ToString(), mPlayer.Number);
             }
-                                
-            if ((mCardsOwnedInSetTwo > 0 || mCardsOwnedInSetOne > 0) && ImGui.Button("Play##CPP"))
+            else 
             {
-                RentPlayValues values = new RentPlayValues();
-                values.withDoubleRent = mUseDoubleRent;
-                values.cardsOwnedInSet = mRadioButton == 0 ? mCardsOwnedInSetOne : mCardsOwnedInSetTwo;
-                values.chargingSetType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
-                values.cardID = mRent.ID;
-
-                var gameplay = App.GetState<Gameplay>();
-                var player = gameplay.PlayerManager.LocalPlayer;
-                int cardsInSet = player.PlayedCards.GetNumberOfCardsInSet(values.chargingSetType);
-
-                int rentAmount = CardData.GetRentAmount(values.chargingSetType, cardsInSet);
-                if (mUseDoubleRent)
+                if (mHasDoubleRent)
                 {
-                    rentAmount *= 2;
-                    CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var card);
-                    player.Hand.RemoveCard(card, false);
+                    ImGui.Checkbox("Use Double Rent##CPP", ref mUseDoubleRent);
+                    ImGui.Spacing();
                 }
 
-                player.Hand.RemoveCard(mRent);
-                PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount);                
-                Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
+                int cardsInSet = mRadioButton == 0 ? mCardsOwnedInSetOne : mCardsOwnedInSetTwo;
+                var setType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
+                var hasHouse = mPlayer.PlayedCards.HasHouse(setType);
+                var hasHotel = hasHouse && mPlayer.PlayedCards.HasHotel(setType);
 
-                Close();
-                gameplay.GetWindow<GettingPaidWindow>().Open();
-            }
+                int rentAmount = CardData.GetRentAmount(setType, cardsInSet, hasHouse, hasHotel);
+                if (mUseDoubleRent)
+                    rentAmount *= 2;
+
+                ImGui.Text($"Amount To be Paid M{rentAmount}");
+
+                if ((mCardsOwnedInSetTwo > 0 || mCardsOwnedInSetOne > 0) && ImGui.Button("Play##CPP"))
+                {
+                    RentPlayValues values = new RentPlayValues();
+                    values.withDoubleRent = mUseDoubleRent;
+                    values.cardsOwnedInSet = mRadioButton == 0 ? mCardsOwnedInSetOne : mCardsOwnedInSetTwo;
+                    values.chargingSetType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
+                    values.cardID = mRent.ID;
+
+                    if (mUseDoubleRent)
+                    {
+                        rentAmount *= 2;
+                        CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var card);
+                        mPlayer.Hand.RemoveCard(card, false);
+                    }
+
+                    mPlayer.Hand.RemoveCard(mRent);
+                    PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount);
+                    Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
+
+                    Close();
+                    App.GetState<Gameplay>().GetWindow<GettingPaidWindow>().Open();
+                }
+            }           
 
             if (ImGui.Button("Close##CPP"))
             {
@@ -89,7 +109,10 @@ namespace MonopolyDeal
                 return;
 
             base.Open(card);
+
             mUseDoubleRent = false;
+            mAsMoney = false;
+
             mHasDoubleRent = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var doubleRent);
 
             mCardsOwnedInSetOne = player.PlayedCards.GetNumberOfCardsInSet(mRent.TargetType1);
@@ -102,6 +125,7 @@ namespace MonopolyDeal
                 mRadioButton = 10;
 
             mPlayerNumber = player.Number;
+            mPlayer = player;
         }
 
         public override void Close()
@@ -112,7 +136,9 @@ namespace MonopolyDeal
             mPlayerNumber = 0;
             mUseDoubleRent = false;
             mHasDoubleRent = false;
+            mAsMoney = false;
             mRent = null;
+
             base.Close();
         }
     }

@@ -21,7 +21,7 @@ namespace MonopolyDeal
                         mGameplay.GetWindow<DealBreakerPopup>().Open(card);
                         break;
                     case ActionType.WildRent:
-                        mGameplay.GetWindow<WildRentPopup>().Open(card);
+                        mGameplay.GetWindow<WildRentPopup>().Open(this, card);
                         break;
                     case ActionType.SlyDeal:
                         mGameplay.GetWindow<SlyDealPopup>().Open(card);
@@ -37,16 +37,15 @@ namespace MonopolyDeal
                         mGameplay.GetWindow<PlayBuildingCardPopup>().Open(card);                     
                         break;
 
-
-                    case ActionType.JustSayNo:
-                    case ActionType.PassGo:
-                        mGameplay.GetWindow<PlayActionCardPopup>().Open(card, TargetType.None);
-                        break;
                     case ActionType.DebtCollector:
                         mGameplay.GetWindow<PlayActionCardPopup>().Open(card, TargetType.One);
                         break;
                     case ActionType.ItsMyBirthday:
                         mGameplay.GetWindow<PlayActionCardPopup>().Open(card, TargetType.All);
+                        break;
+
+                    default:
+                        mGameplay.GetWindow<PlayActionCardPopup>().Open(card, TargetType.None);
                         break;
                 }
 

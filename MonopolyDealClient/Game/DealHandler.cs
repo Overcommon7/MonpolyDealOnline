@@ -4,7 +4,7 @@ using Windows.Media.PlayTo;
 
 namespace MonopolyDeal
 {
-    public static class DealManager
+    public static class DealHandler
     {
         struct DealValues
         {

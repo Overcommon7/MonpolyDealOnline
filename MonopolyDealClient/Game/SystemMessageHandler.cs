@@ -96,8 +96,12 @@ namespace MonopolyDeal
             if (!CardData.TryGetCard<RentCard>(rentValues.cardID, out var card))
                 return;
 
-            int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet);
             var player = playerManager.GetOnlinePlayer(playerNumber);
+            var hasHouse = player.PlayedCards.HasHouse(rentValues.chargingSetType);
+            var hasHotel = hasHouse && player.PlayedCards.HasHotel(rentValues.chargingSetType);
+
+            int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet, hasHouse, hasHotel);
+            
             if (rentValues.withDoubleRent)
             {
                 --player.CardsInHand;
@@ -105,7 +109,6 @@ namespace MonopolyDeal
             }
                 
 
-            App.GetState<Gameplay>().SetToRespondingState();
             PaymentHandler.BeginPaymentProcess(playerNumber, rentAmount);
 
             --player.CardsInHand;

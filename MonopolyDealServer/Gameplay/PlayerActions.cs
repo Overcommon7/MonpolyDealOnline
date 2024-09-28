@@ -66,7 +66,7 @@ public static class PlayerActions
     public static void MoneyCardPlayed(Player player, byte[] data)
     {
         int cardID = int.Parse(Format.ToString(data));
-        CardPlayedToPlayArea<MoneyCard>(player, cardID, data, ServerSendMessages.MoneyCardPlayed);
+        CardPlayedToPlayArea<Card>(player, cardID, data, ServerSendMessages.MoneyCardPlayed);
     }
 
     static void CardPlayedToPlayArea<T>(Player player, int cardID, byte[] data, ServerSendMessages message, Action<T>? action = null) where T : Card
@@ -84,7 +84,7 @@ public static class PlayerActions
         Server.SendMessageExcluding(message, player.Number, data, player.Number);
     }
 
-    static void CardPlayedToDeck<T>(Deck deck, Player player, int cardID, byte[]? data, ServerSendMessages message, Action<T>? action = null) where T : Card
+    public static void CardPlayedToDeck<T>(Deck deck, Player player, int cardID, byte[]? data, ServerSendMessages message, Action<T>? action = null) where T : Card
     {
         var card = CardData.CreateNewCard<T>(cardID);
 
@@ -140,41 +140,6 @@ public static class PlayerActions
 
         PaymentManager.StartNewPayment(player, TargetType.One);
         CardPlayedToDeck<ActionCard>(deck, player, action.ID, data, ServerSendMessages.DebtCollectorPlayed);
-    }
-
-    public static void SlyDealPlayed(Deck deck, Player player, byte[] data)
-    {
-        var values = Format.ToStruct<SlyDealValues>(data);
-
-        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.SlyDeal, out var slyDeal))
-            return;
-
-        CardPlayedToDeck<ActionCard>(deck, player, slyDeal.ID, data, ServerSendMessages.SlyDealPlayed); 
-    }
-
-    public static void ForcedDealPlayed(Deck deck, Player player, byte[] data)
-    {
-        var values = Format.ToStruct<DealBreakerValues>(data);
-
-        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ForcedDeal, out var forcedDeal))
-            return;
-
-        CardPlayedToDeck<ActionCard>(deck, player, forcedDeal.ID, data, ServerSendMessages.DealBreakerPlayed);
-    }
-
-    public static void DealBreakerPlayed(Deck deck, Player player, byte[] data)
-    {
-        var values = Format.ToStruct<DealBreakerValues>(data);
-
-        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DealBreaker, out var dealBreaker))
-            return;
-
-        CardPlayedToDeck<ActionCard>(deck, player, dealBreaker.ID, data, ServerSendMessages.DealBreakerPlayed);
-    }
-
-    public static void DealComplete()
-    {
-
     }
 
     public static void BirthdayPlayed(Deck deck, Player player)

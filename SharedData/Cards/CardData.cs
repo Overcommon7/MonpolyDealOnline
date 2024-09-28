@@ -172,7 +172,7 @@ public static class CardData
         return sortTypes[a.GetType()].CompareTo(sortTypes[b.GetType()]);
     }
 
-    public static int GetRentAmount(SetType type, int cardsOwnedInSet)
+    public static int GetRentAmount(SetType type, int cardsOwnedInSet, bool hasHouse = false, bool hasHotel = false)
     {
         if (!cardValues.TryGetValue(type, out var values))
             return 0;
@@ -181,7 +181,11 @@ public static class CardData
         if (index == -1)
             return 0;
 
-        return values.Prices[index].rentAmount;
+        int rentAmount = values.Prices[index].rentAmount;
+        if (hasHouse) rentAmount += Constants.HOUSE_RENT_INCREASE;
+        if (hasHouse && hasHouse) rentAmount += Constants.HOTEL_RENT_INCREASE;
+
+        return rentAmount;
     }
 
     public static bool TryGetCard<T>(int cardID, out T card) where T : Card

@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using System;
+using System.Drawing;
 using System.Linq;
 
 namespace MonopolyDeal
@@ -36,10 +37,8 @@ namespace MonopolyDeal
                 else if (action.ActionType == ActionType.ItsMyBirthday)
                     BirthdayLogic();
                 else if (action.ActionType == ActionType.PassGo)
-                    PassGoLogic();
-            }
-
-           
+                    PassGoLogic();                
+            }           
         }
         protected void CloseLogic()
         {
@@ -72,7 +71,14 @@ namespace MonopolyDeal
             SelectPlayer();
             ImGui.Spacing();
             if (ImGui.Button("Play Debt Collector##PACP"))
-            {
+            {                
+                if (mCard is not null)
+                {
+                    var gameplay = App.GetState<Gameplay>();
+                    var player = gameplay.PlayerManager.LocalPlayer;
+                    player.Hand.RemoveCard(mCard);
+                }
+                    
                 DebtCollectorValues values = new();
                 values.targetPlayerNumber = mTargetPlayerNumber;
                 values.actionType = ActionType.DebtCollector;
@@ -146,8 +152,28 @@ namespace MonopolyDeal
         public void Open(Card card, TargetType targetType)
         {
             mTargeType = targetType;
-            mAsMoney = false;
 
+            GetPlayerNames();
+
+            if (card is ActionCard action)
+            {
+                if (action.ActionType == ActionType.DebtCollector
+                || action.ActionType == ActionType.ItsMyBirthday
+                || action.ActionType == ActionType.PassGo)
+                {
+                    mAsMoney = false;
+                }
+                else
+                {
+                    mAsMoney = true;
+                }
+            }            
+
+            base.Open(card);
+        }
+
+        protected void GetPlayerNames()
+        {
             var gameplay = App.GetState<Gameplay>();
 
             gameplay.GetWindow<LocalPlayerWindow>().IsDisabled = true;
@@ -158,8 +184,6 @@ namespace MonopolyDeal
             mPlayerNames = new string[onlinePlayers.Count];
             for (int i = 0; i < onlinePlayers.Count; i++)
                 mPlayerNames[i] = onlinePlayers[i].Name;
-
-            base.Open(card);
         }
 
         public override void Close()
