@@ -152,16 +152,43 @@ public static class PlayerActions
 
     public static void BuildingCardPlayed(Player player, byte[] data)
     {
-        
+        var values = Format.ToStruct<PlayBuildingCard>(data);
+        CardPlayedToPlayArea<BuildingCard>(player, values.cardID, data, ServerSendMessages.BuildingCardPlayed);
     }
 
     public static void WildRentPlayed(Deck deck, Player player, byte[] data)
     {
-        throw new NotImplementedException();
+        var values = Format.ToStruct<WildRentPlayValues>(data);
+        CardPlayedToDeck<WildRentCard>(deck, player, values.cardID, data, ServerSendMessages.WildRentPlayed, card =>
+        {
+            if (values.withDoubleRent)
+            {
+                if (!CardData.TryGetCard<ActionCard>(action => action.ActionType == ActionType.DoubleRent, out var value))
+                    return;
+
+                player.RemoveCardFromHand(value);
+                deck.AddCardToRemainingPile(value);
+            }
+        });
+            
     }
 
     public static void MoveCard(Player player, byte[] data)
     {
-        throw new NotImplementedException();
+        var values = Format.ToStruct<MoveValues>(data);
+        var card = player.GetCardFromPlayArea(values.cardID);
+        if (card is null)
+            return;
+
+        if (card is BuildingCard building)
+        {
+            building.CurrentSetType = values.newSetType;
+        }
+        else if (card is WildCard wild)
+        {
+            wild.SetCurrentType(values.newSetType);
+        }
+
+        Server.BroadcastMessage(ServerSendMessages.CardMoved, data, player.Number);
     }
 }

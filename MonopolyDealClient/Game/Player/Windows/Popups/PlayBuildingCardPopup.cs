@@ -52,6 +52,7 @@ namespace MonopolyDeal
 
             var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
 
+            ++player.PlaysUsed;
             player.Hand.RemoveCard(mCard);
             player.PlayedCards.AddMoneyCard(mCard);
 
@@ -72,10 +73,11 @@ namespace MonopolyDeal
 
             PlayBuildingCard values = new();
             values.setType = mSetType;
-            values.buildingType = mBuilding.ActionType;
+            values.cardID = mBuilding.ID;
 
             var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
 
+            ++player.PlaysUsed;
             player.Hand.RemoveCard(mCard);
             player.PlayedCards.AddBuildingCard(mBuilding, mSetType);
 
@@ -86,6 +88,7 @@ namespace MonopolyDeal
         public override void Open(Card card)
         {
             mBuilding = card as BuildingCard;
+            GetTypes();
             base.Open(card);
         }
 
@@ -116,7 +119,13 @@ namespace MonopolyDeal
             if (types.Count == 0)
                 mSetTypes = [];
             else
+            {
                 mSetTypes = [.. types];
+                mSetType = Enum.Parse<SetType>(mSetTypes[0]);
+            }
+                
+
+            
         }
     }
 }

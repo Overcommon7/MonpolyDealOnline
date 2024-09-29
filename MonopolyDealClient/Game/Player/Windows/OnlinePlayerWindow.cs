@@ -1,20 +1,26 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Collections.Generic;
 
 namespace MonopolyDeal
 {
     public class OnlinePlayerWindow : IWindow
     {
-        public OnlinePlayer ConnectedPlayer { get; init; }
-        public OnlinePlayerWindow(OnlinePlayer player) 
-            : base(player.Name)
+        public OnlinePlayer[] ConnectedPlayers { get; init; }
+        public OnlinePlayerWindow(params OnlinePlayer[] players) 
+            : base("Online Players")
         {
-            ConnectedPlayer = player;
+            ConnectedPlayers = players;
         }
 
         public override void ImGuiDraw()
         {
-            ConnectedPlayer.ImGuiDraw();
+            foreach (var player in ConnectedPlayers)
+            {
+                if (ImGui.CollapsingHeader($"{player.Name}##{player.Number}"))
+                    player.ImGuiDraw();
+            }
+                
         }
     }
 }

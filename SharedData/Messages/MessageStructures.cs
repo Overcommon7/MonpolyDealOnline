@@ -69,7 +69,7 @@ public struct PlayWildCard
 public struct PlayBuildingCard
 {
     public SetType setType;
-    public ActionType buildingType;
+    public int cardID;
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]

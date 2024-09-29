@@ -60,6 +60,7 @@ namespace MonopolyDeal
                     return false;
                 }
 
+                ++PlaysUsed;
                 Hand.RemoveCard(card);
                 PlayedCards.AddPropertyCard(property);
                 Client.SendData(ClientSendMessages.PlayPropertyCard, card.ID.ToString(), Number);
@@ -68,6 +69,7 @@ namespace MonopolyDeal
 
             if (card is MoneyCard money)
             {
+                ++PlaysUsed;
                 Hand.RemoveCard(card);
                 PlayedCards.AddMoneyCard(money);
                 Client.SendData(ClientSendMessages.PlayMoneyCard, card.ID.ToString(), Number);

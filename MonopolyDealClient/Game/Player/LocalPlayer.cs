@@ -27,9 +27,17 @@ namespace MonopolyDeal
         {
             var extraLogic = mLogic[mGameplay.State];
             ImGui.SeparatorText("Hand");
-            mHand.ImGuiDraw(extraLogic[2]);
-            ImGui.Spacing();
+            bool disabled = !HasPlaysRemaining;
 
+            if (disabled)
+                ImGui.BeginDisabled();
+
+            mHand.ImGuiDraw(extraLogic[2]);
+
+            if (disabled)
+                ImGui.EndDisabled();
+
+            ImGui.Spacing();
             ImGui.SeparatorText("Played Cards");
             ImGui.Spacing();
             PlayedCards.ImGuiDraw(extraLogic[0], extraLogic[1], extraLogic[3]);

@@ -17,5 +17,7 @@
     public const int HOUSE_RENT_INCREASE = 3;
     public const int HOTEL_RENT_INCREASE = 4;
 
+    public const int DOUBLE_RENT_MULTIPLIER = 2;
+
     public static readonly SetType[] SET_TYPES = (SetType[])Enum.GetValues(typeof(SetType)); 
 }

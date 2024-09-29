@@ -45,8 +45,8 @@ namespace MonopolyDeal
 
             ImGui.Spacing();
 
-            ImGui.Checkbox("Use As Money#CPP", ref mAsMoney);
-            if (mAsMoney)
+            ImGui.Checkbox("Use As Money##CPP", ref mAsMoney);
+            if (mAsMoney && ImGui.Button("Play As Money##CPP"))
             {
                 mPlayer.Hand.RemoveCard(mRent);
                 mPlayer.PlayedCards.AddMoneyCard(mRent);
@@ -63,14 +63,10 @@ namespace MonopolyDeal
 
                 int cardsInSet = mRadioButton == 0 ? mCardsOwnedInSetOne : mCardsOwnedInSetTwo;
                 var setType = mRadioButton == 0 ? mRent.TargetType1 : mRent.TargetType2;
-                var hasHouse = mPlayer.PlayedCards.HasHouse(setType);
-                var hasHotel = hasHouse && mPlayer.PlayedCards.HasHotel(setType);
 
-                int rentAmount = CardData.GetRentAmount(setType, cardsInSet, hasHouse, hasHotel);
-                if (mUseDoubleRent)
-                    rentAmount *= 2;
+                int? rentAmount = mPlayer?.GetRentAmount(setType, cardsInSet, mUseDoubleRent);
 
-                ImGui.Text($"Amount To be Paid M{rentAmount}");
+                ImGui.Text($"Amount To be Paid M{rentAmount.GetValueOrDefault()}");
 
                 if ((mCardsOwnedInSetTwo > 0 || mCardsOwnedInSetOne > 0) && ImGui.Button("Play##CPP"))
                 {
@@ -88,7 +84,8 @@ namespace MonopolyDeal
                     }
 
                     mPlayer.Hand.RemoveCard(mRent);
-                    PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount);
+                    PaymentHandler.BeginPaymentProcess(mPlayerNumber, rentAmount.GetValueOrDefault());
+                    ++mPlayer.PlaysUsed;
                     Client.SendData(ClientSendMessages.PlayRentCard, ref values, mPlayerNumber);
 
                     Close();

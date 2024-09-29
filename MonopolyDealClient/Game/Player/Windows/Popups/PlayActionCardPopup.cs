@@ -126,6 +126,7 @@ namespace MonopolyDeal
             var player = gameplay.PlayerManager.LocalPlayer;
             PaymentHandler.BeginPaymentProcess(player.Number, amountDue);
 
+            ++player.PlaysUsed;
             Client.SendData(message, ref values, player.Number);
             Close();
             gameplay.GetWindow<GettingPaidWindow>().Open();
@@ -142,6 +143,7 @@ namespace MonopolyDeal
 
             var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
 
+            ++player.PlaysUsed;
             player.Hand.RemoveCard(mCard);
             player.PlayedCards.AddMoneyCard(mCard);
 

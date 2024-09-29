@@ -57,7 +57,17 @@ namespace MonopolyDeal
 
         public void SetCurrentPlayer(int playerNumber)
         {
+            try
+            {
+                GetPlayer(playerNumber).EndTurn();
+            }
+            catch (Exception e)
+            {
+
+            }
+
             mCurrentPlayerNumbersTurn = playerNumber;
+            GetPlayer(playerNumber).StartNewTurn();
         }
     }
 }

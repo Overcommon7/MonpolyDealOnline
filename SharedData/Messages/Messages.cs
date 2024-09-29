@@ -39,6 +39,7 @@ public enum ServerSendMessages : short
     DealBreakerPlayed,
     BirthdayCardPlayed,
     DebtCollectorPlayed,
+    BuildingCardPlayed,
     ActionCardPlayed,
     MoneyCardPlayed,
     JustSayNoPlayed,

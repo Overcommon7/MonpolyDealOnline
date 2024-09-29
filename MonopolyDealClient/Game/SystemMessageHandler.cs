@@ -97,10 +97,7 @@ namespace MonopolyDeal
                 return;
 
             var player = playerManager.GetOnlinePlayer(playerNumber);
-            var hasHouse = player.PlayedCards.HasHouse(rentValues.chargingSetType);
-            var hasHotel = hasHouse && player.PlayedCards.HasHotel(rentValues.chargingSetType);
-
-            int rentAmount = CardData.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet, hasHouse, hasHotel);
+            int rentAmount = player.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet, rentValues.withDoubleRent);
             
             if (rentValues.withDoubleRent)
             {
@@ -176,6 +173,34 @@ namespace MonopolyDeal
                     $"{targetPlayer.Name} Owes M{Constants.DEBT_COLLECTOR_AMOUNT} To {player.Name}"]);
             }
               
+        }
+
+        public static void WildRentCardPlayed(Gameplay gameplay, int playerNumber, byte[] data)
+        {
+            var localPlayerNumber = gameplay.PlayerManager.LocalPlayer.Number;            
+            if (playerNumber == localPlayerNumber)
+                return;
+
+            var values = Format.ToStruct<WildRentPlayValues>(data);
+            var chargingPlayer = gameplay.PlayerManager.GetPlayer(playerNumber);
+            int rentAmount = chargingPlayer.GetRentAmount(values.chargingSetType, values.withDoubleRent);
+
+            PaymentHandler.BeginPaymentProcess(playerNumber, rentAmount);
+
+            if (values.targetPlayerNumber == localPlayerNumber)
+            {                
+                gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer,
+                    [$"{chargingPlayer.Name} Has Charged You With A Wild Rent Card On Their {values.chargingSetType} Properties ",
+                    $"You Owe M{rentAmount} To {chargingPlayer.Name}"]);
+            }
+            else
+            {
+                var targetPlayer = gameplay.PlayerManager.GetPlayer(values.targetPlayerNumber);
+               
+                gameplay.GetWindow<MessagePopup>().Open(
+                    [$"{chargingPlayer.Name} Has Charged {targetPlayer.Name} With A Wild Rent Card On Their {values.chargingSetType} Properties ",
+                    $"{targetPlayer.Name} Owes M{rentAmount} To {chargingPlayer.Name}"]);
+            }
         }
     }
 }

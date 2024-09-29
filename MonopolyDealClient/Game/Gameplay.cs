@@ -54,6 +54,7 @@ namespace MonopolyDeal
             switch (message)
             {
                 case ServerSendMessages.WildRentPlayed:
+                    SystemMessageHandler.WildRentCardPlayed(this, playerNumber, data);
                     break;
                 case ServerSendMessages.WildCardPlayed:
                     SystemMessageHandler.WildCardPlayed(PlayerManager, playerNumber, data);
@@ -113,8 +114,6 @@ namespace MonopolyDeal
                     break;
                 case ServerSendMessages.UpdateCardsInHand:
                     SystemMessageHandler.OnlinePlayerHandUpdate(PlayerManager, data, playerNumber);
-                    break;
-                case ServerSendMessages.RemoveCard:
                     break;
                 case ServerSendMessages.HandReturned:
                     PlayerManager.LocalPlayer.OnHandReturned(playerNumber, data);

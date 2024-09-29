@@ -68,6 +68,7 @@ namespace MonopolyDeal
             values.targetPlayerNumber = mTargetPlayerNumber;
             values.cardID = mCard.ID;
 
+            ++player.PlaysUsed;
             Client.SendData(ClientSendMessages.PlayWildRentCard, ref values, player.Number);
         }
 
@@ -80,11 +81,7 @@ namespace MonopolyDeal
             foreach (var setType in player.PlayedCards.SetTypesPlayed)
             {
                 mSetTypes[index] = setType.ToString();
-                int cardsInSet = player.PlayedCards.GetNumberOfCardsInSet(setType);
-                bool hasHouse = player.PlayedCards.HasHouse(setType);
-                bool hasHotel = hasHouse && player.PlayedCards.HasHotel(setType);
-
-                int amount = CardData.GetRentAmount(setType, cardsInSet, hasHouse, hasHotel);
+                int amount = player.GetRentAmount(setType);
 
                 if (amount > mRentAmount)
                 {

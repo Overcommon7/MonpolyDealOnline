@@ -46,6 +46,7 @@ namespace MonopolyDeal
                         if (mCard is not null)
                             player.Hand.RemoveCard(mCard);
 
+                        ++player.PlaysUsed;
                         Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, player.Number);
                         Close();
 

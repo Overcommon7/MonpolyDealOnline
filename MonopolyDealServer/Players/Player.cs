@@ -90,9 +90,14 @@ public class Player : IEquatable<Player>
         mPlayArea.RemoveAt(index);
         return true;
     }
-    public Card? GetCard(int cardID)
+    public Card? GetCardFromPlayArea(int cardID)
     {
         return mPlayArea.Find(card => card.ID == cardID);
+    }
+
+    public Card? GetCardFromPlayArea(Predicate<Card> predicate)
+    {
+        return mPlayArea.Find(predicate);
     }
     public Card[] GetPropertyCardsInSet(SetType type)
     {

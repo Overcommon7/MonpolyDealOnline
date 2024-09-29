@@ -46,6 +46,8 @@ namespace MonopolyDeal
             values.cardID = wildCard.ID;
 
             var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+
+            ++player.PlaysUsed;
             player.PlayedCards.AddPropertyCard(wildCard);
             player.Hand.RemoveCard(wildCard);
 
