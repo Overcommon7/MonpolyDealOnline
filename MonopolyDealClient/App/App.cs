@@ -57,7 +57,8 @@ namespace MonopolyDeal
             Raylib.SetTargetFPS(30);
             Raylib.SetExitKey(KeyboardKey.Null);
 
-            Raylib.SetWindowPosition((int)position.X, (int)position.Y);
+            if (position.X > 1 && position.Y > 1)
+                Raylib.SetWindowPosition((int)position.X, (int)position.Y);
 
             rlImGui.Setup();
             ImGui.LoadIniSettingsFromMemory(IniSettings.Data);
