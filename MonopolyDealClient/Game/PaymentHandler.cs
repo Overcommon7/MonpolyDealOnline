@@ -37,11 +37,7 @@ namespace MonopolyDeal
 
         public static void OnPlayerPaid(PlayerManager playerManager, int playerNumber, byte[] data)
         {
-            if (playerNumber == playerManager.LocalPlayer.Number)
-                return;
-
             var player = playerManager.GetOnlinePlayer(playerNumber);
-
 
             var strs = Format.ToString(data).Split('#', StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length < 2)

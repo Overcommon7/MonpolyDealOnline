@@ -14,7 +14,7 @@ namespace MonopolyDeal
         string mUsername = string.Empty;
         bool mValidServerCredentials = false;
         bool mIsReady = false;
-        bool mAutoConnect = true;    
+        bool mAutoConnect = false;    
         public string Username => mUsername;
         public int PlayerNumber { get; set; }
         public IReadOnlyDictionary<int, (string, ulong)> OtherPlayers => mOtherPlayers;

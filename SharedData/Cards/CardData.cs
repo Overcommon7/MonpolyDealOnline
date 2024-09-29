@@ -104,7 +104,7 @@ public static class CardData
             { SetType.LightBlue, new(154, 190, 218) },
             { SetType.Orange, new(210, 133, 55) },
             { SetType.Purple, new(186, 68, 162) },
-            { SetType.Railroad, new(25, 26, 28) },
+            { SetType.Railroad, new(50, 52, 56) },
             { SetType.Red, new(207, 31, 36) },
             { SetType.Yellow, new(214, 224, 59) },
             { SetType.Utilities, new(203, 220, 183) }

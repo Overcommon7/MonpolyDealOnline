@@ -12,6 +12,7 @@ namespace MonopolyDeal
         string[] mMessages = [];
         LocalPlayer? mPlayer;
         List<Card> mCardsPaying;
+        PlayerManager? mPlayerManager;
         public PayPopup()
             : base(nameof(PayPopup), true) 
         {
@@ -26,8 +27,11 @@ namespace MonopolyDeal
 
             mHasSayNo = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var sayNoCard);
             mUsingSayNo = false;
+            var gameplay = App.GetState<Gameplay>();
 
-            App.GetState<Gameplay>().SetToRespondingState();
+
+            mPlayerManager = gameplay.PlayerManager;
+            gameplay.SetToRespondingState();
             base.Open();
         }
 
@@ -149,6 +153,12 @@ namespace MonopolyDeal
 
             if (invalidPayment)
                 ImGui.EndDisabled();
+
+            if (ImGui.CollapsingHeader("Other Player's Payments"))
+            {
+                if (mPlayerManager is not null)
+                    PaymentHandler.ImGuiDraw(mPlayerManager, null);
+            }                
         }
     }
 }

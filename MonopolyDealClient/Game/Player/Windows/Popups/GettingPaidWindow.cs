@@ -40,13 +40,6 @@ namespace MonopolyDeal
                 ImGui.Button("Waiting For Payments");
                 ImGui.EndDisabled();
             }
-
-            ImGui.SeparatorText("Debug");
-            if (!ImGui.Button("Refresh Say No"))
-            {
-                mHasSayNo = mGameplay.PlayerManager.LocalPlayer.
-                    Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var card);
-            }
         }
 
         void SayNoLogic(int playerNumber)

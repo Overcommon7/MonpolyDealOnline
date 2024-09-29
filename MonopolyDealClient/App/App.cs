@@ -53,13 +53,14 @@ namespace MonopolyDeal
         private static void Initialize(Vector2 position)
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
-            Raylib.InitWindow((int)ScreenSize.X, (int)ScreenSize.Y, "EmptyRaylib");
+            Raylib.InitWindow((int)ScreenSize.X, (int)ScreenSize.Y, "Monopoly Deal");
             Raylib.SetTargetFPS(30);
             Raylib.SetExitKey(KeyboardKey.Null);
 
             Raylib.SetWindowPosition((int)position.X, (int)position.Y);
 
             rlImGui.Setup();
+            ImGui.LoadIniSettingsFromMemory(IniSettings.Data);
 
             AddStates();
 
@@ -120,7 +121,6 @@ namespace MonopolyDeal
                 Client.ProcessIncomingRequests();
             }
 
-            File.WriteAllText("Settings.ini", ImGui.SaveIniSettingsToMemory());
             camera.Dispose();
         }
 
