@@ -25,6 +25,12 @@
         return new WildPropertyCard(setType1, setType2, Value);
     }
 
+    public override void SetCurrentType(SetType setType)
+    {
+        if (Contains(setType))
+            base.SetCurrentType(setType);
+    }
+
     public override string DisplayName()
     {
         if (setType == SetType1)

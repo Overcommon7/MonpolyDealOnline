@@ -37,6 +37,7 @@ namespace MonopolyDeal
             mSetTypes = new() { { SetType.None, -100000 } };
             emptyWildCards = 0;
         }
+
         public void RemovePropertyCard(PropertyCard card)
         {
             int index = mPropertyCards.FindIndex(c => c.ID == card.ID && c.SetType == card.SetType);
@@ -51,7 +52,7 @@ namespace MonopolyDeal
                 if (mSetTypes[card.SetType] == 0)
                 {
                     mSetTypes.Remove(card.SetType);
-                }                    
+                }
                 else if (mSetTypes[card.SetType] == 1)
                 {
                     var value = GetPropertyCardsOfType(card.SetType)[0];
@@ -67,7 +68,6 @@ namespace MonopolyDeal
 
             if (SetType.None == card.SetType)
                 --emptyWildCards;
-               
         }
 
         public void RemoveBuildingCard(BuildingCard card)
@@ -220,6 +220,32 @@ namespace MonopolyDeal
                 return 0;
 
             return count;
+        } 
+        
+        public void DrawProperties(
+            Func<Card, int, bool>? propertyLogic = null,
+            string identifier = "1")
+        {
+            ImGui.SeparatorText("Properties");
+
+            int id = 0;
+            foreach (var setType in mSetTypes.Keys)
+            {
+                if (setType == SetType.None && emptyWildCards == 0)
+                    continue;
+
+                if (!ImGui.TreeNode($"{setType}##{playerNumber}{identifier}"))
+                    continue;
+
+                foreach (var card in GetPropertyCardsOfType(setType))
+                {
+                    ImGui.TextColored(card.Color.ToVector4(), card.Name);
+                    if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
+                        break;
+                }                
+
+                ImGui.TreePop();
+            }
         }
 
         public void ImGuiDraw(

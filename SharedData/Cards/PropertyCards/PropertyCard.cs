@@ -34,4 +34,3 @@
         return $"{Name} - {SetType} - M{Value} - ID: {ID}";
     }
 }
-

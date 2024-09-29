@@ -61,7 +61,7 @@ namespace MonopolyDeal
             {
                 GetPlayer(playerNumber).EndTurn();
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

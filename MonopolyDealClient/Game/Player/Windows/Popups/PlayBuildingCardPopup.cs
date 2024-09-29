@@ -65,10 +65,10 @@ namespace MonopolyDeal
             if (ImGui.Combo("Set##PACP", ref mSetIndex, mSetTypes, mSetTypes.Length))
                 mSetType = Enum.Parse<SetType>(mSetTypes[mSetIndex]);
 
-            if (!ImGui.Button("Play House"))
+            if (!ImGui.Button("Play " + (mBuilding.IsHouse ? "House" : "Hotel")))
                 return;
 
-            if (mCard is null)
+            if (mCard is null) 
                 return;
 
             PlayBuildingCard values = new();
@@ -123,9 +123,6 @@ namespace MonopolyDeal
                 mSetTypes = [.. types];
                 mSetType = Enum.Parse<SetType>(mSetTypes[0]);
             }
-                
-
-            
         }
     }
 }

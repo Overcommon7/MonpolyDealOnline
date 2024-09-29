@@ -7,8 +7,7 @@ namespace MonopolyDeal
     public class GettingPaidWindow : IWindow
     {
         Gameplay mGameplay;
-        bool mHasSayNo;
-        int id = 0;
+        bool mHasSayNo = false;
         public GettingPaidWindow() 
             : base("Payment Details", true)
         {
@@ -24,7 +23,6 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
-            id = 0;
             PaymentHandler.ImGuiDraw(mGameplay.PlayerManager, SayNoLogic);
             ImGui.Spacing();
 

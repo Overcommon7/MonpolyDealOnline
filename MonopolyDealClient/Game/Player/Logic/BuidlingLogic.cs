@@ -10,8 +10,15 @@ namespace MonopolyDeal
             if (card is not BuildingCard building)
                 return false;
 
-            return false;
+            if (building.IsHouse && PlayedCards.HasHotel(building.CurrentSetType))
+                return false;
 
+            ImGui.SameLine();
+
+            if (ImGui.Button($"Move##{id}"))
+                mGameplay.GetWindow<MoveCardPopup>().Open(card);
+
+            return false;
         }
 
         bool RespondToAction_BuildingCards(Card value, int id)

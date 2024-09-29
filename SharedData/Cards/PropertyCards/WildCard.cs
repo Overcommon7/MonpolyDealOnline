@@ -15,7 +15,7 @@
         return new WildCard(SetType, Name, Value);
     }
 
-    public void SetCurrentType(SetType setType)
+    public virtual void SetCurrentType(SetType setType)
     {
         this.setType = setType;
     }

@@ -55,10 +55,10 @@ namespace MonopolyDeal
                     var values = Format.ToStruct<ForcedDealValues>(data);
                     mDealValues.targetPlayer = playerManager.GetPlayer(values.playerTradingWithNumber);
                     mDealValues.data = values;
-                    if (CardData.TryGetCard<Card>(values.givingToPlayerID, out var giving) && 
-                        CardData.TryGetCard<Card>(values.takingFromPlayerID, out var taking))
+                    if (CardData.TryGetCard<Card>(values.givingToPlayerCardID, out var giving) && 
+                        CardData.TryGetCard<Card>(values.takingFromPlayerCardID, out var taking))
                     {
-                        dealMessage = $"{mDealValues.recievingPlayer.Name} Has Forced Dealed Their {giving.DisplayName()} Card For {mDealValues.targetPlayer.Name}'s {taking.DisplayName()} Properties.";
+                        dealMessage = $"{mDealValues.recievingPlayer.Name} Has Forced Dealed Their {giving.DisplayName()} Card For {mDealValues.targetPlayer.Name}'s {taking.DisplayName()} Property.";
                     }
                 }
                 break;
@@ -101,6 +101,12 @@ namespace MonopolyDeal
             if (localPlayer.Number == mDealValues.recievingPlayer.Number)
             {
                 var dealWindow = App.GetState<Gameplay>().GetWindow<GettingDealWindow>();
+                string message =  $"{mDealValues.recievingPlayer.Name} Rejected Your No";
+                if (!dealWindow.IsOpen)
+                    dealWindow.Open(mDealValues.recievingPlayer, mDealValues.targetPlayer, message, localPlayer.Number);
+                else
+                    dealWindow.ChangeMessage(message);
+
                 dealWindow.GotRejected();
             }
             else if (localPlayer.Number != mDealValues.targetPlayer.Number)
@@ -187,18 +193,41 @@ namespace MonopolyDeal
 
         static void DoSlyDealLogic(PlayerManager playerManager, SlyDealValues values)
         {
+            CardData.TryGetCard<PropertyCard>(values.cardID, out var card);
             
+            if (card is WildCard wild)
+            {
+                wild.SetCurrentType(values.setType);
+            }
+
+            mDealValues.targetPlayer.PlayedCards.RemovePropertyCard(card);
+            mDealValues.recievingPlayer.PlayedCards.AddPropertyCard(card);
         }
 
         static void DoForcedDealLogic(PlayerManager playerManager, ForcedDealValues values)
         {
-            
+            CardData.TryGetCard<PropertyCard>(values.takingFromPlayerCardID, out var takingCard);
+            CardData.TryGetCard<PropertyCard>(values.givingToPlayerCardID, out var givingCard);
+
+            {
+                if (takingCard is WildCard wild)
+                    wild.SetCurrentType(values.takingSetType);
+            }
+            {
+                if (givingCard is WildCard wild)
+                    wild.SetCurrentType(values.givingSetType);
+            }            
+
+            mDealValues.targetPlayer.PlayedCards.RemovePropertyCard(takingCard);
+            mDealValues.recievingPlayer.PlayedCards.AddPropertyCard(takingCard);
+
+            mDealValues.targetPlayer.PlayedCards.AddPropertyCard(givingCard);
+            mDealValues.recievingPlayer.PlayedCards.RemovePropertyCard(givingCard);
         }
 
         public static void DealComplete(Gameplay gameplay)
         {
-            CurrentDealType = DealType.None;
-            mDealValues = new();
+            DoDealLogic(gameplay.PlayerManager);
 
             var player = gameplay.PlayerManager.LocalPlayer;
             if (player.Number == mDealValues.targetPlayer.Number || player.Number == mDealValues.recievingPlayer.Number)
@@ -209,6 +238,9 @@ namespace MonopolyDeal
             {
                 gameplay.GetWindow<MessagePopup>().ShowCloseButton = true;
             }
+
+            CurrentDealType = DealType.None;
+            mDealValues = new();
         }
     }
 }

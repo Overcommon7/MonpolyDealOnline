@@ -14,7 +14,7 @@ public static class GameManager
     }
     public static GameState CurrentState { get; set; } = GameState.Lobby;
     public static Configuration Configuration { get; set; } = new();
-    static Deck sDeck;
+    static Deck? sDeck = null;
     static ImGuiValues mValues = new();
     public static void Start()
     {
@@ -29,6 +29,9 @@ public static class GameManager
     {
         var status = PlayerManager.TryGetPlayer(clientID, out var player);
         if (status != ConnectionStatus.Connected) 
+            return;
+
+        if (sDeck is null)
             return;
 
         switch (message)
@@ -73,18 +76,23 @@ public static class GameManager
                 PlayerActions.DebtCollectorPlayed(sDeck, player, data);
                 break;
             case ClientSendMessages.RejectedNo:
-                if (PaymentManager.IsPaymentInProgress)
-                {
-                    var status1 = PlayerManager.TryGetPlayer(playerNumber, out var targetPlayer);
-                    if (status1 != ConnectionStatus.Connected) 
-                        break;
+                var status1 = PlayerManager.TryGetPlayer(playerNumber, out var targetPlayer);
+                if (status1 != ConnectionStatus.Connected)
+                    break;
 
+                if (PaymentManager.IsPaymentInProgress)
                     PaymentManager.NoRejected(sDeck, targetPlayer);
-                }
+
+                if (DealManager.CurrentDealType != DealType.None)
+                    DealManager.RecieverPlayedSayNo(sDeck, targetPlayer);
+
                 break;
             case ClientSendMessages.ActionGotDenied:
                 if (PaymentManager.IsPaymentInProgress)
                     PaymentManager.PlayerUsedSayNo(sDeck, player);
+
+                if (DealManager.CurrentDealType != DealType.None)
+                    DealManager.TargetPlayedSayNo(sDeck, player);
                 break;
             case ClientSendMessages.RequestCards:
                 PlayerActions.OnCardsRequested(sDeck, player, data);

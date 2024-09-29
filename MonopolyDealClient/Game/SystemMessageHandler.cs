@@ -175,6 +175,20 @@ namespace MonopolyDeal
               
         }
 
+        public static void BirthdayPlayed(Gameplay gameplay, int playerNumber)
+        {
+            var localPlayerNumber = gameplay.PlayerManager.LocalPlayer.Number;
+            if (playerNumber == localPlayerNumber)
+                return;
+
+            PaymentHandler.BeginPaymentProcess(playerNumber, Constants.BIRTHDAY_AMOUNT);
+            var player = gameplay.PlayerManager.GetPlayer(playerNumber);
+
+            gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer,
+                [$"{player.Name} Has Played It's My Birthday",
+                $"You Owe M{Constants.BIRTHDAY_AMOUNT}"]);
+        }
+
         public static void WildRentCardPlayed(Gameplay gameplay, int playerNumber, byte[] data)
         {
             var localPlayerNumber = gameplay.PlayerManager.LocalPlayer.Number;            
@@ -200,6 +214,29 @@ namespace MonopolyDeal
                 gameplay.GetWindow<MessagePopup>().Open(
                     [$"{chargingPlayer.Name} Has Charged {targetPlayer.Name} With A Wild Rent Card On Their {values.chargingSetType} Properties ",
                     $"{targetPlayer.Name} Owes M{rentAmount} To {chargingPlayer.Name}"]);
+            }
+        }
+
+        public static void CardMoved(PlayerManager playerManager, byte[] data, int playerNumber)
+        {
+            var values = Format.ToStruct<MoveValues>(data);
+            var player = playerManager.GetPlayer(playerNumber);
+            if (!CardData.TryGetCard<Card>(values.cardID, out var card))
+                return;
+
+            if (values.cardType == MoveCardType.WildCard || values.cardType == MoveCardType.WildProperty)
+            {
+                var wild = (WildCard)card;
+                wild.SetCurrentType(values.oldSetType);                
+                player.PlayedCards.RemovePropertyCard(wild);
+                wild.SetCurrentType(values.newSetType);
+                player.PlayedCards.AddPropertyCard(wild);
+            }
+            else if (values.cardType == MoveCardType.Building)
+            {
+                var building = (BuildingCard)card;
+                building.CurrentSetType = values.oldSetType;
+                player.PlayedCards.MoveBuildingCard(building, values.newSetType);
             }
         }
     }

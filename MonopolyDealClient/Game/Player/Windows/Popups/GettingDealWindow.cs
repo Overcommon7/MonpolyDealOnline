@@ -8,7 +8,6 @@ namespace MonopolyDeal
     {
         string mMessage = string.Empty;
         bool mHasSayNo = false;
-        bool mIsUsingSayNo = false;
         bool mIsTarget = false;
         bool mIsReciever = false;
         bool mIsCountered = false;
@@ -27,18 +26,44 @@ namespace MonopolyDeal
 
             if (mHasSayNo && mIsCountered)
             {
-                if (ImGui.Button("Use Say No"))
+                if (ImGui.Button("Use Say No##GDPU"))
                 {
+                    var player = GetLocalPlayer();
 
+                    if (player is null)
+                        return;
+
+                    player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var justSayNo);
+                    player.Hand.RemoveCard(justSayNo);
+
+                    CheckForSayNo();
+                    mIsCountered = false;
+
+                    if (mIsReciever && mReciever is not null)
+                    {
+                        Client.SendData(ClientSendMessages.RejectedNo, player.Number);
+                    }
+
+                    if (mIsTarget)
+                    {                        
+                        Client.SendData(ClientSendMessages.ActionGotDenied, player.Number);
+                    }
                 }
             }
 
-            if (!mHasSayNo || mIsCountered)
+
+            if (mIsTarget && ImGui.Button("Accept Deal"))
             {
-                if (mIsTarget && ImGui.Button("Accept Deal"))
+                var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
+                Client.SendData(ClientSendMessages.DealAccepted, player.Number);
+                Close();
+            }
+
+            if (mIsReciever && ShowAcceptButton)
+            {
+                if (ImGui.Button("Confirm##GHS"))
                 {
-                    var player = App.GetState<Gameplay>().PlayerManager.LocalPlayer;
-                    Client.SendData(ClientSendMessages.DealAccepted, player.Number);
+                    Close();
                 }
             }
             
@@ -58,16 +83,16 @@ namespace MonopolyDeal
             mIsReciever = reciever.Number == localPlayerNumber;
             mIsTarget = mTarget.Number == localPlayerNumber;
 
-            mIsUsingSayNo = false;
             ShowAcceptButton = false;
 
-            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = true;
+            mIsCountered = mIsTarget;
+
+            //App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = true;
 
             CheckForSayNo();
             Open();
         }
-
-        public void CheckForSayNo()
+        LocalPlayer? GetLocalPlayer()
         {
             LocalPlayer? player = null;
 
@@ -76,6 +101,12 @@ namespace MonopolyDeal
 
             if (mIsReciever)
                 player = mReciever as LocalPlayer;
+
+            return player;
+        }
+        public void CheckForSayNo()
+        {
+            var player = GetLocalPlayer();
 
             if (player is null)
                 return;
@@ -88,6 +119,11 @@ namespace MonopolyDeal
             ShowAcceptButton = false;
             App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = false;
             base.Close();
+        }
+
+        public void ChangeMessage(string message)
+        {
+            mMessage = message;
         }
     }
 }

@@ -60,7 +60,7 @@ namespace MonopolyDeal
 
             if (strs.Length > 2)
             {
-                foreach (var setType in strs[3].Split(','))
+                foreach (var setType in strs[2].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 {
                     buildingTypes.Add(Enum.Parse<SetType>(setType));
                 }                    

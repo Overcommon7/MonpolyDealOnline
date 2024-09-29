@@ -98,7 +98,7 @@ namespace MonopolyDeal
                 player.Hand.RemoveCard(mCard);
 
             Client.SendData(ClientSendMessages.PlayBirthdayCard, player.Number);
-            PaymentHandler.BeginPaymentProcess(player.Number, 2);
+            PaymentHandler.BeginPaymentProcess(player.Number, Constants.BIRTHDAY_AMOUNT);
 
             Close();
             gameplay.GetWindow<GettingPaidWindow>().Open();

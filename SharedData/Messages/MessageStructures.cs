@@ -46,6 +46,7 @@ public struct DealBreakerValues
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct SlyDealValues
 {
+    public SetType setType;
     public int cardID;
     public int targetPlayerNumber;
 }
@@ -53,8 +54,10 @@ public struct SlyDealValues
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ForcedDealValues
 {
-    public int givingToPlayerID;
-    public int takingFromPlayerID;
+    public int givingToPlayerCardID;
+    public int takingFromPlayerCardID;
+    public SetType givingSetType;
+    public SetType takingSetType;
     public int playerTradingWithNumber;
 }
 

@@ -99,7 +99,7 @@ public static class PlayerActions
         if (data is null)
             Server.BroadcastMessage(message, player.Number);
         else
-            Server.SendMessageExcluding(message, player.Number, data, player.Number);
+            Server.BroadcastMessage(message, data, player.Number);
     }
 
     public static void OnCardsRequested(Deck deck, Player player, byte[] data)
@@ -147,6 +147,7 @@ public static class PlayerActions
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ItsMyBirthday, out var card))
             return;
 
+        PaymentManager.StartNewPayment(player, TargetType.All);
         CardPlayedToDeck<ActionCard>(deck, player, card.ID, null, ServerSendMessages.BirthdayCardPlayed);
     }
 
@@ -177,6 +178,7 @@ public static class PlayerActions
     {
         var values = Format.ToStruct<MoveValues>(data);
         var card = player.GetCardFromPlayArea(values.cardID);
+
         if (card is null)
             return;
 

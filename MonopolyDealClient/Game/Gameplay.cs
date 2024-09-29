@@ -68,6 +68,10 @@ namespace MonopolyDeal
                 case ServerSendMessages.RentCardPlayed:                      
                     SystemMessageHandler.RentCardPlayed(GetWindow<PayPopup>(), PlayerManager, playerNumber, data);
                     break;
+                case ServerSendMessages.BirthdayCardPlayed:
+                    if (!PaymentHandler.PaymentInProcess)
+                        SystemMessageHandler.BirthdayPlayed(this, playerNumber);
+                    break;
                 case ServerSendMessages.SlyDealPlayed:
                 case ServerSendMessages.DealBreakerPlayed:
                 case ServerSendMessages.ForcedDealPlayed:
@@ -75,6 +79,9 @@ namespace MonopolyDeal
                         break;
 
                     DealHandler.StartDeal(PlayerManager, message, playerNumber, data);                    
+                    break;
+                case ServerSendMessages.DealComplete:
+                    DealHandler.DealComplete(this);
                     break;
                 case ServerSendMessages.DebtCollectorPlayed:
                     if (PaymentHandler.PaymentInProcess)
@@ -89,11 +96,15 @@ namespace MonopolyDeal
                     if (PaymentHandler.PaymentInProcess)
                         PaymentHandler.OnPlayerSaidNo(PlayerManager, playerNumber);
 
-                break;
+                    if (DealHandler.IsDealInProgress)
+                        DealHandler.SaidNoPlayed(PlayerManager, playerNumber);
+                    break;
                 case ServerSendMessages.NoWasRejected:
                     if (PaymentHandler.PaymentInProcess)
                         PaymentHandler.RejectedNo(this, playerNumber);
 
+                    if (DealHandler.IsDealInProgress)
+                        DealHandler.SaidNoPlayed(PlayerManager, playerNumber);
                 break;
                 case ServerSendMessages.PlayerPaid:
                     if (PaymentHandler.PaymentInProcess)
@@ -108,6 +119,7 @@ namespace MonopolyDeal
                     PaymentHandler.EndPayment(this);
                     break;
                 case ServerSendMessages.CardMoved:
+                    SystemMessageHandler.CardMoved(PlayerManager, data, playerNumber);
                     break;
                 case ServerSendMessages.CardsSent:
                     SystemMessageHandler.OnCardsRecieved(PlayerManager, data, playerNumber);

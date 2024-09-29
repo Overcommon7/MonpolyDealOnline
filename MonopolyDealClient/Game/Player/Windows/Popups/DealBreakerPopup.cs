@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ImGuiNET;
+using Windows.Gaming.Input;
 
 namespace MonopolyDeal
 {
@@ -62,7 +63,14 @@ namespace MonopolyDeal
         public override void Open(Card card)
         {
             mAsMoney = false;
-            Open(card, TargetType.One);
+            mTargetPlayerNumber = App.GetState<Gameplay>().PlayerManager.OnlinePlayers[0].Number;
+            GetTypes();
+
+            if (mSetTypes.Length == 0)
+                mAsMoney = true;
+
+            GetPlayerNames();
+            base.Open(card);
         }
 
         void GetTypes()
@@ -83,6 +91,10 @@ namespace MonopolyDeal
             }
 
             mSetTypes = [.. types];
+
+            if (mSetTypes.Length == 0)
+                mSetType = SetType.None;
+            else mSetType = Enum.Parse<SetType>(mSetTypes[0]);
         }
     }
 }
