@@ -32,8 +32,6 @@ namespace MonopolyDeal
                 ImGui.Checkbox("Use Double Rent##WRPU", ref mUseDoubleRent);
 
                 int rent = mRentAmount;
-                if (mUseDoubleRent)
-                    rent *= 2;
 
                 ImGui.Text($"Amount To be Paid M{rent}");
                 ImGui.SameLine();

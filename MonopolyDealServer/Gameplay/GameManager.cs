@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using SimpleTCP;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public enum GameState
 {
@@ -23,6 +24,15 @@ public static class GameManager
         sDeck = new(Configuration.mDecksToUse);
         sDeck.LoadCardsFromFile();
         mValues.targetPlayerNumber = 1;
+    }
+    public static void SendInitialCards()
+    {
+        if (sDeck is null)
+            return;
+
+        var cards = sDeck.RemoveMultipleCardsFromDeck(Constants.PICK_UP_AMOUNT_ON_TURN_START);
+        var data = Serializer.SerializeListOfCards(cards);
+        Server.BroadcastMessage(ServerSendMessages.CardsSent, data, TurnManager.CurrentPlayer.Number);
     }
 
     private static void Server_OnDataRecieved(ulong clientID, int playerNumber, ClientSendMessages message, byte[] data)

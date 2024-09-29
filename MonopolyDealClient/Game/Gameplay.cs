@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace MonopolyDeal
 {
@@ -21,10 +22,8 @@ namespace MonopolyDeal
 
             PlayerManager = new PlayerManager();
 
-            AddWindow<LocalPlayerWindow>(PlayerManager.LocalPlayer);           
-
-            foreach (var player in PlayerManager.OnlinePlayers)
-                AddWindow<OnlinePlayerWindow>(player);
+            AddWindow<LocalPlayerWindow>(PlayerManager.LocalPlayer);
+            AddWindow<OnlinePlayersWindow>().SetPlayers(PlayerManager.OnlinePlayers.ToArray());
 
             StartGame();
 

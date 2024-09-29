@@ -100,12 +100,8 @@ namespace MonopolyDeal
             int rentAmount = player.GetRentAmount(rentValues.chargingSetType, rentValues.cardsOwnedInSet, rentValues.withDoubleRent);
             
             if (rentValues.withDoubleRent)
-            {
                 --player.CardsInHand;
-                rentAmount *= 2;
-            }
                 
-
             PaymentHandler.BeginPaymentProcess(playerNumber, rentAmount);
 
             --player.CardsInHand;

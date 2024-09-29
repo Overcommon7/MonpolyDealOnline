@@ -78,7 +78,6 @@ namespace MonopolyDeal
 
                     if (mUseDoubleRent)
                     {
-                        rentAmount *= 2;
                         CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var card);
                         mPlayer.Hand.RemoveCard(card, false);
                     }

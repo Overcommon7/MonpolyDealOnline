@@ -133,5 +133,9 @@ public static class ConnectionHandler
         }
 
         ImGui.End();
+
+        Thread.Sleep(50);
+
+        GameManager.SendInitialCards();        
     }
 }

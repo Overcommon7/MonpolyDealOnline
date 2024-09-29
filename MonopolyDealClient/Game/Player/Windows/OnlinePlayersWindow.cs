@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace MonopolyDeal
 {
-    public class OnlinePlayerWindow : IWindow
+    public class OnlinePlayersWindow : IWindow
     {
-        public OnlinePlayer[] ConnectedPlayers { get; init; }
-        public OnlinePlayerWindow(params OnlinePlayer[] players) 
+        public OnlinePlayer[] ConnectedPlayers { get; private set; }
+        public OnlinePlayersWindow() 
             : base("Online Players")
         {
-            ConnectedPlayers = players;
+            ConnectedPlayers = [];
         }
 
         public override void ImGuiDraw()
@@ -19,8 +19,12 @@ namespace MonopolyDeal
             {
                 if (ImGui.CollapsingHeader($"{player.Name}##{player.Number}"))
                     player.ImGuiDraw();
-            }
-                
+            }                
+        }
+
+        public void SetPlayers(OnlinePlayer[] connectedPlayers)
+        {
+            ConnectedPlayers = connectedPlayers;
         }
     }
 }

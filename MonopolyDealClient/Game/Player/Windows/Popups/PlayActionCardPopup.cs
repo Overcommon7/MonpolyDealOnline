@@ -77,8 +77,10 @@ namespace MonopolyDeal
                     var gameplay = App.GetState<Gameplay>();
                     var player = gameplay.PlayerManager.LocalPlayer;
                     player.Hand.RemoveCard(mCard);
+                    ++player.PlaysUsed;
                 }
-                    
+                 
+                
                 DebtCollectorValues values = new();
                 values.targetPlayerNumber = mTargetPlayerNumber;
                 values.actionType = ActionType.DebtCollector;
@@ -97,6 +99,7 @@ namespace MonopolyDeal
             if (mCard is not null)
                 player.Hand.RemoveCard(mCard);
 
+            ++player.PlaysUsed;
             Client.SendData(ClientSendMessages.PlayBirthdayCard, player.Number);
             PaymentHandler.BeginPaymentProcess(player.Number, Constants.BIRTHDAY_AMOUNT);
 
@@ -115,6 +118,7 @@ namespace MonopolyDeal
             if (mCard is not null)
                 player.Hand.RemoveCard(mCard);
 
+            ++player.PlaysUsed;
             Client.SendData(ClientSendMessages.RequestCards, "2", player.Number);
             Close();
         }
