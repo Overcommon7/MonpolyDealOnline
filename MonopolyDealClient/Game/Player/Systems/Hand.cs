@@ -70,7 +70,7 @@ namespace MonopolyDeal
 
         public bool CheckForTooManyCards()
         {
-            if (mCards.Count <= Constants.MAX_CARDS_IN_HAND)
+            if (mCards.Count <= GameData.MAX_CARDS_IN_HAND)
                 return false;
 
             var gameplay = App.GetState<Gameplay>();

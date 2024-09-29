@@ -80,7 +80,7 @@ namespace MonopolyDeal
             var player = gameplay.PlayerManager.GetOnlinePlayer(mTargetPlayerNumber);
             List<string> types = new List<string>();
 
-            foreach (var type in Constants.SET_TYPES)
+            foreach (var type in GameData.SET_TYPES)
             {
                 if (type == SetType.None)
                     continue;

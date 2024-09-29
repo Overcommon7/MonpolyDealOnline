@@ -5,7 +5,7 @@ public static class PlayerActions
 {
     public static void OnHandRequested(Deck deck, Player player, byte[] data)
     {
-        var cards = DataMarshal.GetCards(deck, Constants.PICK_UP_AMOUNT_ON_HAND_EMPTY);
+        var cards = DataMarshal.GetCards(deck, GameData.PICK_UP_AMOUNT_ON_HAND_EMPTY);
         player.AddCardsToHand(cards);
         var message = Format.ToData(ServerSendMessages.HandReturned, Serializer.SerializeListOfCards(cards), player.Number);
         player.Client.GetStream().Write(message, 0, message.Length);

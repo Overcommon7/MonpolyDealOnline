@@ -45,7 +45,7 @@ namespace MonopolyDeal
                 mDiscardingCards.Add(card);
             }
 
-            bool tooManyCards = mPlayer.Hand.NumberOfCards - mDiscardingCards.Count > Constants.MAX_CARDS_IN_HAND;
+            bool tooManyCards = mPlayer.Hand.NumberOfCards - mDiscardingCards.Count > GameData.MAX_CARDS_IN_HAND;
             if (tooManyCards)
                 ImGui.BeginDisabled();
 

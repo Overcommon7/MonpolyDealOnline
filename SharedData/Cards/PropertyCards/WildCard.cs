@@ -18,6 +18,7 @@
     public virtual void SetCurrentType(SetType setType)
     {
         this.setType = setType;
+        mColor = CardData.GetCardColor(setType);
     }
 
     public override string ToString()

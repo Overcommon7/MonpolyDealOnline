@@ -97,7 +97,7 @@ public static class CardData
     {
         cardColors = new Dictionary<SetType, CardColor>
         {
-            { SetType.None, new(255, 255, 255) },
+            { SetType.None, new(240, 240, 240) },
             { SetType.Brown, new(124, 64, 59) },
             { SetType.DarkBlue, new(31, 98, 172) },
             { SetType.Green, new(38, 143, 71) },
@@ -182,8 +182,8 @@ public static class CardData
             return 0;
 
         int rentAmount = values.Prices[index].rentAmount;
-        if (hasHouse) rentAmount += Constants.HOUSE_RENT_INCREASE;
-        if (hasHouse && hasHouse) rentAmount += Constants.HOTEL_RENT_INCREASE;
+        if (hasHouse) rentAmount += GameData.HOUSE_RENT_INCREASE;
+        if (hasHouse && hasHouse) rentAmount += GameData.HOTEL_RENT_INCREASE;
 
         return rentAmount;
     }
@@ -314,10 +314,10 @@ public static class CardData
         {
             Buffer.BlockCopy(array, 0, rv, offset, array.Length);
             offset += array.Length;
-            builder.Append(array.Length.ToString().PadRight(Constants.CARD_DATA_SIZE_DIGITS));
+            builder.Append(array.Length.ToString().PadRight(GameData.CARD_DATA_SIZE_DIGITS));
         }
 
-        return Format.CombineByteArrays(Format.Encode(builder.ToString().PadRight(Constants.CARD_DATA_HEADER_SIZE)), rv, true);
+        return Format.CombineByteArrays(Format.Encode(builder.ToString().PadRight(GameData.CARD_DATA_HEADER_SIZE)), rv, true);
     }
 
     public static void LoadFromData(byte[] externalData)
@@ -333,15 +333,15 @@ public static class CardData
         {
             using (var reader = new StreamReader(stream))
             {
-                char[] data = new char[Constants.CARD_DATA_HEADER_SIZE];
-                reader.ReadBlock(data, 0, Constants.CARD_DATA_HEADER_SIZE);
+                char[] data = new char[GameData.CARD_DATA_HEADER_SIZE];
+                reader.ReadBlock(data, 0, GameData.CARD_DATA_HEADER_SIZE);
                 string sizes = new(data);
 
                
                 int index = 0;
-                for (int i = 0; i < Constants.CARD_DATA_FILE_COUNT; i++)
+                for (int i = 0; i < GameData.CARD_DATA_FILE_COUNT; i++)
                 {
-                    var intermediate = sizes.Substring(i * Constants.CARD_DATA_SIZE_DIGITS, Constants.CARD_DATA_SIZE_DIGITS).TrimEnd();
+                    var intermediate = sizes.Substring(i * GameData.CARD_DATA_SIZE_DIGITS, GameData.CARD_DATA_SIZE_DIGITS).TrimEnd();
                     int size = int.Parse(intermediate);
                     char[] fileData = new char[size];
                     reader.ReadBlock(fileData, index, size);

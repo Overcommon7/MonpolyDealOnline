@@ -1,9 +1,19 @@
 ﻿public class BuildingCard : ActionCard, Copy<BuildingCard>
 {
-    public SetType CurrentSetType { get; set; } = SetType.None;
+    private SetType mCurrentSetType = SetType.None;
     public int AmountToAddToSet => actionType == ActionType.Hotel ? 4 : 3;
     public bool IsHotel => actionType == ActionType.Hotel;
     public bool IsHouse => actionType == ActionType.House;
+    public SetType CurrentSetType 
+    { 
+        get => mCurrentSetType; 
+        set
+        {
+            mCurrentSetType = value;
+            mColor = CardData.GetCardColor(value);
+        }
+    }
+
     public BuildingCard(ActionType type) 
         : base(type, type == ActionType.Hotel ? 4 : 3)
     {

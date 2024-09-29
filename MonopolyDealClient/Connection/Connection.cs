@@ -58,6 +58,9 @@ namespace MonopolyDeal
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
         {
+            if (message == ServerSendMessages.SendConstants)
+                ConstantsAssigned(data);
+
             if (message == ServerSendMessages.OnPlayerIDAssigned)
                 IDAssigned(playerNumber, data);
 
@@ -72,6 +75,11 @@ namespace MonopolyDeal
 
             if (message == ServerSendMessages.OnGameStarted)
                 OnGameStarted(playerNumber, data);
+        }
+
+        private void ConstantsAssigned(byte[] data)
+        {
+            GameData.Deserialize(Format.ToString(data));
         }
 
         private void IDAssigned(int playerNumber, byte[] data)

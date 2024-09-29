@@ -3,13 +3,13 @@
     public string Name { get; private set; }
     public int Value { get; private set; }
     public int ID { get; private set; }
-    public CardColor Color { get; private set; }
-
+    public CardColor Color => mColor;
+    protected CardColor mColor;
     public Card(string name, int value, CardColor color)
     {
         Name = name;
         Value = value;
-        Color = color;
+        mColor = color;
         ID = Hashing.GetHash32(name);
     }
     public Card Copy()

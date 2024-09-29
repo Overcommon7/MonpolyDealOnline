@@ -7,8 +7,8 @@
         public int Number { get; protected set; }
         public string Name { get; protected set; }
         public PlayedCards PlayedCards { get; private set; }
-        public int TurnsRemaining => mPlaysUsed - Constants.MAX_PLAYS_PER_TURN;
-        public bool HasPlaysRemaining => mPlaysUsed < Constants.MAX_PLAYS_PER_TURN;
+        public int TurnsRemaining => mPlaysUsed - GameData.MAX_PLAYS_PER_TURN;
+        public bool HasPlaysRemaining => mPlaysUsed < GameData.MAX_PLAYS_PER_TURN;
         public bool IsTurn => mGameplay.PlayerManager.CurrentTurnPlayer.Number == Number;
 
         public int PlaysUsed

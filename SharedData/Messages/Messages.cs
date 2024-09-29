@@ -25,7 +25,9 @@
     OnEndTurn,
     SendUsername,
     ReadyForNextTurn,
-    RequestHand
+    RequestHand,
+
+    RecievedConstants
 }
 
 public enum ServerSendMessages : short
@@ -66,5 +68,6 @@ public enum ServerSendMessages : short
     OnPlayerDisconnected,
     OnPlayerReconnected,
 
+    SendConstants,
     DebugSendCard
 }

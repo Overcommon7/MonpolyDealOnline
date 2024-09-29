@@ -4,6 +4,7 @@ public static class Files
     public static string SaveDataDirectory =
         Path.Combine(Directory.GetParent(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)).FullName,
             "LocalLow\\Overcommon7\\MonopolyDeal\\");
+
     public static readonly string PropertyCardData = SaveDataDirectory + "PropertyCardData.xml";
     public static readonly string WildPropertyCardData = SaveDataDirectory + "WildPropertyCardData.xml";
     public static readonly string ActionCardData = SaveDataDirectory + "ActionCardData.xml";

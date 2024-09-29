@@ -26,7 +26,7 @@ namespace MonopolyDeal
 
             int amount = CardData.GetRentAmount(setType, amountInSet, hasHouse, hasHotel);
             if (withDoubleRent)
-                amount *= Constants.DOUBLE_RENT_MULTIPLIER;
+                amount *= GameData.DOUBLE_RENT_MULTIPLIER;
 
             return amount;
         }

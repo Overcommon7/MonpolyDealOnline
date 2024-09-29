@@ -9,7 +9,7 @@ namespace MonopolyDeal
         public LocalPlayer ConnectedPlayer { get; init; }
         public bool IsDisabled { get; set; } = false;
         public LocalPlayerWindow(LocalPlayer player) 
-            : base(player.Name)
+            : base("You")
         {
             ConnectedPlayer = player;
         }

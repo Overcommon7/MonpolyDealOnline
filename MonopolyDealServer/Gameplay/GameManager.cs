@@ -30,7 +30,7 @@ public static class GameManager
         if (sDeck is null)
             return;
 
-        var cards = sDeck.RemoveMultipleCardsFromDeck(Constants.PICK_UP_AMOUNT_ON_TURN_START);
+        var cards = sDeck.RemoveMultipleCardsFromDeck(GameData.PICK_UP_AMOUNT_ON_TURN_START);
         var data = Serializer.SerializeListOfCards(cards);
         Server.BroadcastMessage(ServerSendMessages.CardsSent, data, TurnManager.CurrentPlayer.Number);
     }

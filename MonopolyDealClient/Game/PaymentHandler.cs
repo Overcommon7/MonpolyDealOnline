@@ -98,6 +98,8 @@ namespace MonopolyDeal
             PaymentInfo info = new PaymentInfo();
             info.mPlayerNumber = playerNumber;
             info.mPlayedSayNo = true;
+            info.mAsMoney = new();
+            info.mNotMoney = new();
 
             mPayments.Add(info);
         }
@@ -139,7 +141,7 @@ namespace MonopolyDeal
                     if (card is BuildingCard building)
                     {
                         building.SetAsMoney(true);
-                        foreach (var setType in Constants.SET_TYPES)
+                        foreach (var setType in GameData.SET_TYPES)
                         {
                             if (player.PlayedCards.HasFullSetOfType(setType))
                             {
@@ -169,7 +171,7 @@ namespace MonopolyDeal
                     else if (card is WildCard wild)
                     {
                         wild.SetCurrentType(SetType.None);
-                        foreach (var setType in Constants.SET_TYPES)
+                        foreach (var setType in GameData.SET_TYPES)
                         {
                             if (!player.PlayedCards.HasFullSetOfType(setType))
                             {

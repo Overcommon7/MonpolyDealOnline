@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using rlImGui_cs;
 using ImGuiNET;
+using System.IO;
 
 namespace MonopolyDeal
 {
@@ -119,6 +120,7 @@ namespace MonopolyDeal
                 Client.ProcessIncomingRequests();
             }
 
+            File.WriteAllText("Settings.ini", ImGui.SaveIniSettingsToMemory());
             camera.Dispose();
         }
 

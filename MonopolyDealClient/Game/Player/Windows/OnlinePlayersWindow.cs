@@ -17,7 +17,7 @@ namespace MonopolyDeal
         {
             foreach (var player in ConnectedPlayers)
             {
-                if (ImGui.CollapsingHeader($"{player.Name}##{player.Number}"))
+                if (ImGui.CollapsingHeader($"{player.Name}##{player.Number}", ImGuiTreeNodeFlags.DefaultOpen))
                     player.ImGuiDraw();
             }                
         }

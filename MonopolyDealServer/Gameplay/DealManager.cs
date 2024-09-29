@@ -64,7 +64,7 @@ public static class DealManager
         CurrentDealType = DealType.None;
         RecievingPlayer = null;
 
-        Server.BroadcastMessage(ServerSendMessages.DealComplete, Constants.ALL_PLAYER_NUMBER);
+        Server.BroadcastMessage(ServerSendMessages.DealComplete, GameData.ALL_PLAYER_NUMBER);
     }
 }
 

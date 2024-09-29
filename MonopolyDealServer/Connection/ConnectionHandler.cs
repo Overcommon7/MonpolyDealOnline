@@ -1,11 +1,58 @@
 ﻿using ImGuiNET;
 using SimpleTCP;
-using System.Diagnostics;
 using System.Net.Sockets;
 
 public static class ConnectionHandler
 {
     public static int sReadiedPlayers = 0;
+    struct ProfileData
+    {
+        public static string CurrentProfileName => mProfiles[mSelectedProfileIndex];
+
+        public static string mProfileName = string.Empty;
+        public static string[] mProfiles = [];
+        public static int mSelectedProfileIndex = 0;
+        public const string EXTENSION = ".mdprf";
+
+        public static void AddProfile()
+        {
+            var data = GameData.Serialize();
+            var path = Path.Combine(Files.SaveDataDirectory, mProfileName + EXTENSION);
+            File.WriteAllText(path, data);
+
+            Array.Resize(ref mProfiles, mProfiles.Length + 1);
+            mProfiles[^1] = mProfileName;
+            mSelectedProfileIndex = mProfiles.Length - 1;
+        }
+
+        public static void GetAllProfilesFromFile()
+        {
+            var profiles = Directory.GetFiles(Files.SaveDataDirectory, '*' + EXTENSION);
+            mSelectedProfileIndex = 0;
+
+            if (profiles.Length == 0)
+            {
+                mProfileName = "Default";
+                AddProfile();                
+                return;
+            }
+             
+            mProfiles = new string[profiles.Length];
+            for (int i = 0; i < profiles.Length; i++)
+                mProfiles[i] = Path.GetFileNameWithoutExtension(profiles[i]);
+
+            mProfileName = CurrentProfileName;
+        }
+
+        public static void LoadProfileFromFile()
+        {
+            mProfileName = mProfiles[mSelectedProfileIndex];
+            var path = Path.Combine(Files.SaveDataDirectory, mProfileName + EXTENSION);
+
+            var data = File.ReadAllText(path);
+            GameData.Deserialize(data);
+        }
+    }
     public static void Start()
     {
         GameManager.CurrentState = GameState.Lobby;
@@ -14,6 +61,8 @@ public static class ConnectionHandler
         Server.mOnClientConnected += Server_OnClientConnected;
         Server.mOnClientDisconnected += Server_OnClientDisconnected;
         Server.mOnDataRecieved += Server_OnDataRecieved;
+
+        ProfileData.GetAllProfilesFromFile();
     }
 
     public static void End()
@@ -76,12 +125,26 @@ public static class ConnectionHandler
     {
         ImGui.Begin("Connection");
 
+        ImGui.SeparatorText("Configuration");
+
         var config = GameManager.Configuration;
         bool change = ImGui.InputInt("Lobby Size", ref config.mLobbySize);
         change |= ImGui.InputInt("Decks To Play With", ref config.mDecksToUse);
 
         if (change)
             GameManager.Configuration = config;
+
+        ImGui.SeparatorText("Profile Values");
+        ImGui.InputInt("Starting Cards", ref GameData.PICK_UP_AMOUNT_ON_GAME_START);
+        ImGui.InputInt("Pick Up On Turn Start", ref GameData.PICK_UP_AMOUNT_ON_TURN_START);
+        ImGui.InputInt("Pick Up On Empty Hand", ref GameData.PICK_UP_AMOUNT_ON_HAND_EMPTY);
+        ImGui.InputInt("Max Cards In Hand", ref GameData.MAX_CARDS_IN_HAND);
+        ImGui.InputInt("Max Plays Per Turn", ref GameData.MAX_PLAYS_PER_TURN);
+        ImGui.InputInt("Debt Collector Amount", ref GameData.DEBT_COLLECTOR_AMOUNT);
+        ImGui.InputInt("Birthday Amount", ref GameData.BIRTHDAY_AMOUNT);
+        ImGui.InputInt("House Rent Increase", ref GameData.HOUSE_RENT_INCREASE);
+        ImGui.InputInt("Hotel Rent Increase", ref GameData.HOTEL_RENT_INCREASE);
+        ImGui.InputInt("Double Rent Multiplier", ref GameData.DOUBLE_RENT_MULTIPLIER);
 
         bool invalid = PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize ||
             sReadiedPlayers < GameManager.Configuration.mLobbySize || GameManager.Configuration.mLobbySize == 1;
@@ -90,34 +153,23 @@ public static class ConnectionHandler
         {
             ImGui.BeginDisabled();
         }
-            
-  
+
+        ImGui.Separator();
+
         if (ImGui.Button("Start Game"))
         {
             End();
             GameManager.Start();
-
+            var gameData = GameData.Serialize();
+            Server.BroadcastMessage(ServerSendMessages.SendConstants, gameData, GameData.ALL_PLAYER_NUMBER);
             Thread.Sleep(50);
 
-            bool valid = false;
-            for (int i = 0; i < PlayerManager.ConnectedPlayerCount; ++i)
-            {
-                if (PlayerManager.ConnectedPlayers[i].Name.Contains('7'))
-                {
-                    TurnManager.StartGame(PlayerManager.ConnectedPlayers[i].Number);
-                    Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), PlayerManager.ConnectedPlayers[i].Number); 
-                    valid = true;
-                    break;
-                }
-            }
+            var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
+            TurnManager.StartGame(startingPlayerNumber);
 
-            if (!valid)
-            {
-                var startingPlayerNumber = PlayerManager.ConnectedPlayers[Random.Shared.Next(0, PlayerManager.ConnectedPlayerCount)].Number;
-                TurnManager.StartGame(startingPlayerNumber);
-
-                Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
-            }           
+            Server.BroadcastMessage(ServerSendMessages.OnGameStarted, CardData.LoadToMemory(), startingPlayerNumber);
+            Thread.Sleep(50);
+            GameManager.SendInitialCards();
         }
 
         if (invalid)
@@ -125,17 +177,37 @@ public static class ConnectionHandler
             ImGui.EndDisabled();
         }
 
-        ImGui.SeparatorText("Connected Players");                           
+        ImGui.SeparatorText("Connected Players");
 
         foreach (var player in PlayerManager.ConnectedPlayers)
         {
             ImGui.Text(player.Name + " - " + player.ID);
         }
 
+        if (ImGui.CollapsingHeader("Save/Load Profile"))
+        {
+            ImGui.SeparatorText("Load");
+            ImGui.Combo("Load Profile", ref ProfileData.mSelectedProfileIndex, ProfileData.mProfiles, ProfileData.mProfiles.Length);
+            ImGui.SameLine();
+            if (ImGui.Button($"Load {ProfileData.CurrentProfileName}"))
+                ProfileData.LoadProfileFromFile();
+                
+
+            ImGui.SeparatorText("Save");
+            ImGui.InputText("Profile Name", ref ProfileData.mProfileName, 25);
+            invalid = string.IsNullOrEmpty(ProfileData.mProfileName) || string.IsNullOrWhiteSpace(ProfileData.mProfileName) || ProfileData.mProfileName == "Default";
+            
+            if (invalid)
+                ImGui.BeginDisabled();
+
+            ImGui.SameLine();            
+            if (ImGui.Button("Save Profile"))
+                ProfileData.AddProfile();
+
+            if (invalid)
+                ImGui.EndDisabled();
+        }
+
         ImGui.End();
-
-        Thread.Sleep(50);
-
-        GameManager.SendInitialCards();        
     }
 }

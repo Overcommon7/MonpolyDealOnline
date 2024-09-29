@@ -20,7 +20,7 @@ public static class TurnManager
         var player = CurrentPlayer;
         if (player.CardsInHand == 0)
         {
-            var cards = deck.RemoveMultipleCardsFromDeck(Constants.PICK_UP_AMOUNT_ON_HAND_EMPTY);
+            var cards = deck.RemoveMultipleCardsFromDeck(GameData.PICK_UP_AMOUNT_ON_HAND_EMPTY);
             player.AddCardsToHand(cards);
             Server.BroadcastMessage(ServerSendMessages.CardsSent, Serializer.SerializeListOfCards(cards), player.Number);
             Thread.Sleep(100);
@@ -43,7 +43,7 @@ public static class TurnManager
     public static void StartTurn(Deck deck)
     {
         var player = CurrentPlayer;
-        var cards = deck.RemoveMultipleCardsFromDeck(Constants.PICK_UP_AMOUNT_ON_TURN_START);
+        var cards = deck.RemoveMultipleCardsFromDeck(GameData.PICK_UP_AMOUNT_ON_TURN_START);
         player.AddCardsToHand(cards);
 
         var data = Format.Encode(Serializer.SerializeListOfCards(cards));

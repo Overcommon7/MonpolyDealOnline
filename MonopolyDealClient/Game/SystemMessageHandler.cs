@@ -150,7 +150,7 @@ namespace MonopolyDeal
             if (playerNumber == localPlayerNumber)
                 return;
 
-            PaymentHandler.BeginPaymentProcess(playerNumber, Constants.DEBT_COLLECTOR_AMOUNT);
+            PaymentHandler.BeginPaymentProcess(playerNumber, GameData.DEBT_COLLECTOR_AMOUNT);
             var player = gameplay.PlayerManager.GetPlayer(playerNumber);
 
             var values = Format.ToStruct<DebtCollectorValues>(data);
@@ -159,14 +159,14 @@ namespace MonopolyDeal
             {
                 gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer,
                     [$"{player.Name} Has Played Debt Collector",
-                    $"You Owe M{Constants.DEBT_COLLECTOR_AMOUNT}"]);
+                    $"You Owe M{GameData.DEBT_COLLECTOR_AMOUNT}"]);
             }                
             else
             {
                 var targetPlayer = gameplay.PlayerManager.GetPlayer(values.targetPlayerNumber);
                 gameplay.GetWindow<MessagePopup>().Open(
                     [$"{player.Name} Has Played Debt Collector On {targetPlayer.Name}",
-                    $"{targetPlayer.Name} Owes M{Constants.DEBT_COLLECTOR_AMOUNT} To {player.Name}"]);
+                    $"{targetPlayer.Name} Owes M{GameData.DEBT_COLLECTOR_AMOUNT} To {player.Name}"]);
             }
               
         }
@@ -177,12 +177,12 @@ namespace MonopolyDeal
             if (playerNumber == localPlayerNumber)
                 return;
 
-            PaymentHandler.BeginPaymentProcess(playerNumber, Constants.BIRTHDAY_AMOUNT);
+            PaymentHandler.BeginPaymentProcess(playerNumber, GameData.BIRTHDAY_AMOUNT);
             var player = gameplay.PlayerManager.GetPlayer(playerNumber);
 
             gameplay.GetWindow<PayPopup>().Open(gameplay.PlayerManager.LocalPlayer,
                 [$"{player.Name} Has Played It's My Birthday",
-                $"You Owe M{Constants.BIRTHDAY_AMOUNT}"]);
+                $"You Owe M{GameData.BIRTHDAY_AMOUNT}"]);
         }
 
         public static void WildRentCardPlayed(Gameplay gameplay, int playerNumber, byte[] data)

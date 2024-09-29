@@ -267,6 +267,9 @@ namespace MonopolyDeal
 
                 foreach (var card in GetPropertyCardsOfType(setType))
                 {
+                    if (card is null)
+                        continue;
+
                     ImGui.TextColored(card.Color.ToVector4(), card.Name);
                     if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
                         break;

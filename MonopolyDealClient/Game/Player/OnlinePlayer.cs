@@ -5,7 +5,7 @@ namespace MonopolyDeal
 {
     public class OnlinePlayer : Player
     {
-        public int CardsInHand { get; set; } = Constants.PICK_UP_AMOUNT_ON_GAME_START;
+        public int CardsInHand { get; set; } = GameData.PICK_UP_AMOUNT_ON_GAME_START;
         public OnlinePlayer(int playerNumber, ulong id, string name)
             : base(playerNumber, id, name) { } 
 

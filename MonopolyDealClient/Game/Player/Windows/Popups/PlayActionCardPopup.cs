@@ -84,7 +84,7 @@ namespace MonopolyDeal
                 DebtCollectorValues values = new();
                 values.targetPlayerNumber = mTargetPlayerNumber;
                 values.actionType = ActionType.DebtCollector;
-                SinglePlayerCharged(ClientSendMessages.PlayDebtCollector, values.actionType, ref values, Constants.DEBT_COLLECTOR_AMOUNT);
+                SinglePlayerCharged(ClientSendMessages.PlayDebtCollector, values.actionType, ref values, GameData.DEBT_COLLECTOR_AMOUNT);
             }
         }
 
@@ -101,7 +101,7 @@ namespace MonopolyDeal
 
             ++player.PlaysUsed;
             Client.SendData(ClientSendMessages.PlayBirthdayCard, player.Number);
-            PaymentHandler.BeginPaymentProcess(player.Number, Constants.BIRTHDAY_AMOUNT);
+            PaymentHandler.BeginPaymentProcess(player.Number, GameData.BIRTHDAY_AMOUNT);
 
             Close();
             gameplay.GetWindow<GettingPaidWindow>().Open();

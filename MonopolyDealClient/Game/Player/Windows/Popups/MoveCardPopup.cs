@@ -51,10 +51,13 @@ namespace MonopolyDeal
 
         public override void Open(Card card)
         {
-            if (card is WildCard wild)
+            if (card is WildPropertyCard wildProperty)
+                GetWildPropertyTypes(wildProperty);
+
+            else if (card is WildCard wild)
                 GetWildTypes(wild);
 
-            if (card is BuildingCard building)
+            else if (card is BuildingCard building)
                 GetBuildingTypes(building);
 
             base.Open(card);
@@ -69,7 +72,7 @@ namespace MonopolyDeal
 
             bool isHouse = building.IsHouse;
 
-            foreach (var type in Constants.SET_TYPES)
+            foreach (var type in GameData.SET_TYPES)
             {
                 if (type == SetType.None)
                     continue;
@@ -116,6 +119,21 @@ namespace MonopolyDeal
                 mSetType = propertyCard.SetType1;
             else 
                 mSetType = player.PlayedCards.SetTypesPlayed.FirstOrDefault();
+
+            mSetIndex = 0;
+            mCurrentSetType = wild.SetType;
+        }
+
+        void GetWildPropertyTypes(WildPropertyCard wild)
+        {
+            var gameplay = App.GetState<Gameplay>();
+            var player = gameplay.PlayerManager.LocalPlayer;
+
+            mSetTypes = new string[1];
+            if (wild.SetType == wild.SetType1)
+                mSetTypes[0] = wild.SetType2.ToString();
+            else
+                mSetTypes[0] = wild.SetType1.ToString();
 
             mSetIndex = 0;
             mCurrentSetType = wild.SetType;
