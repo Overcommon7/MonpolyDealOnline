@@ -79,6 +79,8 @@ public static class CardData
         public Rent[] Prices;
     }
 
+ 
+    static Dictionary<ActionType, string> actionCardTooltips;
     static Dictionary<SetType, Values> cardValues = new();
     static Dictionary<ActionType, CardColor> actionColors;
     static Dictionary<SetType, CardColor> cardColors;
@@ -92,6 +94,8 @@ public static class CardData
     public static CardColor GetCardColor(int value) => moneyColors[value];
     public static CardColor GetCardColor(SetType type) => cardColors[type];    
     public static CardColor GetCardColor(ActionType type) => actionColors[type];
+    public static bool HasTooltip(ActionType type) => actionCardTooltips.ContainsKey(type);
+    public static string GetToolTip(ActionType type) => actionCardTooltips[type];
 
     static CardData()
     {
@@ -146,6 +150,16 @@ public static class CardData
             { typeof(WildPropertyCard), 2 },
             { typeof(PropertyCard), 1 },
             { typeof(Card), 0 }
+        };
+
+        actionCardTooltips = new Dictionary<ActionType, string>
+        {
+            { ActionType.DealBreaker, "Steal A Complete Set From Another Player"},
+            { ActionType.JustSayNo, "Counter Any Action Played Against You"},
+            { ActionType.SlyDeal, "Take One Card From Any Player" },
+            { ActionType.ForcedDeal, "Trade A Card With Any Player"},
+            { ActionType.WildRent, "Charge Rent On Any Owned Set To A Single Player" },
+            { ActionType.PassGo, "Pick Up An Additional 2 Cards" }
         };
     }
     public static Vector4 ToVector4(this CardColor color)

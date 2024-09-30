@@ -59,11 +59,17 @@ namespace MonopolyDeal
         
         public void ImGuiDraw(Func<Card, int, bool>? extraLogic = null)
         {
-            int id = 0;
             for (int i = 0; i < mCards.Count; i++)
             {
                 ImGui.TextColored(mCards[i].Color.ToVector4(), mCards[i].DisplayName());
-                if (extraLogic is not null && extraLogic.Invoke(mCards[i], id++))
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text(mCards[i].GetToolTip());
+                    ImGui.EndTooltip();
+                }
+
+                if (extraLogic is not null && extraLogic.Invoke(mCards[i], i))
                     return;
             }
         }

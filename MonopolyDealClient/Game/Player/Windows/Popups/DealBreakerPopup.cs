@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ImGuiNET;
-using Windows.Gaming.Input;
 
 namespace MonopolyDeal
 {
@@ -14,6 +13,7 @@ namespace MonopolyDeal
             : base(nameof(DealBreakerPopup))
         {
             mSetTypes = [];
+            AutoResize = true;
         }
 
         public override void ImGuiDraw()
@@ -63,8 +63,16 @@ namespace MonopolyDeal
         public override void Open(Card card)
         {
             mAsMoney = false;
-            mTargetPlayerNumber = App.GetState<Gameplay>().PlayerManager.OnlinePlayers[0].Number;
-            GetTypes();
+            var gameplay = App.GetState<Gameplay>();
+
+            foreach (var player in gameplay.PlayerManager.OnlinePlayers)
+            {
+                mTargetPlayerNumber = player.Number;
+                GetTypes();
+
+                if (mSetTypes.Length > 0)
+                    break;
+            }            
 
             if (mSetTypes.Length == 0)
                 mAsMoney = true;

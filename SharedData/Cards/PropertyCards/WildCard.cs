@@ -33,5 +33,10 @@
 
         return $"WildCard ({setType})";
     }
+
+    public override string GetToolTip()
+    {
+        return "A Property That Can Be Of Any Set And Can Be moved Freely\nHas No Monetary Value";
+    }
 }
 

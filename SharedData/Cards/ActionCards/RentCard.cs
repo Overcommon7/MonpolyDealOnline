@@ -53,6 +53,11 @@ public partial class RentCard : ActionCard, Copy<RentCard>
         return displayName;
     }
 
+    public override string GetToolTip()
+    {
+        return "Charges Rent Of Either Owned Set To All Players";
+    }
+
     [GeneratedRegex("(\\B[A-Z])")]
     private static partial Regex EnumSeperator();
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleTCP;
+using System;
 using Windows.Gaming.Input;
 using Windows.Media.PlayTo;
 
@@ -112,7 +113,11 @@ namespace MonopolyDeal
             else if (localPlayer.Number != mDealValues.targetPlayer.Number)
             {
                 var messageWindow = App.GetState<Gameplay>().GetWindow<MessagePopup>();
-                messageWindow.AddMessage($"{mDealValues.targetPlayer.Name} Played \"Just Say No\"");
+                string message = $"{mDealValues.targetPlayer.Name} Played \"Just Say No\"";
+                if (!messageWindow.IsOpen)
+                    messageWindow.Open([message]);
+                else
+                    messageWindow.AddMessage(message);
             }
         }
 
@@ -130,7 +135,11 @@ namespace MonopolyDeal
             else if (localPlayer.Number != mDealValues.recievingPlayer.Number)
             {
                 var messageWindow = App.GetState<Gameplay>().GetWindow<MessagePopup>();
-                messageWindow.AddMessage($"{mDealValues.recievingPlayer.Name} Played Rejected {mDealValues.targetPlayer.Name}'s \"Just Say No\"");
+                string message = $"{mDealValues.recievingPlayer.Name} Played Rejected {mDealValues.targetPlayer.Name}'s \"Just Say No\"";
+                if (!messageWindow.IsOpen)
+                    messageWindow.Open([message]);
+                else
+                    messageWindow.AddMessage(message);
             }
 
             if (mDealValues.targetPlayer is OnlinePlayer onlinePlayer)

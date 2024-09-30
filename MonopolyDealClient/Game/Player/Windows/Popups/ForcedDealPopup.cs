@@ -13,7 +13,7 @@ namespace MonopolyDeal
         public ForcedDealPopup()
             : base(nameof(ForcedDealPopup))
         {
-            
+            AutoResize = true;
         }
 
         public override void ImGuiDraw()
@@ -93,6 +93,9 @@ namespace MonopolyDeal
         bool TakePropertyLogic(Card card, int id)
         {
             if (card is not PropertyCard property)
+                return false;
+
+            if (mSelectedPlayer.PlayedCards.HasFullSetOfType(property.SetType))
                 return false;
 
             ImGui.SameLine();

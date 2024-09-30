@@ -42,5 +42,11 @@
 
         return $"{displayName} ({CurrentSetType})";
     }
+
+    public override string GetToolTip()
+    {
+        int amount = IsHouse ? GameData.HOUSE_RENT_INCREASE : GameData.HOTEL_RENT_INCREASE;
+        return $"When Played On A Complete Set (Monopoly) Adds {amount} To Total Rent";
+    }
 }
 

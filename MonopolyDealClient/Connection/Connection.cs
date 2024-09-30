@@ -4,6 +4,8 @@ using SimpleTCP;
 using System.Collections.Generic;
 using System.Threading;
 using System;
+using Raylib_cs;
+using System.IO;
 
 namespace MonopolyDeal
 {
@@ -136,7 +138,6 @@ namespace MonopolyDeal
 
         public override void ImGuiUpdate()
         {
-
             if (Client.IsConnected)
                 CreateUsername();
             else
@@ -192,6 +193,9 @@ namespace MonopolyDeal
             if (mIsReady)
                 ImGui.Text($"You: {mUsername}");
 
+            //if (mIsReady)
+            //    CheckForProfilePicture();
+
 
             foreach (var player in mOtherPlayers.Values)
                 ImGui.Text(player.Item1 + " - " + player.Item2);
@@ -202,6 +206,18 @@ namespace MonopolyDeal
             ImGui.TextDisabled("Number: " + PlayerNumber.ToString());
             ImGui.TextDisabled(Client.EndPoint);
         }
+
+        private void CheckForProfilePicture()
+        {
+            if (!Raylib.IsFileDropped())
+                return;
+
+            var file = Raylib.GetDroppedFiles()[0];
+            var ext = Path.GetExtension(file);
+            if (ext != ".png" && ext != ".jpg")
+                return;            
+        }
+
         void ConnectToServer()
         {
             if (!Client.ConnectToServer(mAddress, mPort))

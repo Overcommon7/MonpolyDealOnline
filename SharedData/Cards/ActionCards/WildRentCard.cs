@@ -10,4 +10,9 @@
     {
         return new WildRentCard();
     }
+
+    public override string GetToolTip()
+    {
+        return "Charge Rent On Any Owned Set To A Single Player";
+    }
 }

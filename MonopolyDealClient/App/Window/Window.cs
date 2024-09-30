@@ -10,6 +10,7 @@ namespace MonopolyDeal
         public bool IsOpen => mIsOpen;
         public bool HasMenuBar => mHasMenuBar;
         public bool IsPopup => mIsPopup;
+        public bool AutoResize { get; set; }
         public bool IsClosable { get => mIsClosable; set => mIsClosable = value; }
         public string Title => mTitle;
 
@@ -24,6 +25,7 @@ namespace MonopolyDeal
             mIsOpen = !startClosed;
             mIsClosable = isClosable;
             mHasMenuBar = hasMenuBar;
+            AutoResize = isPopup;
 
             if (isPopup)
             {
@@ -75,18 +77,28 @@ namespace MonopolyDeal
             {
                 if (mHasMenuBar)
                 {
+                    ImGuiWindowFlags flags = ImGuiWindowFlags.MenuBar;
+                    if (AutoResize)
+                        flags |= ImGuiWindowFlags.AlwaysAutoResize;
+
                     if (mIsClosable)
-                        ImGui.Begin(mTitle, ref mIsOpen, ImGuiWindowFlags.MenuBar);
+                        ImGui.Begin(mTitle, ref mIsOpen, flags);
                     else
-                        ImGui.Begin(mTitle, ImGuiWindowFlags.MenuBar);
+                        ImGui.Begin(mTitle, flags);
                 }
                 else if (mIsClosable)
                 {
-                    ImGui.Begin(mTitle, ref mIsOpen);
+                    if (!AutoResize)
+                        ImGui.Begin(mTitle, ref mIsOpen);
+                    else
+                        ImGui.Begin(mTitle, ref mIsOpen, ImGuiWindowFlags.AlwaysAutoResize);
                 }
                 else
                 {
-                    ImGui.Begin(mTitle);
+                    if (!AutoResize)
+                        ImGui.Begin(mTitle);
+                    else
+                        ImGui.Begin(mTitle, ImGuiWindowFlags.AlwaysAutoResize);
                 }
 
             }

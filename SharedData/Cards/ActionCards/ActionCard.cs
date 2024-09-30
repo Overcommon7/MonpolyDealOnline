@@ -43,6 +43,26 @@ public partial class ActionCard : Card, Copy<ActionCard>
         return displayName;
     }
 
+    public override string GetToolTip()
+    {
+        switch (ActionType)
+        {
+            case ActionType.ItsMyBirthday:
+                return $"Charge {GameData.BIRTHDAY_AMOUNT} To All Players";
+            case ActionType.DebtCollector:
+                return $"Charge {GameData.DEBT_COLLECTOR_AMOUNT} To One Player";
+            case ActionType.DoubleRent:
+                return $"Multiplies Rent Amount By {GameData.DOUBLE_RENT_MULTIPLIER}X";
+            default:
+                if (CardData.HasTooltip(actionType))
+                    return CardData.GetToolTip(actionType);
+                break;
+        }
+
+        return base.GetToolTip();
+    }
+
+
     [GeneratedRegex("(\\B[A-Z])")]
     private static partial Regex SeperateEnums();
 }

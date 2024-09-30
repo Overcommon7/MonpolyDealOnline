@@ -21,7 +21,7 @@
     public PropertyCard(SetType setType, string name, int value)
         : base(name, value, CardData.GetCardColor(setType))
     {
-       this.setType = setType;
+        this.setType = setType;
     }
 
     public new PropertyCard Copy()
@@ -32,5 +32,12 @@
     public override string ToString()
     {
         return $"{Name} - {SetType} - M{Value} - ID: {ID}";
+    }
+
+    public override string GetToolTip()
+    {
+        var prices = CardData.GetValues(setType).Prices;
+        return "Rent:\n" + 
+        string.Join('\n', prices.Select(x => x.rentAmount));
     }
 }

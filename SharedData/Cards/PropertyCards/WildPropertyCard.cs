@@ -34,8 +34,13 @@
     public override string DisplayName()
     {
         if (setType == SetType1)
-            return $"{setType1} - {setType2}";
-        return $"{setType2} - {setType1}";
+            return $"Wild - {setType1} / {setType2}";
+        return $"Wild - {setType2} / {setType1}";
+    }
+
+    public override string GetToolTip()
+    {
+        return $"A Property That Can Be Either {SetType1} Or {SetType2} And Can Be Swapped At Will";
     }
 }
 

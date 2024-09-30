@@ -11,7 +11,7 @@ namespace MonopolyDeal
         public SlyDealPopup() 
             : base(nameof(SlyDealPopup))
         {
-            
+            AutoResize = true;
         }
 
         public override void ImGuiDraw()
@@ -69,6 +69,9 @@ namespace MonopolyDeal
         bool PropertyLogic(Card card, int id)
         {
             if (card is not PropertyCard property)
+                return false;
+
+            if (mSelectedPlayer.PlayedCards.HasFullSetOfType(property.SetType))
                 return false;
 
             ImGui.SameLine();

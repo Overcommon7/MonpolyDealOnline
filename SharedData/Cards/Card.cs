@@ -24,5 +24,9 @@
     {
         return Name;
     }
+    public virtual string GetToolTip()
+    {
+        return string.Empty;
+    }
 }
 

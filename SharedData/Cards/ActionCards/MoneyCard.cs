@@ -20,5 +20,10 @@
     {
         return Name;
     }
+
+    public override string GetToolTip()
+    {
+        return "A Card Used For Monetary Value";
+    }
 }
 

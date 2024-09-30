@@ -62,8 +62,7 @@ namespace MonopolyDeal
             if (position.X > 1 && position.Y > 1)
                 Raylib.SetWindowPosition((int)position.X, (int)position.Y);
 
-            rlImGui.Setup();
-            ImGui.LoadIniSettingsFromMemory(IniSettings.Data);
+            rlImGui.Setup();           
 
             AddStates();
 
@@ -71,7 +70,9 @@ namespace MonopolyDeal
                 state.AddWindows();
 
             foreach (var state in mAppstates)
-                state.Intialize();               
+                state.Intialize();
+
+            ImGui.LoadIniSettingsFromMemory(IniSettings.Data);
         }
 
         private static void AddStates()
@@ -137,6 +138,9 @@ namespace MonopolyDeal
 
             rlImGui.Shutdown();
             Raylib.CloseWindow();
+
+            if (File.Exists("imgui.ini"))
+                File.Delete("imgui.ini");
         }
 
         public static void Quit()

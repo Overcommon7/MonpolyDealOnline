@@ -243,6 +243,12 @@ namespace MonopolyDeal
                 foreach (var card in GetPropertyCardsOfType(setType))
                 {
                     ImGui.TextColored(card.Color.ToVector4(), card.Name);
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.Text(card.GetToolTip());
+                        ImGui.EndTooltip();
+                    }
                     if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
                         break;
                 }                
@@ -274,6 +280,12 @@ namespace MonopolyDeal
                         continue;
 
                     ImGui.TextColored(card.Color.ToVector4(), card.Name);
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.Text(card.GetToolTip());
+                        ImGui.EndTooltip();
+                    }
                     if (propertyLogic is not null && propertyLogic.Invoke(card, id++))
                         break;
                 }
@@ -281,6 +293,12 @@ namespace MonopolyDeal
                 foreach (var buildingCard in mBuildingCards.FindAll(building => building.CurrentSetType == setType))
                 {
                     ImGui.TextColored(buildingCard.Color.ToVector4(), buildingCard.DisplayName());
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.BeginTooltip();
+                        ImGui.Text(buildingCard.GetToolTip());
+                        ImGui.EndTooltip();
+                    }
                     if (buildingLogic is not null && buildingLogic.Invoke(buildingCard, id++))
                         break;
                 }
@@ -304,6 +322,12 @@ namespace MonopolyDeal
                         if (card is ActionCard action)
                         {
                             ImGui.TextColored(card.Color.ToVector4(), $"M{card.Value} - {card.DisplayName()}");
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.Text(card.GetToolTip());
+                                ImGui.EndTooltip();
+                            }
                             if (moneyLogic is not null && moneyLogic.Invoke(action, id++))
                                 break;
                         }
@@ -319,7 +343,13 @@ namespace MonopolyDeal
                         if (card is MoneyCard money)
                         {
                             ImGui.TextColored(money.Color.ToVector4(), money.Name);
-                            if(moneyLogic is not null && moneyLogic.Invoke(card, id++))
+                            if (ImGui.IsItemHovered())
+                            {
+                                ImGui.BeginTooltip();
+                                ImGui.Text(card.GetToolTip());
+                                ImGui.EndTooltip();
+                            }
+                            if (moneyLogic is not null && moneyLogic.Invoke(card, id++))
                                 break;
                         }                            
                     }
