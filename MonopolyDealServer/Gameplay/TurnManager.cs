@@ -40,7 +40,7 @@ public static class TurnManager
         return false;
     }
 
-    public static void StartTurn(Deck deck)
+    public static void StartTurn(Deck deck, int playerNumber, int cardsInHand)
     {
         var player = CurrentPlayer;
         var cards = deck.RemoveMultipleCardsFromDeck(GameData.PICK_UP_AMOUNT_ON_TURN_START);
@@ -49,19 +49,8 @@ public static class TurnManager
         var data = Format.Encode(Serializer.SerializeListOfCards(cards));
         Server.SendMessageToPlayers(ServerSendMessages.CardsSent, CurrentPlayerNumberTurn, data, player.Number);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        foreach (var connectedPlayer in PlayerManager.ConnectedPlayers)
-        {
-            stringBuilder
-                .Append(connectedPlayer.Number)
-                .Append(',')
-                .Append(connectedPlayer.CardsInHand)
-                .Append('|');
-        }
-
         Thread.Sleep(100);
-        data = Format.Encode(stringBuilder.ToString().Remove(stringBuilder.Length - 1, 1));
-        Server.BroadcastMessage(ServerSendMessages.OnTurnStarted, data, CurrentPlayerNumberTurn);
+        Server.BroadcastMessage(ServerSendMessages.OnTurnStarted, $"{playerNumber},{cardsInHand}", CurrentPlayerNumberTurn);
     }
 
     public static void StartGame(int startingPlayerNumber)

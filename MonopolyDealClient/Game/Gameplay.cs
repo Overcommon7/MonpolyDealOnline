@@ -161,8 +161,8 @@ namespace MonopolyDeal
                     }
                     else
                     {
-                        var player = PlayerManager.GetOnlinePlayer(playerNumber);
-                        ++player.CardsInHand;
+                        var onlinePlayer = PlayerManager.GetOnlinePlayer(playerNumber);
+                        ++onlinePlayer.CardsInHand;
                     }                  
                 break;
             }

@@ -2,4 +2,5 @@
 {
     public int mDecksToUse;
     public int mLobbySize;
+    public int mSetToPlayTo;
 }

@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using SimpleTCP;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public enum GameState
 {
@@ -128,8 +127,17 @@ public static class GameManager
                 
                 break;
             case ClientSendMessages.OnEndTurn:
+
                 TurnManager.EndTurn(sDeck);
-                TurnManager.StartTurn(sDeck);
+                var strs = Format.ToString(data).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+                if (int.Parse(strs[0]) >= Configuration.mSetToPlayTo)
+                {
+                    Server.BroadcastMessage(ServerSendMessages.OnPlayerWin, player.Number);
+                    break;
+                }    
+
+                TurnManager.StartTurn(sDeck, player.Number, int.Parse(strs[1]));
                 break;
             case ClientSendMessages.ReadyForNextTurn:
                 break;

@@ -62,7 +62,10 @@ namespace MonopolyDeal
                 mPlayer.Hand.RemoveCards(mDiscardingCards);
                 Client.SendData(ClientSendMessages.PutCardsBack, Serializer.SerializeListOfCards(mDiscardingCards), mPlayer.Number);
                 Thread.Sleep(100);
-                Client.SendData(ClientSendMessages.OnEndTurn, mPlayer.Number);
+
+                var completeSets = mPlayer.GetNumberOfCompleteSets();
+
+                Client.SendData(ClientSendMessages.OnEndTurn, $"{completeSets},{mPlayer.Hand.NumberOfCards}", mPlayer.Number);
                 Close();
             }
 

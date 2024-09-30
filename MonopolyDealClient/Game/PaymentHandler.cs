@@ -37,7 +37,7 @@ namespace MonopolyDeal
 
         public static void OnPlayerPaid(PlayerManager playerManager, int playerNumber, byte[] data)
         {
-            var player = playerManager.GetOnlinePlayer(playerNumber);
+            var player = playerManager.GetPlayer(playerNumber);
 
             var strs = Format.ToString(data).Split('#', StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length < 2)

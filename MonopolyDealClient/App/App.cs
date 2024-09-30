@@ -5,6 +5,7 @@ using System.Numerics;
 using rlImGui_cs;
 using ImGuiNET;
 using System.IO;
+using System;
 
 namespace MonopolyDeal
 {
@@ -17,6 +18,7 @@ namespace MonopolyDeal
         static Appstate? mCurrentState => mAppstates[mCurrentStateIndex];
         static bool mValidAppstateLoaded => mCurrentStateIndex >= 0 && mCurrentStateIndex < mAppstates.Count && mCurrentState is not null;
 
+        delegate void SetClipboardText(string text);  
         public static Vector2 ScreenSize { get; private set; } = new Vector2(1280, 720);
         public static void Run(Vector2 position)
         {

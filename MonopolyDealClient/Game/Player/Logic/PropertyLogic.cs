@@ -36,14 +36,27 @@ namespace MonopolyDeal
                     invalid = !mPayPopup.IsPayingCard(building);
             }
 
-            if (invalid)
+            var isPaying = mPayPopup.IsPayingCard(card);
+
+            if (!isPaying)
+            {
+                if (invalid)
+                    ImGui.BeginDisabled();
+
+                if (ImGui.Button($"Pay##{id}"))
+                    mPayPopup.AddToCardsPaying(card);
+
+                if (invalid)
+                    ImGui.EndDisabled();
+            }
+            else
+            {
                 ImGui.BeginDisabled();
-
-            if (ImGui.Button($"Pay##{id}"))
-                mPayPopup.AddToCardsPaying(card);
-
-            if (invalid)
+                ImGui.Button($"In Use##{id}");
                 ImGui.EndDisabled();
+            }
+
+            
 
             return false;
         }

@@ -49,6 +49,7 @@ public static class GameData
         MAX_PLAYS_PER_TURN = int.Parse(numbers[4]);
         DEBT_COLLECTOR_AMOUNT = int.Parse(numbers[5]);
         BIRTHDAY_AMOUNT = int.Parse(numbers[6]);
-        DOUBLE_RENT_MULTIPLIER = int.Parse(numbers[7]);
+        HOUSE_RENT_INCREASE = int.Parse(numbers[7]);
+        DOUBLE_RENT_MULTIPLIER = int.Parse(numbers[8]);
     }
 }

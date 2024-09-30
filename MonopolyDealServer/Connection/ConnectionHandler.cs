@@ -130,6 +130,7 @@ public static class ConnectionHandler
         var config = GameManager.Configuration;
         bool change = ImGui.InputInt("Lobby Size", ref config.mLobbySize);
         change |= ImGui.InputInt("Decks To Play With", ref config.mDecksToUse);
+        change |= ImGui.InputInt("Set To Play TO", ref config.mSetToPlayTo);
 
         if (change)
             GameManager.Configuration = config;

@@ -26,14 +26,18 @@ namespace MonopolyDeal
 
             if (ImGui.Button("End Turn"))
             {
+                var numberOfCompleteSets = ConnectedPlayer.GetNumberOfCompleteSets();
+
                 if (!ConnectedPlayer.Hand.CheckForTooManyCards())
                 {
-                    Client.SendData(ClientSendMessages.OnEndTurn, ConnectedPlayer.Number);
+                    Client.SendData(ClientSendMessages.OnEndTurn, $"{numberOfCompleteSets},{ConnectedPlayer.Hand.NumberOfCards}", ConnectedPlayer.Number);
                 }                    
             }
 
             if (IsDisabled)
                 ImGui.EndDisabled();
         }
+
+        
     }
 }

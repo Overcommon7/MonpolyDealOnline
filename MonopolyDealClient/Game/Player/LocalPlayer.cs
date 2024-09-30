@@ -51,5 +51,17 @@ namespace MonopolyDeal
             var cards = Format.ToString(data);
             mHand.AddCards(Serializer.GetCardsFromString<Card>(cards));     
         }
+
+        public int GetNumberOfCompleteSets()
+        {
+            int numberOfCompleteSets = 0;
+            foreach (var setType in GameData.SET_TYPES)
+            {
+                if (PlayedCards.HasFullSetOfType(setType))
+                    ++numberOfCompleteSets;
+            }
+
+            return numberOfCompleteSets;
+        }
     }
 }

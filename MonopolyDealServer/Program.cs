@@ -9,6 +9,7 @@ public class Program
         Configuration configuration = new Configuration();
         configuration.mLobbySize = 2;
         configuration.mDecksToUse = 1;
+        configuration.mSetToPlayTo = 3;
 
         CardData.LoadFromFile();
         ConnectionHandler.Start();

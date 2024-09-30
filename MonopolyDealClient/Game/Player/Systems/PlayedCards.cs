@@ -158,6 +158,9 @@ namespace MonopolyDeal
 
         public bool HasFullSetOfType(SetType setType)
         {
+            if (setType == SetType.None) 
+                return false;
+
             if (!mSetTypes.TryGetValue(setType, out int amount))
                 return false;
 

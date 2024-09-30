@@ -66,7 +66,7 @@ public static class PaymentManager
             sPlayerBeingPaid.AddCardToPlayArea(card);
         }
 
-        Server.SendMessageExcluding(ServerSendMessages.PlayerPaid, player.Number, data, player.Number);    
+        Server.BroadcastMessage(ServerSendMessages.PlayerPaid, data, player.Number);    
         CheckForAllPlayersPaid();
     }
 

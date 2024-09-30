@@ -32,17 +32,16 @@ namespace MonopolyDeal
         public static void TurnStarted(PlayerManager playerManager, byte[] data)
         {
             string dataString = Format.ToString(data);
-            foreach (var playerData in dataString.Split('|'))
-            {
-                var strs = playerData.Split(',');
-                int number = int.Parse(strs[0]);
+            var strs = dataString.Split(',');
 
-                if (number == playerManager.LocalPlayer.Number)
-                    continue;
+            int number = int.Parse(strs[0]);
 
-                var player = playerManager.GetOnlinePlayer(number);
-                player.CardsInHand = int.Parse(strs[1]);
-            }
+            if (number == playerManager.LocalPlayer.Number)
+                return;
+
+            var player = playerManager.GetOnlinePlayer(number);
+            player.CardsInHand = int.Parse(strs[1]);
+    
         }
 
         public static void OnlinePlayerHandUpdate(PlayerManager playerManager, byte[] data, int playerNumber)
