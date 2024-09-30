@@ -78,7 +78,14 @@ namespace MonopolyDeal
                 mAsMoney = true;
 
             GetPlayerNames();
+            gameplay.GetWindow<LocalPlayerWindow>().CanEndTurn = false;
             base.Open(card);
+        }
+
+        public override void Close()
+        {
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = true;
+            base.Close();
         }
 
         void GetTypes()

@@ -38,7 +38,9 @@ namespace MonopolyDeal
                     BirthdayLogic();
                 else if (action.ActionType == ActionType.PassGo)
                     PassGoLogic();                
-            }           
+            }
+
+            CloseLogic();
         }
         protected void CloseLogic()
         {
@@ -174,7 +176,7 @@ namespace MonopolyDeal
                 {
                     mAsMoney = true;
                 }
-            }            
+            }
 
             base.Open(card);
         }

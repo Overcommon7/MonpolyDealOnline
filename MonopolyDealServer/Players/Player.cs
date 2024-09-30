@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raylib_cs;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Xml.Linq;
@@ -20,6 +21,7 @@ public class Player : IEquatable<Player>
     public string Name { get => mName; set => mName = value; }
     public int CardsInHand => mHand.Count;
     public int CardsInPlayArea => mPlayArea.Count;
+    public byte[] ProfilePictureData { get; set; } = Array.Empty<byte>();
 
     public Player(TcpClient client, string name, int playerNumber)
     {

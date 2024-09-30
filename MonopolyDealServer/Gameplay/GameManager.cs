@@ -156,6 +156,9 @@ public static class GameManager
 
     public static void ImGuiDraw()
     {
+        if (!ConnectionHandler.mUseDebugConsole)
+            return;
+
         ImGui.Begin("Target Player", ImGuiWindowFlags.AlwaysAutoResize);
         {
             ImGui.InputInt("Target Player", ref mValues.targetPlayerNumber);

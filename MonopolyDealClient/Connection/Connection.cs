@@ -6,6 +6,7 @@ using System.Threading;
 using System;
 using Raylib_cs;
 using System.IO;
+using rlImGui_cs;
 
 namespace MonopolyDeal
 {
@@ -16,16 +17,18 @@ namespace MonopolyDeal
         string mUsername = string.Empty;
         bool mValidServerCredentials = false;
         bool mIsReady = false;
-        bool mAutoConnect = true;    
+        bool mAutoConnect = true;
+        MessagePopup mMessagePopup;
         public string Username => mUsername;
         public int PlayerNumber { get; set; }
-        public IReadOnlyDictionary<int, (string, ulong)> OtherPlayers => mOtherPlayers;
+        public Texture2D ProfilePicture { get; set; }
+        public IReadOnlyDictionary<int, (string, ulong, Texture2D)> OtherPlayers => mOtherPlayers;
 
-        Dictionary<int, (string, ulong)> mOtherPlayers = new();
+        Dictionary<int, (string, ulong, Texture2D)> mOtherPlayers = new();
 
         public void AddOnlinePlayer(int playerNumber, ulong id, string name)
         {
-            mOtherPlayers.TryAdd(playerNumber, (name, id));
+            mOtherPlayers.TryAdd(playerNumber, (name, id, new Texture2D()));
         }
 
         public void RemovePlayer(int playerNumber)
@@ -85,6 +88,51 @@ namespace MonopolyDeal
 
             if (message == ServerSendMessages.OnGameStarted)
                 OnGameStarted(playerNumber, data);
+
+            //if (message == ServerSendMessages.ProfileImageSent)
+            //    ProfilePictureRecieved(playerNumber, data);
+        }
+
+        private void ProfilePictureRecieved(int playerNumber, byte[] data)
+        {
+            if (!mOtherPlayers.ContainsKey(playerNumber))
+                return;
+
+            var image = Raylib.LoadImageFromMemory(".png", data);
+            if (image.Height == 0 || image.Width == 0)
+                return;
+
+            var values = mOtherPlayers[playerNumber];
+            values.Item3 = Raylib.LoadTextureFromImage(image);
+            mOtherPlayers[playerNumber] = values;
+
+            Raylib.UnloadImage(image);
+        }
+
+        private void CheckForProfilePicture()
+        {
+            if (mMessagePopup.IsOpen)
+                return;
+
+            if (!Raylib.IsFileDropped())
+                return;
+
+            var file = Raylib.GetDroppedFiles()[0];
+            var ext = Path.GetExtension(file);
+            if (ext != ".png")
+                mMessagePopup.Open(["Only PNGs are accepeted"]);
+
+            var imageData = File.ReadAllBytes(file);
+            var image = Raylib.LoadImageFromMemory(ext, imageData);
+            ProfilePicture = Raylib.LoadTextureFromImage(image);
+
+            if (ProfilePicture.Id == 0)
+            {
+                mMessagePopup.Open(["Image Could Not Be Loaded"]);
+                return;
+            }
+
+            Client.SendData(ClientSendMessages.ProfilePictureSent, PlayerNumber);
         }
 
         private void ConstantsAssigned(byte[] data)
@@ -139,7 +187,15 @@ namespace MonopolyDeal
         public override void ImGuiUpdate()
         {
             if (Client.IsConnected)
+            {
                 CreateUsername();
+                if (!mMessagePopup.IsOpen)
+                    return;
+
+                mMessagePopup.ImGuiDrawBegin();
+                mMessagePopup.ImGuiDraw();
+                mMessagePopup.ImGuiDrawEnd();
+            }                
             else
                 EstablishConnection();
         }
@@ -165,9 +221,6 @@ namespace MonopolyDeal
         }
         void CreateUsername()
         {
-            ImGui.TextDisabled($"Server Address: {mAddress}");
-            ImGui.TextDisabled($"Server Port: {mPort}");
-
             bool notValid = string.IsNullOrEmpty(mUsername) || string.IsNullOrWhiteSpace(mUsername);
             bool isDisabled = false;
 
@@ -188,35 +241,48 @@ namespace MonopolyDeal
             if (notValid || mIsReady)
                 ImGui.EndDisabled();
 
-            ImGui.SeparatorText("Players:");
+            ImGui.SeparatorText("You:");
 
             if (mIsReady)
-                ImGui.Text($"You: {mUsername}");
-
+            {
+                ImGui.Text(mUsername);
+                if (ProfilePicture.Id != 0)
+                {
+                    rlImGui.ImageSize(ProfilePicture, 250, 250);
+                }
+            }
+                          
             //if (mIsReady)
             //    CheckForProfilePicture();
 
+            if (ImGui.CollapsingHeader("Other Players", ImGuiTreeNodeFlags.DefaultOpen))
+            {
+                foreach (var player in mOtherPlayers.Values)
+                {
+                    ImGui.Text(player.Item1 + " - " + player.Item2);
+                    if (player.Item3.Id == 0)
+                        continue;
 
-            foreach (var player in mOtherPlayers.Values)
-                ImGui.Text(player.Item1 + " - " + player.Item2);
-                
-            ImGui.SeparatorText("Debug Info");
+                    if (!ImGui.IsItemHovered())
+                        continue;
+
+                    ImGui.BeginTooltip();
+                    rlImGui.ImageSize(player.Item3, 100, 100);
+                    ImGui.EndTooltip();
+                }
+            }
+
+            
+            if (!ImGui.CollapsingHeader("Debug Info"))
+                return;
+
+            ImGui.TextDisabled($"Server Address: {mAddress}");
+            ImGui.TextDisabled($"Server Port: {mPort}");
 
             ImGui.TextDisabled(Client.ID.ToString());
             ImGui.TextDisabled("Number: " + PlayerNumber.ToString());
             ImGui.TextDisabled(Client.EndPoint);
-        }
-
-        private void CheckForProfilePicture()
-        {
-            if (!Raylib.IsFileDropped())
-                return;
-
-            var file = Raylib.GetDroppedFiles()[0];
-            var ext = Path.GetExtension(file);
-            if (ext != ".png" && ext != ".jpg")
-                return;            
-        }
+        }        
 
         void ConnectToServer()
         {
@@ -226,6 +292,7 @@ namespace MonopolyDeal
         void SendUsernameToServer()
         {
             Client.SendData(ClientSendMessages.SendUsername, mUsername, -1);
+            //mMessagePopup.Open(["(Optional) Drag A PNG Image Onto The Window To Set Profile Picture"]);
         }
 
         void PlayerUsernameRecieved(int playerNumber, byte[] data)
@@ -245,15 +312,16 @@ namespace MonopolyDeal
             }
             else
             {
-                if (!mOtherPlayers.TryAdd(playerNumber, (username, incomingID)))
-                    mOtherPlayers[playerNumber] = (username, incomingID);
+                if (!mOtherPlayers.TryAdd(playerNumber, (username, incomingID, new Texture2D())))
+                    mOtherPlayers[playerNumber] = (username, incomingID, new Texture2D());
             }
 
         }
 
         public override void AddWindows()
         {
-            
+            mMessagePopup = AddWindow<MessagePopup>();
+            mMessagePopup.ShowCloseButton = true;
         }
     }
 }

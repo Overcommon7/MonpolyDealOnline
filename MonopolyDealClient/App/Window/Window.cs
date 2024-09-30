@@ -43,6 +43,9 @@ namespace MonopolyDeal
 
         public virtual void Open()
         {
+            if (mIsOpen)
+                return;
+
             mIsOpen = true;
             if (mIsPopup)
             {
@@ -53,6 +56,9 @@ namespace MonopolyDeal
         }
         public virtual void Close()
         {
+            if (!mIsOpen)
+                return;
+
             mIsOpen = false;
             if (mIsPopup)
             {

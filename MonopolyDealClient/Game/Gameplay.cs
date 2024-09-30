@@ -71,6 +71,9 @@ namespace MonopolyDeal
                     if (!PaymentHandler.PaymentInProcess)
                         SystemMessageHandler.BirthdayPlayed(this, playerNumber);
                     break;
+                case ServerSendMessages.BuildingCardPlayed:
+                    SystemMessageHandler.BuildingCardPlayed(PlayerManager, playerNumber, data);
+                    break;
                 case ServerSendMessages.SlyDealPlayed:
                 case ServerSendMessages.DealBreakerPlayed:
                 case ServerSendMessages.ForcedDealPlayed:

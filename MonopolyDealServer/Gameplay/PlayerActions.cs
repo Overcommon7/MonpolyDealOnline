@@ -179,9 +179,15 @@ public static class PlayerActions
     {
         var values = Format.ToStruct<MoveValues>(data);
         var card = player.GetCardFromPlayArea(values.cardID);
-
+            
         if (card is null)
-            return;
+        {
+            card = CardData.CreateNewCard<Card>(values.cardID);
+            if (card is null)
+                return;
+
+            player.AddCardToPlayArea(card);
+        }
 
         if (card is BuildingCard building)
         {

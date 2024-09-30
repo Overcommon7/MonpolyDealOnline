@@ -35,6 +35,11 @@ namespace MonopolyDeal
            
             if (ImGui.Button("Play##WildPopup"))
                 PlayCard();
+
+            if (ImGui.Button("Close##PWPU"))
+            {
+                Close();
+            }
         }
 
         void PlayCard()

@@ -10,7 +10,7 @@ namespace StartupProject
             List<Process?> processes = new();
             Process? serverProcess = null;
 
-            const int clientsToCreate = 2;
+            const int clientsToCreate = 1;
 
 
             var directory = new DirectoryInfo(Directory.GetCurrentDirectory());

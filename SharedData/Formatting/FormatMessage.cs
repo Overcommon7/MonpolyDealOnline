@@ -191,6 +191,7 @@ public static class Format
         {
             Marshal.FreeHGlobal(ptr);
         }
+       
 
         return str;
     }

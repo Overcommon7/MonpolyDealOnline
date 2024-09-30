@@ -1,5 +1,6 @@
 ﻿using System;
 using ImGuiNET;
+using Windows.Gaming.Input;
 
 namespace MonopolyDeal
 {
@@ -116,15 +117,24 @@ namespace MonopolyDeal
         }
         public override void Open(Card card)
         {
-            var playerManager = App.GetState<Gameplay>().PlayerManager;
+            var gameplay = App.GetState<Gameplay>();
+            var playerManager = gameplay.PlayerManager;
             mPlayer = playerManager.LocalPlayer;
             mPlayerIndex = 0;
             mSelectedPlayer = playerManager.OnlinePlayers[0];
             mTargetPlayerNumber = mSelectedPlayer.Number;
 
+            gameplay.GetWindow<LocalPlayerWindow>().CanEndTurn = false;
+
             GetPlayerNames();
 
             base.Open(card);
+        }
+
+        public override void Close()
+        {
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = true;
+            base.Close();
         }
     }
 }

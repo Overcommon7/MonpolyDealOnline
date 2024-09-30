@@ -79,7 +79,7 @@ namespace MonopolyDeal
 
             foreach (var card in asMoneyCards)
             {
-                player.PlayedCards.RemoveMoneyCard(card);
+                player.PlayedCards.RemoveMoneyCard(card.ID);
                 info.mAsMoney.Add(card);
             }
 

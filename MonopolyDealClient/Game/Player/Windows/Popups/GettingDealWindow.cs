@@ -22,7 +22,7 @@ namespace MonopolyDeal
         
         public override void ImGuiDraw()
         {
-            ImGui.Text(mMessage);
+            ImGui.TextWrapped(mMessage);
 
             if (mHasSayNo && mIsCountered)
             {
@@ -87,7 +87,7 @@ namespace MonopolyDeal
 
             mIsCountered = mIsTarget;
 
-            //App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = true;
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = false;
 
             CheckForSayNo();
             Open();
@@ -117,7 +117,9 @@ namespace MonopolyDeal
         public override void Close()
         {
             ShowAcceptButton = false;
-            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().IsDisabled = false;
+            var window = App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>();
+            window.IsDisabled = false;
+            window.CanEndTurn = true;
             base.Close();
         }
 

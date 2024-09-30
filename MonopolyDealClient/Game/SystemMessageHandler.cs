@@ -144,7 +144,8 @@ namespace MonopolyDeal
             var values = Format.ToStruct<PlayActionCardValues>(data);
             if (values.asMoney)
             {
-                if (CardData.TryGetCard<ActionCard>(values.cardID, out var card))
+                var card = CardData.CreateNewCard<ActionCard>(values.cardID);
+                if (card is not null)
                     player.PlayedCards.AddMoneyCard(card);
             }
 
@@ -224,7 +225,8 @@ namespace MonopolyDeal
         {
             var values = Format.ToStruct<MoveValues>(data);
             var player = playerManager.GetPlayer(playerNumber);
-            if (!CardData.TryGetCard<Card>(values.cardID, out var card))
+            var card = CardData.CreateNewCard<Card>(values.cardID);
+            if (card is null)
                 return;
 
             if (values.cardType == MoveCardType.WildCard || values.cardType == MoveCardType.WildProperty)
@@ -241,6 +243,22 @@ namespace MonopolyDeal
                 building.CurrentSetType = values.oldSetType;
                 player.PlayedCards.MoveBuildingCard(building, values.newSetType);
             }
+        }
+
+        public static void BuildingCardPlayed(PlayerManager playerManager, int playerNumber, byte[] data)
+        {
+            if (playerNumber == playerManager.LocalPlayer.Number)
+                return;
+
+            var player = playerManager.GetOnlinePlayer(playerNumber);
+            var values = Format.ToStruct<PlayBuildingCard>(data);
+
+            --player.CardsInHand;
+            var card = CardData.CreateNewCard<BuildingCard>(values.cardID);
+            if (card is null)
+                return;
+
+            player.PlayedCards.AddBuildingCard(card, values.setType);
         }
     }
 }

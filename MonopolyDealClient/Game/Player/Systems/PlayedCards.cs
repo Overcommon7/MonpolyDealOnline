@@ -137,7 +137,16 @@ namespace MonopolyDeal
             if (card is ActionCard actionCard)
                 actionCard.SetAsMoney(true);
 
-            mMoneyCards.Add(card);
+            if (!mMoneyCards.Contains(card))
+                mMoneyCards.Add(card);
+            else
+            {
+                var money = CardData.CreateNewCard<Card>(card.ID);
+                if (money is not null)
+                    mMoneyCards.Add(money);
+            }
+
+
         }
 
         public void AddPropertyCard(PropertyCard card)

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 public static class ConnectionHandler
 {
     public static int sReadiedPlayers = 0;
+    public static bool mUseDebugConsole = true;
     struct ProfileData
     {
         public static string CurrentProfileName => mProfiles[mSelectedProfileIndex];
@@ -72,9 +73,25 @@ public static class ConnectionHandler
 
     private static void Server_OnDataRecieved(ulong clientID, int playerNumber, ClientSendMessages message, byte[] data)
     {
-        if (message != ClientSendMessages.SendUsername)
+        if (message == ClientSendMessages.SendUsername)
+            UsernameRecieved(clientID, data);
+
+        if (message == ClientSendMessages.ProfilePictureSent)
+            ProfilePictureRecieved(playerNumber, data);
+    }
+
+    private static void ProfilePictureRecieved(int playerNumber, byte[] data)
+    {
+        var status = PlayerManager.TryGetPlayer(playerNumber, out var player);
+        if (status != ConnectionStatus.Connected)
             return;
 
+        player.ProfilePictureData = data;
+        Server.SendMessageExcluding(ServerSendMessages.ProfileImageSent, playerNumber, data, playerNumber);
+    }
+
+    static void UsernameRecieved(ulong clientID, byte[] data)
+    {
         var name = Format.ToString(data);
         if (PlayerManager.TryGetPlayer(clientID, out var player) != ConnectionStatus.Connected)
             return;
@@ -118,6 +135,18 @@ public static class ConnectionHandler
             Console.WriteLine($"New Client {player.ID} Has Joined - EndPoint => { client.Client.RemoteEndPoint?.ToString() }");
             Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
+
+            foreach (var connected in PlayerManager.ConnectedPlayers)
+            {
+                if (connected == player)
+                    continue;
+
+                if (connected.ProfilePictureData.Length == 0)
+                    continue;
+
+                var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
+                client.GetStream().Write(data, 0, data.Length);
+            }
         }  
     }
 
@@ -207,6 +236,8 @@ public static class ConnectionHandler
 
             if (invalid)
                 ImGui.EndDisabled();
+
+            ImGui.Checkbox("Use Debug Console", ref mUseDebugConsole);
         }
 
         ImGui.End();

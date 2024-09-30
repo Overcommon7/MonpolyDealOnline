@@ -18,7 +18,14 @@ namespace MonopolyDeal
         {
             var player = mGameplay.PlayerManager.LocalPlayer;
             mHasSayNo = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.JustSayNo, out var card);
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = false;
             base.Open();
+        }
+
+        public override void Close()
+        {
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = true;
+            base.Close();
         }
 
         public override void ImGuiDraw()

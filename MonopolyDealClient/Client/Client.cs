@@ -73,6 +73,12 @@ namespace MonopolyDeal
             mOnMessageSent?.Invoke(mClient, message, playerNumber, data);
         }
 
+        public static void SendData(ClientSendMessages message, byte[] data, int playerNumber)
+        {
+            mClient.Write(Format.ToData(message, data, playerNumber));
+            mOnMessageSent?.Invoke(mClient, message, playerNumber, data);
+        }
+
         public static void SendData(ClientSendMessages message, int playerNumber)
         {
             mClient.Write(Format.CreateHeader(message, playerNumber).AddDelimiter());

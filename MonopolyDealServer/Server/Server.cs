@@ -21,6 +21,7 @@ internal static class Server
     public static event Action<SimpleTcpServer, TcpClient>? mOnClientConnected;
     private static List<ClientRequest> mRequests;
     private static bool mProcessingRequests = false;
+    private static bool mTryParse = false;
 
     public static IPAddress? Address { get; private set; } = null;
 
@@ -196,9 +197,7 @@ internal static class Server
     {
         ClientRequest clientRequest = new();
 
-        clientRequest.mPlayerID = e.TcpClient.GetID();
-        
-        
+        clientRequest.mPlayerID = e.TcpClient.GetID();        
 
         if (e.Data.Length >= Format.HEADER_SIZE)
         {

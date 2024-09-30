@@ -27,7 +27,8 @@
     ReadyForNextTurn,
     RequestHand,
 
-    RecievedConstants
+    RecievedConstants,
+    ProfilePictureSent
 }
 
 public enum ServerSendMessages : short
@@ -69,5 +70,6 @@ public enum ServerSendMessages : short
     OnPlayerReconnected,
 
     SendConstants,
+    ProfileImageSent,
     DebugSendCard
 }

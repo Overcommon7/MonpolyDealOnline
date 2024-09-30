@@ -25,9 +25,14 @@ namespace MonopolyDeal
             if (!mAsMoney)
             {
                 if (ImGui.Combo("Charging Set Type", ref mSelectedTypeIndex, mSetTypes, mSetTypes.Length))
+                {
                     mSelectedSetType = Enum.Parse<SetType>(mSetTypes[mSelectedTypeIndex]);
+                    mRentAmount = App.GetState<Gameplay>().PlayerManager.LocalPlayer.GetRentAmount(mSelectedSetType, mUseDoubleRent);
+                }
+                    
 
-                SelectPlayer();
+                if (SelectPlayer())
+                    mRentAmount = App.GetState<Gameplay>().PlayerManager.LocalPlayer.GetRentAmount(mSelectedSetType, mUseDoubleRent);
 
                 if (mHasDoulelRent)
                 {
@@ -35,11 +40,16 @@ namespace MonopolyDeal
                         mRentAmount = App.GetState<Gameplay>().PlayerManager.LocalPlayer.GetRentAmount(mSelectedSetType, mUseDoubleRent);
                 }
               
-                ImGui.Text($"Amount To be Paid M{mRentAmount}");
-                ImGui.SameLine();
-                if (ImGui.Button("Charge##WRPU"))
-                    PlayRent();
+                if (mSelectedSetType != SetType.None)
+                {
+                    ImGui.Text($"Amount To be Paid M{mRentAmount}");
+                    ImGui.SameLine();
+                    if (ImGui.Button("Charge##WRPU"))
+                        PlayRent();
+                }                
             }
+
+            CloseLogic();
         }
 
         void PlayRent()

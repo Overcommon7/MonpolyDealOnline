@@ -8,6 +8,7 @@ namespace MonopolyDeal
     {
         public LocalPlayer ConnectedPlayer { get; init; }
         public bool IsDisabled { get; set; } = false;
+        public bool CanEndTurn { get; set; } = true;
         public LocalPlayerWindow(LocalPlayer player) 
             : base("You")
         {
@@ -16,26 +17,35 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
-            if (IsDisabled)
+            if (IsDisabled || DealHandler.IsDealInProgress)
                 ImGui.BeginDisabled();
 
             ConnectedPlayer.ImGuiDraw();
 
-            if (!ConnectedPlayer.IsTurn)
-                return;
-
-            if (ImGui.Button("End Turn"))
+            if (ConnectedPlayer.IsTurn)
             {
-                var numberOfCompleteSets = ConnectedPlayer.GetNumberOfCompleteSets();
+                if (!IsDisabled && !DealHandler.IsDealInProgress && !CanEndTurn)
+                    ImGui.BeginDisabled();
 
-                if (!ConnectedPlayer.Hand.CheckForTooManyCards())
+                if (ImGui.Button("End Turn"))
                 {
-                    Client.SendData(ClientSendMessages.OnEndTurn, $"{numberOfCompleteSets},{ConnectedPlayer.Hand.NumberOfCards}", ConnectedPlayer.Number);
-                }                    
-            }
+                    var numberOfCompleteSets = ConnectedPlayer.GetNumberOfCompleteSets();
 
-            if (IsDisabled)
+                    if (!ConnectedPlayer.Hand.CheckForTooManyCards())
+                    {
+                        Client.SendData(ClientSendMessages.OnEndTurn, $"{numberOfCompleteSets},{ConnectedPlayer.Hand.NumberOfCards}", ConnectedPlayer.Number);
+                    }
+                }
+
+                if (!IsDisabled && !DealHandler.IsDealInProgress && !CanEndTurn)
+                    ImGui.EndDisabled();
+            }                
+
+            if (IsDisabled || DealHandler.IsDealInProgress)
                 ImGui.EndDisabled();
+
+            ImGui.SameLine();
+            ImGui.Text($"Turns Remaining: {ConnectedPlayer.TurnsRemaining}");
         }
 
         

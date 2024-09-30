@@ -19,7 +19,7 @@ public static class DealManager
 
     public static void ForcedDealPlayed(Deck deck, Player player, byte[] data)
     {
-        var values = Format.ToStruct<DealBreakerValues>(data);
+        var values = Format.ToStruct<ForcedDealValues>(data);
 
         if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.ForcedDeal, out var forcedDeal))
             return;

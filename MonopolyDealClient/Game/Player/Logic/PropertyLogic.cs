@@ -13,8 +13,11 @@ namespace MonopolyDeal
             if (!CanPlayCards)
                 return false;
 
-            if (card is WildCard)
+            if (card is WildCard wild)
             {
+                if (PlayedCards.HasHouse(wild.SetType))
+                    return false;
+
                 ImGui.SameLine();
                 if (ImGui.Button($"Move##{id}"))
                     mGameplay.GetWindow<MoveCardPopup>().Open(card);                                 
@@ -27,7 +30,7 @@ namespace MonopolyDeal
             if (value is not PropertyCard card)
                 return false;
 
-            ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
+            ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); 
             bool invalid = PlayedCards.HasHouse(card.SetType);
             if (!invalid)
             {
@@ -40,17 +43,25 @@ namespace MonopolyDeal
 
             if (!isPaying)
             {
-                if (invalid)
-                    ImGui.BeginDisabled();
+                if (mPayPopup.Value < PaymentHandler.AmountDue)
+                {
+                    ImGui.SameLine();
 
-                if (ImGui.Button($"Pay##{id}"))
-                    mPayPopup.AddToCardsPaying(card);
+                    if (invalid)
+                        ImGui.BeginDisabled();
 
-                if (invalid)
-                    ImGui.EndDisabled();
+                    if (ImGui.Button($"Pay##{id}"))
+                        mPayPopup.AddToCardsPaying(card);
+
+                    if (invalid)
+                        ImGui.EndDisabled();
+                }                
             }
-            else
+            
+            if (isPaying)
             {
+                ImGui.SameLine();
+
                 ImGui.BeginDisabled();
                 ImGui.Button($"In Use##{id}");
                 ImGui.EndDisabled();

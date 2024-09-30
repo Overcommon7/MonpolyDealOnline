@@ -202,7 +202,9 @@ namespace MonopolyDeal
 
         static void DoSlyDealLogic(PlayerManager playerManager, SlyDealValues values)
         {
-            CardData.TryGetCard<PropertyCard>(values.cardID, out var card);
+            var card = CardData.CreateNewCard<PropertyCard>(values.cardID);
+            if (card is null)
+                return;
             
             if (card is WildCard wild)
             {
@@ -215,8 +217,11 @@ namespace MonopolyDeal
 
         static void DoForcedDealLogic(PlayerManager playerManager, ForcedDealValues values)
         {
-            CardData.TryGetCard<PropertyCard>(values.takingFromPlayerCardID, out var takingCard);
-            CardData.TryGetCard<PropertyCard>(values.givingToPlayerCardID, out var givingCard);
+            var takingCard = CardData.CreateNewCard<PropertyCard>(values.takingFromPlayerCardID);
+            var givingCard = CardData.CreateNewCard<PropertyCard>(values.givingToPlayerCardID);
+
+            if (takingCard is null) return;
+            if (givingCard is null) return;
 
             {
                 if (takingCard is WildCard wild)

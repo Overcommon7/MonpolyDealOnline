@@ -52,8 +52,9 @@ namespace MonopolyDeal
                 mPlayer.PlayedCards.AddMoneyCard(mRent);
 
                 Client.SendData(ClientSendMessages.PlayMoneyCard, mRent.ID.ToString(), mPlayer.Number);
+                Close();
             }
-            else 
+            else if (!mAsMoney)
             {
                 if (mHasDoubleRent)
                 {
@@ -122,6 +123,8 @@ namespace MonopolyDeal
 
             mPlayerNumber = player.Number;
             mPlayer = player;
+
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = false;
         }
 
         public override void Close()
@@ -134,6 +137,8 @@ namespace MonopolyDeal
             mHasDoubleRent = false;
             mAsMoney = false;
             mRent = null;
+
+            App.GetState<Gameplay>().GetWindow<LocalPlayerWindow>().CanEndTurn = true;
 
             base.Close();
         }

@@ -13,6 +13,8 @@ namespace MonopolyDeal
         LocalPlayer? mPlayer;
         List<Card> mCardsPaying;
         PlayerManager? mPlayerManager;
+
+        public int Value { get; private set; } = 0;
         public PayPopup()
             : base(nameof(PayPopup), true) 
         {
@@ -52,7 +54,7 @@ namespace MonopolyDeal
 
             foreach (var message in mMessages)
             {
-                ImGui.Text(message);
+                ImGui.TextWrapped(message);
             }
 
             if (mHasSayNo)
@@ -76,14 +78,14 @@ namespace MonopolyDeal
 
             ImGui.Spacing();
             ImGui.SeparatorText("Cards Paying");
-            int value = 0;
+            Value = 0;
             for (int i = 0; i < mCardsPaying.Count;)
             {
                 ImGui.TextColored(mCardsPaying[i].Color.ToVector4(), mCardsPaying[i].DisplayName());
                 ImGui.SameLine();
                 if (!ImGui.Button($"Put Back##{i}"))
                 {
-                    value += mCardsPaying[i].Value;
+                    Value += mCardsPaying[i].Value;
                     ++i;
                     continue;
                 }
@@ -92,7 +94,7 @@ namespace MonopolyDeal
             }
 
             var playedCards = mPlayer.PlayedCards;
-            bool invalidPayment = value < PaymentHandler.AmountDue;
+            bool invalidPayment = Value < PaymentHandler.AmountDue;
             if (invalidPayment && playedCards.IsEmpty)
                 invalidPayment = false;
 
@@ -113,18 +115,20 @@ namespace MonopolyDeal
                 {
                     if (card is BuildingCard building)
                     {
-                        playedCards.RemoveBuildingCard(building);
-                        buildingTypes.Add(building.CurrentSetType);
-                        notMoney.Add(card);
+                        if (building.AsMoney)
+                            asMoney.Add(card);
+                        else
+                        {
+                            buildingTypes.Add(building.CurrentSetType);
+                            notMoney.Add(card);
+                        }                        
                     }                     
                     else if (card is PropertyCard property)
                     {
-                        playedCards.RemovePropertyCard(property);
                         notMoney.Add(card);
                     }                      
                     else
                     {
-                        playedCards.RemoveMoneyCard(card);
                         asMoney.Add(card);
                     }                       
                 }
