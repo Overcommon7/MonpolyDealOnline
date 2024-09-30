@@ -13,6 +13,9 @@ namespace MonopolyDeal
             if (building.IsHouse && PlayedCards.HasHotel(building.CurrentSetType))
                 return false;
 
+            if (!CanPlayCards)
+                return false;
+
             ImGui.SameLine();
 
             if (ImGui.Button($"Move##{id}"))

@@ -11,7 +11,7 @@ namespace MonopolyDeal
         LocalPlayer? mPlayer;
         List<Card> mDiscardingCards;
         public TooManyCardsPopup() : 
-            base(nameof(TooManyCardsPopup), true, true, true)
+            base(nameof(TooManyCardsPopup), true, false, false)
         {
             mDiscardingCards = new();
         }
@@ -30,8 +30,14 @@ namespace MonopolyDeal
                     ++i;
             }
 
+            bool tooManyCards = mPlayer.Hand.NumberOfCards - mDiscardingCards.Count > GameData.MAX_CARDS_IN_HAND;
+
             ImGui.SeparatorText("Choose Cards To Discard");
             int suffix = 0;
+
+            if (!tooManyCards)
+                ImGui.BeginDisabled();
+
             foreach (var card in mPlayer.Hand.Cards)
             {
                 if (mDiscardingCards.Contains(card))
@@ -45,7 +51,9 @@ namespace MonopolyDeal
                 mDiscardingCards.Add(card);
             }
 
-            bool tooManyCards = mPlayer.Hand.NumberOfCards - mDiscardingCards.Count > GameData.MAX_CARDS_IN_HAND;
+            if (!tooManyCards)
+                ImGui.EndDisabled();
+
             if (tooManyCards)
                 ImGui.BeginDisabled();
 
@@ -65,12 +73,14 @@ namespace MonopolyDeal
         public void Open(LocalPlayer player)
         {
             mPlayer = player;
+            mPlayer.CanPlayCards = false;
             base.Open();
         }
 
         public override void Close()
         {
             mDiscardingCards.Clear();
+            mPlayer.CanPlayCards = true;
             base.Close();
         }
     }

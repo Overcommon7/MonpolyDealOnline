@@ -7,6 +7,7 @@ namespace MonopolyDeal
     public class MessagePopup : IWindow
     {
         List<string> mMessages = [];
+        Action? mOnClose = null;
         public bool ShowCloseButton { get; set; } = false;
         public MessagePopup()
             : base("Messages", true, false, true, false)
@@ -23,16 +24,20 @@ namespace MonopolyDeal
                 ImGui.Spacing();
                 if (ImGui.Button("OK##MPU"))
                 {
+                    mOnClose?.Invoke();
                     Close();
                 }
             }
         }
 
-        public void Open(string[] messages, bool showCloseButton = true)
+        public void Open(string[] messages, bool showCloseButton = true, Action? onClose = null)
         {
             mMessages = new(messages);
             ShowCloseButton = showCloseButton;
             IsClosable = showCloseButton;
+
+            mOnClose = onClose;
+
             base.Open();
         }
 

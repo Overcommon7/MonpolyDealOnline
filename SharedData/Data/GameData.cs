@@ -14,6 +14,8 @@ public static class GameData
            
     public static int HOUSE_RENT_INCREASE = 3;
     public static int HOTEL_RENT_INCREASE = 4;
+
+    public static int CARDS_TO_PICK_UP_ON_GO = 2;
            
     public static int DOUBLE_RENT_MULTIPLIER = 2;
 

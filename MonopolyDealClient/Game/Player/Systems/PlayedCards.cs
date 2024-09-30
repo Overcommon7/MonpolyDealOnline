@@ -224,9 +224,9 @@ namespace MonopolyDeal
         
         public void DrawProperties(
             Func<Card, int, bool>? propertyLogic = null,
-            string identifier = "1")
+            string identifier = "1", string extra = "")
         {
-            ImGui.SeparatorText("Properties");
+            ImGui.SeparatorText("Properties" + extra);
 
             int id = 0;
             foreach (var setType in mSetTypes.Keys)

@@ -5,13 +5,21 @@ namespace MonopolyDeal
 {
     public static class SystemMessageHandler
     {
+        public static bool GoCards = false;
         public static void OnCardsRecieved(PlayerManager playerManager, byte[] data, int playerNumber)
         {
             var stringData = Format.ToString(data);
 
             if (playerNumber == playerManager.LocalPlayer.Number)
-            {                
+            {                             
                 var cards = Serializer.GetCardsFromString<Card>(stringData);
+                if (GoCards && cards.Length == GameData.CARDS_TO_PICK_UP_ON_GO)
+                {
+                    GoCards = false;
+                    string[] messages = ["Recieved From Pass Go", cards[0].DisplayName(), cards[1].DisplayName()];
+                    App.GetState<Gameplay>().GetWindow<MessagePopup>().Open(messages, true);
+                }
+                    
                 playerManager.LocalPlayer.Hand.AddCards(cards);
             }
             else

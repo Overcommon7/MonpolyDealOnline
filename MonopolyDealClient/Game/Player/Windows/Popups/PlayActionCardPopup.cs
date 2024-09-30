@@ -119,7 +119,8 @@ namespace MonopolyDeal
                 player.Hand.RemoveCard(mCard);
 
             ++player.PlaysUsed;
-            Client.SendData(ClientSendMessages.RequestCards, "2", player.Number);
+            SystemMessageHandler.GoCards = true;
+            Client.SendData(ClientSendMessages.RequestCards, GameData.CARDS_TO_PICK_UP_ON_GO.ToString(), player.Number);
             Close();
         }
         

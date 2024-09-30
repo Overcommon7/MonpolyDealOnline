@@ -92,7 +92,9 @@ public class Deck
             }
         }
 
-        Shuffle(fullDeck);
+        for (int i = 0; i < 5; ++i)
+            Shuffle(fullDeck);
+
         foreach (var card in fullDeck)
         {
             var value = CardData.CreateNewCard<Card>(card.ID);
@@ -130,7 +132,9 @@ public class Deck
 
     private void ReloadCards()
     {
-        Shuffle(remainingCards);
+        for (int i = 0; i < 5; ++i)
+            Shuffle(remainingCards);
+
         cards.Clear();
 
         foreach (var card in remainingCards)

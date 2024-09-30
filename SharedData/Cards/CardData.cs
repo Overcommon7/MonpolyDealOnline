@@ -177,6 +177,10 @@ public static class CardData
         if (!cardValues.TryGetValue(type, out var values))
             return 0;
 
+        if (type == SetType.DarkBlue)
+            cardsOwnedInSet = 2;
+
+
         int index = Array.FindIndex(values.Prices, rent => rent.cardsOwned == cardsOwnedInSet);
         if (index == -1)
             return 0;

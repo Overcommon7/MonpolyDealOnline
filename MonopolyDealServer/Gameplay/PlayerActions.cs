@@ -171,7 +171,8 @@ public static class PlayerActions
                 deck.AddCardToRemainingPile(value);
             }
         });
-            
+
+        PaymentManager.StartNewPayment(player, TargetType.One);
     }
 
     public static void MoveCard(Player player, byte[] data)

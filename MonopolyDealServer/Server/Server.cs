@@ -237,7 +237,7 @@ internal static class Server
 
         for (int i = 0; i < PlayerManager.TotalPlayers; ++i)
         {
-            status = PlayerManager.TryGetPlayer(i, out player);
+            status = PlayerManager.TryGetPlayer(i + 1, out player);
             if (status != ConnectionStatus.Connected)
                 continue;
 

@@ -20,7 +20,7 @@ namespace MonopolyDeal
         {
             int index = mPlayers.FindIndex(player => player.Number == playerNumber);
             if (index == -1)
-                throw new System.InvalidOperationException();
+                throw new InvalidOperationException();
 
             return mPlayers[index];
         }
@@ -33,7 +33,7 @@ namespace MonopolyDeal
 
                 int index = mPlayers.FindIndex(player => player.Number == mCurrentPlayerNumbersTurn);
                 if (index == -1)
-                     throw new System.InvalidOperationException();
+                     throw new InvalidOperationException();
 
                 return mPlayers[index];                
             }

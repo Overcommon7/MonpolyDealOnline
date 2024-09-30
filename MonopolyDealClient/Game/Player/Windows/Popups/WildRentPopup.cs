@@ -9,7 +9,7 @@ namespace MonopolyDeal
         int mSelectedTypeIndex = 0;
         int mRentAmount = 0;
         bool mUseDoubleRent = false;
-        bool mHasDoubelRent = false;
+        bool mHasDoulelRent = false;
         string[] mSetTypes = [];
         SetType mSelectedSetType = SetType.None;
         public WildRentPopup() 
@@ -29,11 +29,13 @@ namespace MonopolyDeal
 
                 SelectPlayer();
 
-                ImGui.Checkbox("Use Double Rent##WRPU", ref mUseDoubleRent);
-
-                int rent = mRentAmount;
-
-                ImGui.Text($"Amount To be Paid M{rent}");
+                if (mHasDoulelRent)
+                {
+                    if (ImGui.Checkbox("Use Double Rent##WRPU", ref mUseDoubleRent))
+                        mRentAmount = App.GetState<Gameplay>().PlayerManager.LocalPlayer.GetRentAmount(mSelectedSetType, mUseDoubleRent);
+                }
+              
+                ImGui.Text($"Amount To be Paid M{mRentAmount}");
                 ImGui.SameLine();
                 if (ImGui.Button("Charge##WRPU"))
                     PlayRent();
@@ -67,7 +69,11 @@ namespace MonopolyDeal
             values.cardID = mCard.ID;
 
             ++player.PlaysUsed;
+            PaymentHandler.BeginPaymentProcess(player.Number, mRentAmount);
             Client.SendData(ClientSendMessages.PlayWildRentCard, ref values, player.Number);
+            Close();
+
+            gameplay.GetWindow<GettingPaidWindow>().Open();
         }
 
         public void Open(LocalPlayer player, Card card)
@@ -91,7 +97,7 @@ namespace MonopolyDeal
                 ++index;
             }
 
-            mHasDoubelRent = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var doubleRent);
+            mHasDoulelRent = player.Hand.TryGetCard<ActionCard>(card => card.ActionType == ActionType.DoubleRent, out var doubleRent);
 
             GetPlayerNames();
             base.Open(card);

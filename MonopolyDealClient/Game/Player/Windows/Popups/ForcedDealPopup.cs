@@ -28,8 +28,8 @@ namespace MonopolyDeal
                     mSelectedPlayer = playerManager.OnlinePlayers[mPlayerIndex];
                 }
 
-                mPlayer.PlayedCards.DrawProperties(GivePropertyLogic, "GIVE");
-                mSelectedPlayer.PlayedCards.DrawProperties(TakePropertyLogic, "TAKE");
+                mPlayer.PlayedCards.DrawProperties(GivePropertyLogic, "GIVE", " - " + mPlayer.Name);
+                mSelectedPlayer.PlayedCards.DrawProperties(TakePropertyLogic, "TAKE", " - " + mSelectedPlayer.Name);
 
                 if (mCardToTake is not null)
                     ImGui.TextColored(mCardToTake.Color.ToVector4(), "Taking: " + mCardToTake.DisplayName());
@@ -74,9 +74,19 @@ namespace MonopolyDeal
                 return false;
 
             ImGui.SameLine();
-            if (ImGui.Button($"Choose##{id}"))
-                mCardToGive = property;
 
+            if (mCardToGive == property)
+            {
+                ImGui.BeginDisabled();
+                ImGui.Button("Chosen");
+                ImGui.EndDisabled();
+            }
+            else
+            {
+                if (ImGui.Button($"Choose##{id}"))
+                    mCardToGive = property;
+            }    
+           
             return false;
         }
 
@@ -86,17 +96,30 @@ namespace MonopolyDeal
                 return false;
 
             ImGui.SameLine();
-            if (ImGui.Button($"Choose##{id}"))
-                mCardToTake = property;
 
+            if (mCardToTake == property)
+            {
+                ImGui.BeginDisabled();
+                ImGui.Button("Chosen");
+                ImGui.EndDisabled();
+            }
+            else
+            {
+                if (ImGui.Button($"Choose##{id}"))
+                    mCardToTake = property;
+            }
+                
             return false;
         }
         public override void Open(Card card)
         {
             var playerManager = App.GetState<Gameplay>().PlayerManager;
+            mPlayer = playerManager.LocalPlayer;
             mPlayerIndex = 0;
             mSelectedPlayer = playerManager.OnlinePlayers[0];
             mTargetPlayerNumber = mSelectedPlayer.Number;
+
+            GetPlayerNames();
 
             base.Open(card);
         }

@@ -9,6 +9,9 @@ namespace MonopolyDeal
             if (PaymentHandler.PaymentInProcess)
                 return false;
 
+            if (!CanPlayCards)
+                return false;
+
             ImGui.SameLine();
             if (!ImGui.Button($"Play##{id}"))
                 return false;

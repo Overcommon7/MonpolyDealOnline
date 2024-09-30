@@ -40,6 +40,7 @@ namespace MonopolyDeal
                         values.cardType = MoveCardType.Building;
 
                     Client.SendData(ClientSendMessages.MoveCard, ref values, player.Number);
+                    Close();
                 }
             }    
 
@@ -137,6 +138,7 @@ namespace MonopolyDeal
 
             mSetIndex = 0;
             mCurrentSetType = wild.SetType;
+            mSetType = Enum.Parse<SetType>(mSetTypes[0]);
         }
     }
 }

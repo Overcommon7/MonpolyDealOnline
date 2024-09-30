@@ -14,7 +14,7 @@ namespace MonopolyDeal
         string mUsername = string.Empty;
         bool mValidServerCredentials = false;
         bool mIsReady = false;
-        bool mAutoConnect = false;    
+        bool mAutoConnect = true;    
         public string Username => mUsername;
         public int PlayerNumber { get; set; }
         public IReadOnlyDictionary<int, (string, ulong)> OtherPlayers => mOtherPlayers;
@@ -40,6 +40,13 @@ namespace MonopolyDeal
         {
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
 
+#if !DEBUG
+            mAddress = "154.5.153.25";
+            mPort = "25565";
+            mUsername = string.Empty;
+            mValidServerCredentials = true;
+#endif
+#if DEBUG
             if (!mAutoConnect)
                 return;
 
@@ -54,6 +61,7 @@ namespace MonopolyDeal
 
             mUsername += Program.DebugNumber.Value;
             ConnectToServer();
+#endif
         }
 
         private void Client_OnMessageRecieved(ServerSendMessages message, int playerNumber, byte[] data)
@@ -161,6 +169,7 @@ namespace MonopolyDeal
 
             bool notValid = string.IsNullOrEmpty(mUsername) || string.IsNullOrWhiteSpace(mUsername);
             bool isDisabled = false;
+
             if (mIsReady)
             {
                 ImGui.BeginDisabled();

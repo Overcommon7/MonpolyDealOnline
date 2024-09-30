@@ -139,6 +139,11 @@ namespace MonopolyDeal
                         State = State.NotTurn;
                 break;
                 case ServerSendMessages.OnPlayerWin:
+                    var player = PlayerManager.GetPlayer(playerNumber);
+                    GetWindow<MessagePopup>().Open([$"Player {player.Name} Has Won"], true, () =>
+                    {
+                        App.ChangeState<Connection>();
+                    });
                     break;
                 case ServerSendMessages.OnPlayerConnected:
                     break;
