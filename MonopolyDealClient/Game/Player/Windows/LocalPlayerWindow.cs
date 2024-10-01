@@ -44,8 +44,11 @@ namespace MonopolyDeal
             if (IsDisabled || DealHandler.IsDealInProgress)
                 ImGui.EndDisabled();
 
-            ImGui.SameLine();
-            ImGui.Text($"Turns Remaining: {ConnectedPlayer.TurnsRemaining}");
+            if (ConnectedPlayer.IsTurn)
+            {
+                ImGui.SameLine();
+                ImGui.Text($"Turns Remaining: {ConnectedPlayer.TurnsRemaining}");
+            }            
         }
 
         

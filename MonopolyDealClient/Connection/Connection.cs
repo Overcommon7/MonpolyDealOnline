@@ -132,7 +132,7 @@ namespace MonopolyDeal
                 return;
             }
 
-            Client.SendData(ClientSendMessages.ProfilePictureSent, PlayerNumber);
+            //Client.SendData(ClientSendMessages.ProfilePictureSent, PlayerNumber);
         }
 
         private void ConstantsAssigned(byte[] data)

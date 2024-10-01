@@ -87,7 +87,7 @@ public static class ConnectionHandler
             return;
 
         player.ProfilePictureData = data;
-        Server.SendMessageExcluding(ServerSendMessages.ProfileImageSent, playerNumber, data, playerNumber);
+        //Server.SendMessageExcluding(ServerSendMessages.ProfileImageSent, playerNumber, data, playerNumber);
     }
 
     static void UsernameRecieved(ulong clientID, byte[] data)
@@ -136,17 +136,17 @@ public static class ConnectionHandler
             Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
 
-            foreach (var connected in PlayerManager.ConnectedPlayers)
-            {
-                if (connected == player)
-                    continue;
+            //foreach (var connected in PlayerManager.ConnectedPlayers)
+            //{
+            //    if (connected == player)
+            //        continue;
 
-                if (connected.ProfilePictureData.Length == 0)
-                    continue;
+            //    if (connected.ProfilePictureData.Length == 0)
+            //        continue;
 
-                var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
-                client.GetStream().Write(data, 0, data.Length);
-            }
+            //    var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
+            //    client.GetStream().Write(data, 0, data.Length);
+            //}
         }  
     }
 
