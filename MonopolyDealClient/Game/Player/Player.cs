@@ -1,4 +1,6 @@
-﻿namespace MonopolyDeal
+﻿using Raylib_cs;
+
+namespace MonopolyDeal
 {
     public abstract class Player
     {
@@ -7,6 +9,7 @@
         public int Number { get; protected set; }
         public string Name { get; protected set; }
         public PlayedCards PlayedCards { get; private set; }
+        public Texture2D ProfilePicture { get; protected set; }
         public int TurnsRemaining => GameData.MAX_PLAYS_PER_TURN - mPlaysUsed;
         public bool HasPlaysRemaining => mPlaysUsed < GameData.MAX_PLAYS_PER_TURN;
         public bool IsTurn => mGameplay.PlayerManager.CurrentTurnPlayer.Number == Number;
@@ -18,11 +21,12 @@
         }
 
         protected Gameplay mGameplay;
-        public Player(int playerNumber, ulong id, string name)
+        public Player(int playerNumber, ulong id, string name, Texture2D texture)
         {
             ID = id; 
             Name = name;
             Number = playerNumber;
+            ProfilePicture = texture;
             PlayedCards = new(this);
 
             mGameplay = App.GetState<Gameplay>();

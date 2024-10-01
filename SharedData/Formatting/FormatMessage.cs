@@ -23,6 +23,9 @@ public static class Format
 
     public static bool ContainsProperlyFormattedHeader<T>(byte[] data) where T : struct, Enum
     {
+        if (data.Length < HEADER_SIZE)
+            return false;
+
         string header = Encoding.UTF8.GetString(data, 0, MESSAGE_SIZE);
         if (!Enum.TryParse<T>(header.TrimEnd(), false, out T result))
             return false;

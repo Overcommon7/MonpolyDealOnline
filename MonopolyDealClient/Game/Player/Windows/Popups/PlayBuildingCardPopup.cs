@@ -65,6 +65,15 @@ namespace MonopolyDeal
             if (ImGui.Combo("Set##PACP", ref mSetIndex, mSetTypes, mSetTypes.Length))
                 mSetType = Enum.Parse<SetType>(mSetTypes[mSetIndex]);
 
+            if (mSetType == SetType.None)
+                return;
+
+            if (mSetType == SetType.Railroad)
+                return;
+
+            if (mSetType == SetType.Utilities)
+                return;
+
             if (!ImGui.Button("Play " + (mBuilding.IsHouse ? "House" : "Hotel")))
                 return;
 
@@ -104,6 +113,12 @@ namespace MonopolyDeal
             foreach (var type in GameData.SET_TYPES)
             {
                 if (type == SetType.None)
+                    continue;
+
+                if (type == SetType.Railroad)
+                    continue;
+
+                if (type == SetType.Utilities)
                     continue;
 
                 var count = player.PlayedCards.GetNumberOfCardsInSet(type);

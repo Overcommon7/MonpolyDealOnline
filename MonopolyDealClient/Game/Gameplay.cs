@@ -19,6 +19,7 @@ namespace MonopolyDeal
         public override void OnOpen()
         {           
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
+            Client.GameStarted();
 
             PlayerManager = new PlayerManager();
 

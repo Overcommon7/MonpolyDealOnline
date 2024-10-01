@@ -6,6 +6,7 @@ public static class ConnectionHandler
 {
     public static int sReadiedPlayers = 0;
     public static bool mUseDebugConsole = true;
+    public static bool mSendingProfilePictures = false;
     struct ProfileData
     {
         public static string CurrentProfileName => mProfiles[mSelectedProfileIndex];
@@ -136,6 +137,9 @@ public static class ConnectionHandler
             Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
 
+            mSendingProfilePictures = true;
+            Thread.Sleep(100);
+
             foreach (var connected in PlayerManager.ConnectedPlayers)
             {
                 if (connected == player)
@@ -144,9 +148,13 @@ public static class ConnectionHandler
                 if (connected.ProfilePictureData.Length == 0)
                     continue;
 
+                Console.WriteLine("[SERVER] S: Sent Image #" + connected.Number);
                 var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
                 client.GetStream().Write(data, 0, data.Length);
+                Thread.Sleep(5000);
             }
+
+            mSendingProfilePictures = false; 
         }  
     }
 
@@ -178,6 +186,10 @@ public static class ConnectionHandler
 
         bool invalid = PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize ||
             sReadiedPlayers < GameManager.Configuration.mLobbySize || GameManager.Configuration.mLobbySize == 1;
+
+        if (!invalid && mSendingProfilePictures)
+            invalid = true;
+            
 
         if (invalid)
         {
