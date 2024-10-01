@@ -1,4 +1,6 @@
 ﻿using ImGuiNET;
+using Raylib_cs;
+using rlImGui_cs;
 using System;
 using System.Collections.Generic;
 
@@ -9,8 +11,8 @@ namespace MonopolyDeal
         Hand mHand;
         readonly Dictionary<State, Func<Card, int, bool>[]> mLogic;
         public Hand Hand => mHand;
-        public LocalPlayer(int playerNumber, ulong id, string name)
-            : base(playerNumber, id, name) 
+        public LocalPlayer(int playerNumber, ulong id, string name, Texture2D profile)
+            : base(playerNumber, id, name, profile) 
         { 
             mHand = new Hand();
             mLogic = new Dictionary<State, Func<Card, int, bool>[]>
@@ -25,6 +27,7 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
+          
             var extraLogic = mLogic[mGameplay.State];
             ImGui.SeparatorText("Hand");
             bool disabled = !HasPlaysRemaining;

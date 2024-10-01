@@ -41,6 +41,18 @@ namespace MonopolyDeal
             Client.mOnMessageRecieved -= Client_OnMessageRecieved;
         }
 
+        public override void Terminate()
+        {
+            foreach (var player in mOtherPlayers.Values)
+            {
+                if (player.Item3.Id != 0)
+                    Raylib.UnloadTexture(player.Item3);
+            }
+
+            if (ProfilePicture.Id != 0)
+                Raylib.UnloadTexture(ProfilePicture);
+        }
+
         public override void OnOpen()
         {
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
@@ -89,8 +101,8 @@ namespace MonopolyDeal
             if (message == ServerSendMessages.OnGameStarted)
                 OnGameStarted(playerNumber, data);
 
-            //if (message == ServerSendMessages.ProfileImageSent)
-            //    ProfilePictureRecieved(playerNumber, data);
+            if (message == ServerSendMessages.ProfileImageSent)
+                ProfilePictureRecieved(playerNumber, data);
         }
 
         private void ProfilePictureRecieved(int playerNumber, byte[] data)
@@ -132,7 +144,7 @@ namespace MonopolyDeal
                 return;
             }
 
-            //Client.SendData(ClientSendMessages.ProfilePictureSent, PlayerNumber);
+            Client.SendData(ClientSendMessages.ProfilePictureSent, imageData, PlayerNumber);
         }
 
         private void ConstantsAssigned(byte[] data)
@@ -251,9 +263,9 @@ namespace MonopolyDeal
                     rlImGui.ImageSize(ProfilePicture, 250, 250);
                 }
             }
-                          
-            //if (mIsReady)
-            //    CheckForProfilePicture();
+
+            if (mIsReady)
+                CheckForProfilePicture();
 
             if (ImGui.CollapsingHeader("Other Players", ImGuiTreeNodeFlags.DefaultOpen))
             {
@@ -267,7 +279,7 @@ namespace MonopolyDeal
                         continue;
 
                     ImGui.BeginTooltip();
-                    rlImGui.ImageSize(player.Item3, 100, 100);
+                    rlImGui.ImageSize(player.Item3, 200, 200);
                     ImGui.EndTooltip();
                 }
             }
@@ -292,7 +304,7 @@ namespace MonopolyDeal
         void SendUsernameToServer()
         {
             Client.SendData(ClientSendMessages.SendUsername, mUsername, -1);
-            //mMessagePopup.Open(["(Optional) Drag A PNG Image Onto The Window To Set Profile Picture"]);
+            mMessagePopup.Open(["(Optional) Drag A PNG Image Onto The Window To Set Profile Picture"]);
         }
 
         void PlayerUsernameRecieved(int playerNumber, byte[] data)

@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using rlImGui_cs;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +19,19 @@ namespace MonopolyDeal
             foreach (var player in ConnectedPlayers)
             {
                 if (ImGui.CollapsingHeader($"{player.Name}##{player.Number}", ImGuiTreeNodeFlags.DefaultOpen))
+                {
+                    if (player.ProfilePicture.Id != 0)
+                    {
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            rlImGui.ImageSize(player.ProfilePicture, 150, 150);
+                            ImGui.EndTooltip();
+                        }
+                    }
                     player.ImGuiDraw();
+                }
+                    
             }                
         }
 

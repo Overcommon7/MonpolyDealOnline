@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using rlImGui_cs;
 using System;
 using System.Collections.Generic;
 
@@ -17,6 +18,18 @@ namespace MonopolyDeal
 
         public override void ImGuiDraw()
         {
+
+            if (ConnectedPlayer.ProfilePicture.Id != 0)
+            {
+                ImGui.SeparatorText("Hover For Profile Picture");
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.BeginTooltip();
+                    rlImGui.ImageSize(ConnectedPlayer.ProfilePicture, 150, 150);
+                    ImGui.EndTooltip();
+                }
+            }
+
             if (IsDisabled || DealHandler.IsDealInProgress)
                 ImGui.BeginDisabled();
 

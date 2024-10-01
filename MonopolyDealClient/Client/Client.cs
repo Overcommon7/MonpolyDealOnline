@@ -28,6 +28,7 @@ namespace MonopolyDeal
         private static List<ServerRequest> mRequests;
         private static bool mProcessingRequests = false;
         private static readonly object mEmptyObject = new();
+        private static bool mProcessingProfilePicture = false;
 
         static Client()
         {
@@ -38,6 +39,7 @@ namespace MonopolyDeal
             mClient.AutoTrimStrings = false;
 
             mClient.DelimiterDataReceived += Client_DataReceived;
+            mClient.DataReceived += ProfilePictureLogic;
         }
 
         public static bool ConnectToServer(string ipAddress, string port)
@@ -53,6 +55,12 @@ namespace MonopolyDeal
 
             EndPoint = mClient.TcpClient.Client.RemoteEndPoint?.ToString() ?? string.Empty;
             return true;
+        }
+
+        public static void GameStarted()
+        {
+            mProcessingProfilePicture = false;
+            mClient.DataReceived -= ProfilePictureLogic;
         }
 
         public static void Shutdown()
@@ -85,17 +93,61 @@ namespace MonopolyDeal
             mOnMessageSent?.Invoke(mClient, message, playerNumber, mEmptyObject);
         }
 
+        private static void ProfilePictureLogic(object? sender, Message e)
+        {
+            Thread.Sleep(10);
+            if (!mProcessingProfilePicture)
+                return;
+
+            ServerRequest serverRequest = new();
+            serverRequest.mMessage = ServerSendMessages.ProfileImageSent;
+            serverRequest.mData = Format.GetByteDataFromMessage(e.Data);
+            serverRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
+
+            if (mProcessingRequests)
+            {
+                Task.Run(() =>
+                {
+                    while (mProcessingRequests)
+                        Thread.Sleep(33);
+
+                }).Wait();
+            }
+
+            lock (mRequests)
+                mRequests.Add(serverRequest);
+
+            mProcessingProfilePicture = false;
+        }
 
         private static void Client_DataReceived(object? sender, Message e)
         {
             if (e.Data.Length < Format.HEADER_SIZE)
                 return;
 
-            ServerRequest request = new();
+            if (mProcessingProfilePicture)
+            {
+                if (!Format.ContainsProperlyFormattedHeader<ClientSendMessages>(e.Data))
+                    return;
 
+                Task.Run(() =>
+                {
+                    while (mProcessingProfilePicture)
+                        Thread.Sleep(10);
+
+                }).Wait();
+            }
+
+            ServerRequest request = new();
             request.mData = Format.GetByteDataFromMessage(e.Data);
             request.mMessage = Format.GetMessageType<ServerSendMessages>(e.Data);
             request.mPlayerNumber = Format.GetPlayerNumber(e.Data);
+
+            if (request.mMessage == ServerSendMessages.ProfileImageSent)
+            {
+                mProcessingProfilePicture = true;
+                return;
+            }
 
             if (mProcessingRequests)
             {

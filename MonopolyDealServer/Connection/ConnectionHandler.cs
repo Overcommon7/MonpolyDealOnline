@@ -6,6 +6,7 @@ public static class ConnectionHandler
 {
     public static int sReadiedPlayers = 0;
     public static bool mUseDebugConsole = true;
+    public static bool mSendingProfilePictures = false;
     struct ProfileData
     {
         public static string CurrentProfileName => mProfiles[mSelectedProfileIndex];
@@ -87,7 +88,7 @@ public static class ConnectionHandler
             return;
 
         player.ProfilePictureData = data;
-        //Server.SendMessageExcluding(ServerSendMessages.ProfileImageSent, playerNumber, data, playerNumber);
+        Server.SendMessageExcluding(ServerSendMessages.ProfileImageSent, playerNumber, data, playerNumber);
     }
 
     static void UsernameRecieved(ulong clientID, byte[] data)
@@ -136,17 +137,24 @@ public static class ConnectionHandler
             Thread.Sleep(100);
             Server.BroadcastMessage(ServerSendMessages.OnPlayerConnected, player.ID.ToString(), player.Number);
 
-            //foreach (var connected in PlayerManager.ConnectedPlayers)
-            //{
-            //    if (connected == player)
-            //        continue;
+            mSendingProfilePictures = true;
+            Thread.Sleep(100);
 
-            //    if (connected.ProfilePictureData.Length == 0)
-            //        continue;
+            foreach (var connected in PlayerManager.ConnectedPlayers)
+            {
+                if (connected == player)
+                    continue;
 
-            //    var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
-            //    client.GetStream().Write(data, 0, data.Length);
-            //}
+                if (connected.ProfilePictureData.Length == 0)
+                    continue;
+
+                Console.WriteLine("[SERVER] S: Sent Image #" + connected.Number);
+                var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
+                client.GetStream().Write(data, 0, data.Length);
+                Thread.Sleep(5000);
+            }
+
+            mSendingProfilePictures = false; 
         }  
     }
 
@@ -178,6 +186,10 @@ public static class ConnectionHandler
 
         bool invalid = PlayerManager.ConnectedPlayerCount != GameManager.Configuration.mLobbySize ||
             sReadiedPlayers < GameManager.Configuration.mLobbySize || GameManager.Configuration.mLobbySize == 1;
+
+        if (!invalid && mSendingProfilePictures)
+            invalid = true;
+            
 
         if (invalid)
         {
