@@ -28,6 +28,8 @@ namespace MonopolyDeal
         private static List<ServerRequest> mRequests;
         private static bool mProcessingRequests = false;
         private static readonly object mEmptyObject = new();
+        private static bool mTryParse = false;
+        private static ServerRequest mProfileRequest = new();
 
         static Client()
         {
@@ -93,10 +95,30 @@ namespace MonopolyDeal
 
             ServerRequest request = new();
 
+            if (mTryParse && Format.ContainsProperlyFormattedHeader<ServerSendMessages>(e.Data))
+            {
+                mTryParse = false;
+                lock (mRequests)
+                    mRequests.Add(mProfileRequest);
+            }
+
             request.mData = Format.GetByteDataFromMessage(e.Data);
             request.mMessage = Format.GetMessageType<ServerSendMessages>(e.Data);
             request.mPlayerNumber = Format.GetPlayerNumber(e.Data);
 
+            if (request.mMessage == ServerSendMessages.ProfileImageSent)
+            {
+                mTryParse = true;
+                mProfileRequest = request;
+                return;
+            }                
+
+            if (mTryParse)
+            {
+                mProfileRequest.mData = Format.CombineByteArrays(mProfileRequest.mData, e.Data, false);
+                return;
+            }
+                
             if (mProcessingRequests)
             {
                 Task.Run(() =>

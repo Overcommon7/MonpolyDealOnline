@@ -206,7 +206,10 @@ internal static class Server
             clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
         }            
         else
+        {
             clientRequest.mData = e.Data;
+        }
+            
 
         if (mProcessingRequests)
         {
