@@ -7,13 +7,14 @@ using System;
 using Raylib_cs;
 using System.IO;
 using rlImGui_cs;
+using System.Diagnostics;
 
 namespace MonopolyDeal
 {
     struct PingValues
     {
-        public int mPing;
-        public double mPingStartTime;
+        public long mPing;
+        public Stopwatch mStopwatch;
         public bool mIsTestingPing;
     }
     public class Connection : Appstate
@@ -124,9 +125,8 @@ namespace MonopolyDeal
             if (!mPingValues.mIsTestingPing)
                 return;
 
-            double ping = Raylib.GetTime() - mPingValues.mPingStartTime;
             mPingValues.mIsTestingPing = false;
-            mPingValues.mPing = (int)Math.Round(ping * 1000f);
+            mPingValues.mPing = mPingValues.mStopwatch.ElapsedMilliseconds;
         }
 
         private void ProfilePictureRecieved(int playerNumber, byte[] data)
@@ -327,7 +327,10 @@ namespace MonopolyDeal
                 {
                     Client.SendData(ClientSendMessages.PingRequested, PlayerNumber);
                     mPingValues.mIsTestingPing = true;
-                    mPingValues.mPingStartTime = Raylib.GetTime();
+                    if (mPingValues.mStopwatch is null)
+                        mPingValues.mStopwatch = Stopwatch.StartNew();
+                    else
+                        mPingValues.mStopwatch.Restart();
                 }
 
                 if (Client.IsProcessingProfilePicture)

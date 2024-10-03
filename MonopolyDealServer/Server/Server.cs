@@ -252,6 +252,12 @@ internal static class Server
             clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
             clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
 
+            if (clientRequest.mMessage == ClientSendMessages.PingRequested)
+            {
+                mOnDataRecieved?.Invoke(clientRequest.mPlayerID, clientRequest.mPlayerNumber, clientRequest.mMessage, clientRequest.mData);
+                return;
+            }
+
             if (clientRequest.mMessage == ClientSendMessages.ProfilePictureSent)
             {                
                 mProcessingProfilePicture = true;

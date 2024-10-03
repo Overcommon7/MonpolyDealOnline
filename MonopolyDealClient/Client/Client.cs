@@ -145,6 +145,12 @@ namespace MonopolyDeal
             request.mMessage = Format.GetMessageType<ServerSendMessages>(e.Data);
             request.mPlayerNumber = Format.GetPlayerNumber(e.Data);
 
+            if (request.mMessage == ServerSendMessages.PingSent)
+            {
+                mOnMessageRecieved?.Invoke(request.mMessage, request.mPlayerNumber, request.mData);
+                return;
+            }
+
             if (request.mMessage == ServerSendMessages.ProfileImageSent)
             {
                 mProcessingProfilePicture = true;
