@@ -138,6 +138,9 @@ namespace MonopolyDeal
                 return;
 
             var values = mOtherPlayers[playerNumber];
+            if (values.Item3.Id != 0)
+                Raylib.UnloadTexture(values.Item3);
+
             values.Item3 = Raylib.LoadTextureFromImage(image);
             mOtherPlayers[playerNumber] = values;
 
@@ -156,6 +159,9 @@ namespace MonopolyDeal
             var ext = Path.GetExtension(file);
             if (ext != ".png")
                 mMessagePopup.Open(["Only PNGs are accepeted"]);
+
+            if (ProfilePicture.Id != 0)
+                Raylib.UnloadTexture(ProfilePicture);
 
             var imageData = File.ReadAllBytes(file);
             var image = Raylib.LoadImageFromMemory(ext, imageData);
