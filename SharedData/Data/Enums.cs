@@ -11,5 +11,6 @@ public enum DealType
     None,
     SlyDeal,
     ForcedDeal,
-    DealBreaker
+    DealBreaker,
+    Plunder
 }

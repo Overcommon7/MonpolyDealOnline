@@ -202,13 +202,14 @@ internal static class Server
 
     private static void ProfilePictureLogic(object? sender, Message e)
     {
-        Thread.Sleep(10);
+        
+
         if (!mProcessingProfilePicture)
             return;
 
         ClientRequest clientRequest = new();
         clientRequest.mPlayerID = e.TcpClient.GetID();
-        clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
+        clientRequest.mMessage = ClientSendMessages.ProfilePictureSent;
         clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
         clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
 
@@ -251,6 +252,12 @@ internal static class Server
             clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
             clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
             clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
+
+            if (clientRequest.mMessage == ClientSendMessages.PingRequested)
+            {
+                mOnDataRecieved?.Invoke(clientRequest.mPlayerID, clientRequest.mPlayerNumber, clientRequest.mMessage, clientRequest.mData);
+                return;
+            }
 
             if (clientRequest.mMessage == ClientSendMessages.ProfilePictureSent)
             {                

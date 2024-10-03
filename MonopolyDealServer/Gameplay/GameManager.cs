@@ -56,6 +56,9 @@ public static class GameManager
             case ClientSendMessages.PlayDealBreaker:
                 DealManager.DealBreakerPlayed(sDeck, player, data);
                 break;
+            case ClientSendMessages.PlayPlunderCard:
+                DealManager.PlunderCardPlayed(sDeck, player, data);
+                break;
             case ClientSendMessages.DealAccepted:
                 DealManager.DealComplete();
                 break;
@@ -136,6 +139,7 @@ public static class GameManager
                 if (int.Parse(strs[0]) >= Configuration.mSetToPlayTo)
                 {
                     Server.BroadcastMessage(ServerSendMessages.OnPlayerWin, player.Number);
+                    End();
                     break;
                 }    
 

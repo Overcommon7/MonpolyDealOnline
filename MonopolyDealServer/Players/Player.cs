@@ -69,6 +69,11 @@ public class Player : IEquatable<Player>
     {
         mPlayArea.Add(card);
     }
+
+    public Card GetCardFromHand(int index)
+    {
+        return mHand[index];
+    }
     public void RemoveCardFromHand(Card card)
     {
         int index = mHand.FindIndex(c => c.ID == card.ID);

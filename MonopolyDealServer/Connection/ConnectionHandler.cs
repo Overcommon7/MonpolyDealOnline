@@ -79,6 +79,19 @@ public static class ConnectionHandler
 
         if (message == ClientSendMessages.ProfilePictureSent)
             ProfilePictureRecieved(playerNumber, data);
+
+        if (message == ClientSendMessages.PingRequested)
+            PingRequested(playerNumber);
+    }
+
+    private static void PingRequested(int playerNumber)
+    {
+        var status = PlayerManager.TryGetPlayer(playerNumber, out var player);
+        if (status != ConnectionStatus.Connected)
+            return;
+
+        var data = Format.CreateHeader(ServerSendMessages.PingSent, playerNumber).AddDelimiter();
+        player.Client.GetStream().Write(data, 0, data.Length);
     }
 
     private static void ProfilePictureRecieved(int playerNumber, byte[] data)

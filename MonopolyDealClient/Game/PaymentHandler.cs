@@ -52,14 +52,30 @@ namespace MonopolyDeal
             info.mNotMoney = new List<Card>();
 
             int buildingTypesIndex = 0;
+            int wildTypesIndex = 0;
+            List<SetType> wildTypes = new List<SetType>();
             List<SetType> buildingTypes = new List<SetType>();
 
             if (strs.Length > 2)
             {
-                foreach (var setType in strs[2].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                if (!strs[2].Contains("Empty"))
                 {
-                    buildingTypes.Add(Enum.Parse<SetType>(setType));
-                }                    
+                    foreach (var setType in strs[2].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                    {
+                        buildingTypes.Add(Enum.Parse<SetType>(setType));
+                    }
+                }                                  
+            }
+
+            if (strs.Length > 3)
+            {
+                if (!strs[3].Contains("Empty"))
+                {
+                    foreach (var setType in strs[3].Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                    {
+                        wildTypes.Add(Enum.Parse<SetType>(setType));
+                    }
+                }
             }
             
 
@@ -72,6 +88,9 @@ namespace MonopolyDeal
                 }                   
                 else if (card is PropertyCard property)
                 {
+                    if (card is WildCard wild)
+                        wild.SetCurrentType(wildTypes[wildTypesIndex++]);
+
                     player.PlayedCards.RemovePropertyCard(property);
                 }                    
                 info.mNotMoney.Add(card);

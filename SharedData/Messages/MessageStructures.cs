@@ -62,6 +62,14 @@ public struct ForcedDealValues
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct PlunderDealValues
+{
+    public int handIndex;
+    public int targetPlayerNumber;
+    public int cardID;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct PlayWildCard
 {
     public SetType setType;

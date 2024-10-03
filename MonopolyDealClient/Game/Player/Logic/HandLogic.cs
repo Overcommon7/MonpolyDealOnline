@@ -32,6 +32,9 @@ namespace MonopolyDeal
                     case ActionType.ForcedDeal:
                         mGameplay.GetWindow<ForcedDealPopup>().Open(card);
                         break;
+                    case ActionType.Plunder:
+                        mGameplay.GetWindow<PlayPlunderPopup>().Open(card);
+                        break;
                     case ActionType.Rent:
                         mGameplay.GetWindow<ChargeRentPopup>().Open(this, card);
                         break;

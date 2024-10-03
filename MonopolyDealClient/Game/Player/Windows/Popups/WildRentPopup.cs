@@ -59,7 +59,6 @@ namespace MonopolyDeal
 
             if (mCard is not null)
             {
-                player.PlayedCards.AddMoneyCard(mCard);
                 player.Hand.RemoveCard(mCard);
             }
 

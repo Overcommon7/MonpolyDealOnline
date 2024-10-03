@@ -8,6 +8,7 @@
     PlayBuildingCard,
     PlayWildCard,
     PlayMoneyCard,
+    PlayPlunderCard,
     PlayPropertyCard,
     PlayBirthdayCard,
     PlayDebtCollector,
@@ -28,7 +29,9 @@
     RequestHand,
 
     RecievedConstants,
-    ProfilePictureSent
+    ProfilePictureSent,
+
+    PingRequested
 }
 
 public enum ServerSendMessages : short
@@ -38,6 +41,7 @@ public enum ServerSendMessages : short
     PropertyCardPlayed,
     RentCardPlayed,
     SlyDealPlayed,
+    PlunderDealPlayed,
     ForcedDealPlayed,
     DealBreakerPlayed,
     BirthdayCardPlayed,
@@ -71,5 +75,7 @@ public enum ServerSendMessages : short
 
     SendConstants,
     ProfileImageSent,
-    DebugSendCard
+    DebugSendCard,
+
+    PingSent,    
 }
