@@ -119,7 +119,7 @@ Wait:
                 }
                 else
                 {
-                    var span = new Span<byte>(e.Data, index, e.Data.Length - index);
+                    var span = new Span<byte>(e.Data, startIndex, e.Data.Length - startIndex);
                     mIncomingData.AddRange(span);
                     break;
                 }
