@@ -136,6 +136,7 @@ public static class GameManager
                 if (int.Parse(strs[0]) >= Configuration.mSetToPlayTo)
                 {
                     Server.BroadcastMessage(ServerSendMessages.OnPlayerWin, player.Number);
+                    End();
                     break;
                 }    
 

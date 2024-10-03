@@ -178,9 +178,16 @@ namespace MonopolyDeal
             if (cards.Length > amountForSet)
                 Array.Sort(cards, CardData.SortAlgorithm);
 
+            foreach (var card in cards)
+            {
+
+            }
+
             for (int i = 0; i < amountForSet; ++i)
             {
                 mDealValues.targetPlayer.PlayedCards.RemovePropertyCard(cards[i]);
+                if (cards[i] is WildCard wild)
+                    wild.SetCurrentType(values.setType);
                 mDealValues.recievingPlayer.PlayedCards.AddPropertyCard(cards[i]);
             }
 

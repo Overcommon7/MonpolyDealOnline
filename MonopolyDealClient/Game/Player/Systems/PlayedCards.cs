@@ -55,7 +55,7 @@ namespace MonopolyDeal
                 }
                 else if (mSetTypes[card.SetType] == 1)
                 {
-                    var value = GetPropertyCardsOfType(card.SetType)[0];
+                    var value = GetPropertyCardsOfType(card.SetType).First();
                     if (value.GetType() == typeof(WildCard))
                     {
                         mSetTypes.Remove(card.SetType);
