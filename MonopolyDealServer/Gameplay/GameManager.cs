@@ -56,6 +56,9 @@ public static class GameManager
             case ClientSendMessages.PlayDealBreaker:
                 DealManager.DealBreakerPlayed(sDeck, player, data);
                 break;
+            case ClientSendMessages.PlayPlunderCard:
+                DealManager.PlunderCardPlayed(sDeck, player, data);
+                break;
             case ClientSendMessages.DealAccepted:
                 DealManager.DealComplete();
                 break;

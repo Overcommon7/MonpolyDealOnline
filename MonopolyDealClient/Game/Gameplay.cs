@@ -78,6 +78,7 @@ namespace MonopolyDeal
                 case ServerSendMessages.SlyDealPlayed:
                 case ServerSendMessages.DealBreakerPlayed:
                 case ServerSendMessages.ForcedDealPlayed:
+                case ServerSendMessages.PlunderDealPlayed:
                     if (DealHandler.IsDealInProgress)
                         break;
 
@@ -196,10 +197,12 @@ namespace MonopolyDeal
             _ = AddWindow<PayPopup>();
             _ = AddWindow<PlayActionCardPopup>();
             _ = AddWindow<PlayBuildingCardPopup>();
+            _ = AddWindow<PlayPlunderPopup>();
             _ = AddWindow<PlayWildCardPopup>();            
             _ = AddWindow<SlyDealPopup>();
             _ = AddWindow<TooManyCardsPopup>();
             _ = AddWindow<WildRentPopup>();
+
         }
     }
 }

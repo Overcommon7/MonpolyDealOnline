@@ -28,6 +28,8 @@ namespace MonopolyDeal
                 return DealType.SlyDeal;
             if (message == ServerSendMessages.ForcedDealPlayed)
                 return DealType.ForcedDeal;
+            if (message == ServerSendMessages.PlunderDealPlayed)
+                return DealType.Plunder;
 
             return DealType.None;
         }
@@ -69,6 +71,18 @@ namespace MonopolyDeal
                     mDealValues.targetPlayer = playerManager.GetPlayer(values.targetPlayerNumber);
                     mDealValues.data = values;
                     dealMessage = $"{mDealValues.recievingPlayer.Name} Has Deal Broken {mDealValues.targetPlayer.Name} For Their {values.setType} Properties.";
+                }
+                break;
+                case DealType.Plunder:
+                {
+                    var values = Format.ToStruct<PlunderDealValues>(data);
+                    mDealValues.targetPlayer = playerManager.GetPlayer(values.targetPlayerNumber);
+                    mDealValues.data = values;
+                    dealMessage = $"{mDealValues.recievingPlayer.Name} Has Plundered ";
+                    if (mDealValues.targetPlayer.Number == playerManager.LocalPlayer.Number)
+                        dealMessage += $"Your {CardData.CreateNewCard<Card>(values.cardID)?.DisplayName()}";
+                    else
+                        dealMessage += mDealValues.targetPlayer.Name;
                 }
                 break;
             }  
@@ -167,6 +181,46 @@ namespace MonopolyDeal
                 case DealType.DealBreaker:
                     DoDealBreakerLogic(playerManager, (DealBreakerValues)mDealValues.data);
                     break;
+                case DealType.Plunder:
+                    DoPlunderLogic(playerManager, (PlunderDealValues)mDealValues.data);
+                    break;
+            }
+        }
+
+        private static void DoPlunderLogic(PlayerManager playerManager, PlunderDealValues values)
+        {
+            {
+                if (mDealValues.targetPlayer is OnlinePlayer online)
+                {
+                    --online.CardsInHand;                    
+                }
+                else if (mDealValues.targetPlayer is LocalPlayer local)
+                {
+                    if (!CardData.TryGetCard<Card>(values.cardID, out var newCard))
+                        return;
+
+                    if (newCard is not null)
+                        local.Hand.RemoveCard(newCard);
+                }
+            }
+            {
+                if (mDealValues.recievingPlayer is OnlinePlayer online)
+                {
+                   ++online.CardsInHand;
+                }
+                else if (mDealValues.recievingPlayer is LocalPlayer local)
+                {
+                    var newCard = CardData.CreateNewCard<Card>(values.cardID);
+
+                    if (newCard is not null)
+                        local.Hand.AddCard(newCard);
+
+                    var dealWindow = App.GetState<Gameplay>().GetWindow<GettingDealWindow>();
+                    if (dealWindow.IsOpen)
+                        dealWindow.ChangeMessage($"You Plundered {mDealValues.targetPlayer}'s {newCard.DisplayName()}");
+                }
+
+
             }
         }
 
@@ -177,11 +231,6 @@ namespace MonopolyDeal
 
             if (cards.Length > amountForSet)
                 Array.Sort(cards, CardData.SortAlgorithm);
-
-            foreach (var card in cards)
-            {
-
-            }
 
             for (int i = 0; i < amountForSet; ++i)
             {

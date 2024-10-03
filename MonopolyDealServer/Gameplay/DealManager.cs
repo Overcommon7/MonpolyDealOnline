@@ -4,7 +4,6 @@ using System.Collections.Generic;
 public static class DealManager
 {
     public static DealType CurrentDealType = DealType.None;
-    public static Player? RecievingPlayer = null;
 
     public static void SlyDealPlayed(Deck deck, Player player, byte[] data)
     {
@@ -62,9 +61,33 @@ public static class DealManager
     public static void DealComplete()
     {
         CurrentDealType = DealType.None;
-        RecievingPlayer = null;
-
         Server.BroadcastMessage(ServerSendMessages.DealComplete, GameData.ALL_PLAYER_NUMBER);
+    }
+
+    public static void PlunderCardPlayed(Deck deck, Player player, byte[] data)
+    {
+        CurrentDealType = DealType.Plunder;
+        var values = Format.ToStruct<PlunderDealValues>(data);
+
+        if (!CardData.TryGetCard<ActionCard>(card => card.ActionType == ActionType.Plunder, out var plunder))
+            return;
+
+        var status = PlayerManager.TryGetPlayer(values.targetPlayerNumber, out var target);
+        if (status != ConnectionStatus.Connected)
+            return;
+
+
+
+        var card = target.GetCardFromHand(values.handIndex);
+        target.RemoveCardFromHand(card);
+
+        player.RemoveCardFromHand(plunder);
+        deck.AddCardToRemainingPile(plunder);
+
+        player.AddCardToHand(card);
+        values.cardID = card.ID;
+
+        Server.BroadcastMessage(ServerSendMessages.PlunderDealPlayed, ref values, player.Number);
     }
 }
 

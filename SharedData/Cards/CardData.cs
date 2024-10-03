@@ -30,7 +30,8 @@ public enum ActionType
     Hotel,
     House,
     DoubleRent,
-    PassGo
+    PassGo,
+    Plunder
 }
 
 public enum CardType
@@ -136,7 +137,8 @@ public static class CardData
             { ActionType.Hotel, new(214, 47, 59) },
             { ActionType.House, new(18, 102, 61) },
             { ActionType.DoubleRent, new(204, 204, 187) },
-            { ActionType.PassGo, new(212, 212, 200) }
+            { ActionType.PassGo, new(212, 212, 200) },
+            { ActionType.Plunder, new(183, 187, 191) },
         };
 
         sortTypes = new Dictionary<Type, int>
@@ -159,7 +161,9 @@ public static class CardData
             { ActionType.SlyDeal, "Take One Card From Any Player" },
             { ActionType.ForcedDeal, "Trade A Card With Any Player"},
             { ActionType.WildRent, "Charge Rent On Any Owned Set To A Single Player" },
-            { ActionType.PassGo, "Pick Up An Additional 2 Cards" }
+            { ActionType.PassGo, "Pick Up An Additional 2 Cards" },
+            { ActionType.Plunder, "Steal Any Card From One Player's Hand" },
+
         };
     }
     public static Vector4 ToVector4(this CardColor color)
