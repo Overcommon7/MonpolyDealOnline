@@ -93,12 +93,42 @@ namespace MonopolyDeal
                 mCardsPaying.RemoveAt(i);
             }
 
+
             var playedCards = mPlayer.PlayedCards;
+            int value = 0;
+
+            foreach (var card in playedCards.PropertyCards)
+            {
+                if (mCardsPaying.Contains(card))
+                    continue;
+
+                value += card.Value;
+            }
+
+            foreach (var card in playedCards.BuildingCards)
+            {
+                if (mCardsPaying.Contains(card))
+                    continue;
+
+                value += card.Value;
+            }
+
+            foreach (var card in playedCards.MoneyCards)
+            {
+                if (mCardsPaying.Contains(card))
+                    continue;
+
+                value += card.Value;
+            }
+
             bool invalidPayment = Value < PaymentHandler.AmountDue;
             if (invalidPayment && playedCards.IsEmpty)
                 invalidPayment = false;
 
             if (invalidPayment && playedCards.TotalCardsPlayed - mCardsPaying.Count <= 0)
+                invalidPayment = false;
+
+            if (value == 0)
                 invalidPayment = false;
 
             ImGui.Spacing();
@@ -110,6 +140,7 @@ namespace MonopolyDeal
                 List<Card> notMoney = new();
                 List<Card> asMoney = new();
                 List<SetType> buildingTypes = new();
+                List<SetType> wildTypes = new();
 
                 foreach (var card in mCardsPaying)
                 {
@@ -125,6 +156,9 @@ namespace MonopolyDeal
                     }                     
                     else if (card is PropertyCard property)
                     {
+                        if (card is WildCard wild)
+                            wildTypes.Add(wild.SetType);
+
                         notMoney.Add(card);
                     }                      
                     else
@@ -139,15 +173,27 @@ namespace MonopolyDeal
                     .Append('#')
                     .Append(Serializer.SerializeListOfCards(asMoney));
 
-                if (buildingTypes.Count > 0)
+
+                stringBuilder.Append('#');
+                if (buildingTypes.Count == 0)
+                    stringBuilder.Append("Empty");
+
+                for (int i = 0; i < buildingTypes.Count; i++)
                 {
-                    stringBuilder.Append('#');
-                    for (int i = 0; i < buildingTypes.Count; i++)
-                    {
-                        stringBuilder.Append(buildingTypes[i]);
-                        if (i - 1 < buildingTypes.Count)
-                            stringBuilder.Append(',');
-                    }
+                    stringBuilder.Append(buildingTypes[i]);
+                    if (i - 1 < buildingTypes.Count)
+                        stringBuilder.Append(',');
+                }
+
+                stringBuilder.Append('#');
+                if (wildTypes.Count == 0)
+                    stringBuilder.Append("Empty");
+
+                for (int i = 0; i < wildTypes.Count; i++)
+                {
+                    stringBuilder.Append(wildTypes[i]);
+                    if (i - 1 < wildTypes.Count)
+                        stringBuilder.Append(',');
                 }
 
                 App.GetState<Gameplay>().RevertState();

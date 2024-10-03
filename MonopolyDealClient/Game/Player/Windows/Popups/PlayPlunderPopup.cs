@@ -52,6 +52,8 @@ namespace MonopolyDeal
                 values.targetPlayerNumber = mSelectedPlayer.Number;
                 values.handIndex = mSelectedIndex;
 
+                //localPlayer.Hand.RemoveCard();
+
                 Client.SendData(ClientSendMessages.PlayPlunderCard, ref values, localPlayer.Number);
 
                 gameplay.GetWindow<GettingDealWindow>()

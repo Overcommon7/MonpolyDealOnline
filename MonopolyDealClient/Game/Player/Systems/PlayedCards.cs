@@ -173,7 +173,7 @@ namespace MonopolyDeal
             if (!mSetTypes.TryGetValue(setType, out int amount))
                 return false;
 
-            return amount == CardData.GetValues(setType).AmountForFullSet;
+            return amount >= CardData.GetValues(setType).AmountForFullSet;
         }
 
         public bool HasHouse(SetType setType)

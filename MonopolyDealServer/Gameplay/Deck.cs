@@ -2,6 +2,8 @@
 
 public class Deck
 {
+    const int ShuffleIterations = 20;
+
     Stack<Card> cards;
     List<Card> fullDeck;
     List<Card> remainingCards;
@@ -92,14 +94,22 @@ public class Deck
             }
         }
 
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < ShuffleIterations; ++i)
             Shuffle(fullDeck);
 
-        foreach (var card in fullDeck)
+        var indexes = Enumerable.Range(0, fullDeck.Count).ToList();
+
+        while (indexes.Count > 0)
         {
+            int index = Random.Shared.Next(0, indexes.Count);
+            var card = fullDeck[indexes[index]];
+
             var value = CardData.CreateNewCard<Card>(card.ID);
             if (value is not null)
+            {
                 cards.Push(value);
+                indexes.RemoveAt(index);
+            }                
         }
     }
 
@@ -132,7 +142,7 @@ public class Deck
 
     private void ReloadCards()
     {
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < ShuffleIterations; ++i)
             Shuffle(remainingCards);
 
         cards.Clear();
@@ -151,7 +161,7 @@ public class Deck
     {
         for (int i = 0; i < source.Count - 1; ++i)
         {
-            var indexToSwap = Random.Shared.Next(i, source.Count);
+            var indexToSwap = Random.Shared.Next(0, source.Count);
             (source[i], source[indexToSwap]) = (source[indexToSwap], source[i]);
         }
     }

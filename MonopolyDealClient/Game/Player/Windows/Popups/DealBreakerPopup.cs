@@ -31,29 +31,34 @@ namespace MonopolyDeal
                 }
                 else
                 {
+
                     if (ImGui.Combo("Set", ref mSetIndex, mSetTypes, mSetTypes.Length))
                         mSetType = Enum.Parse<SetType>(mSetTypes[mSetIndex]);
-
-                    if (ImGui.Button($"Steal Set: {mSetType}"))
+               
+                    if (mSetType != SetType.None)
                     {
-                        DealBreakerValues values = new DealBreakerValues();
-                        values.targetPlayerNumber = mTargetPlayerNumber;
-                        values.setType = mSetType;
+                        if (ImGui.Button($"Steal Set: {mSetType}"))
+                        {
+                            DealBreakerValues values = new DealBreakerValues();
+                            values.targetPlayerNumber = mTargetPlayerNumber;
+                            values.setType = mSetType;
 
-                        var gameplay = App.GetState<Gameplay>();
-                        var player = gameplay.PlayerManager.LocalPlayer;
-                        var targetPlayer = gameplay.PlayerManager.GetOnlinePlayer(values.targetPlayerNumber);
+                            var gameplay = App.GetState<Gameplay>();
+                            var player = gameplay.PlayerManager.LocalPlayer;
+                            var targetPlayer = gameplay.PlayerManager.GetOnlinePlayer(values.targetPlayerNumber);
 
-                        if (mCard is not null)
-                            player.Hand.RemoveCard(mCard);
+                            if (mCard is not null)
+                                player.Hand.RemoveCard(mCard);
 
-                        ++player.PlaysUsed;
-                        Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, player.Number);
-                        Close();
+                            ++player.PlaysUsed;
+                            Client.SendData(ClientSendMessages.PlayDealBreaker, ref values, player.Number);
+                            Close();
 
-                        gameplay.GetWindow<GettingDealWindow>().Open(player, targetPlayer,
-                            $"Deal Broke {targetPlayer.Name}'s {mSetType} properties", player.Number);
-                    }
+                            gameplay.GetWindow<GettingDealWindow>().Open(player, targetPlayer,
+                                $"Deal Broke {targetPlayer.Name}'s {mSetType} properties", player.Number);
+                        }
+                    }    
+                    
                 }                
             }    
 
@@ -63,19 +68,10 @@ namespace MonopolyDeal
         public override void Open(Card card)
         {
             mAsMoney = false;
-            var gameplay = App.GetState<Gameplay>();
+            var gameplay = App.GetState<Gameplay>();          
 
-            foreach (var player in gameplay.PlayerManager.OnlinePlayers)
-            {
-                mTargetPlayerNumber = player.Number;
-                GetTypes();
-
-                if (mSetTypes.Length > 0)
-                    break;
-            }            
-
-            if (mSetTypes.Length == 0)
-                mAsMoney = true;
+            mTargetPlayerNumber = gameplay.PlayerManager.OnlinePlayers[mPlayerIndex].Number;
+            GetTypes();
 
             GetPlayerNames();
             gameplay.GetWindow<LocalPlayerWindow>().CanEndTurn = false;
