@@ -6,11 +6,14 @@ public static class PaymentManager
     static TargetType sTargetType;
     static int sPlayersPaid;
     static Player? sPlayerBeingPaid;
+    static List<int> mPlayersWhoPaid = new List<int>();    
     public static bool IsPaymentInProgress { get; private set; } = false;
+    
     public static void StartNewPayment(Player playerBeingPayed, TargetType targetType)
     {
         sTargetType = targetType;
         sPlayersPaid = 0;
+        mPlayersWhoPaid.Clear();
         sPlayerBeingPaid = playerBeingPayed;
         IsPaymentInProgress = true;
     }
@@ -20,6 +23,7 @@ public static class PaymentManager
         sPlayerBeingPaid = null;
         sTargetType = TargetType.None;
         sPlayersPaid = 0;
+        mPlayersWhoPaid.Clear();
         IsPaymentInProgress = false;
     }
 
@@ -29,9 +33,11 @@ public static class PaymentManager
             return;
 
         sPlayerBeingPaid?.RemoveCardFromHand(justSayNo);
+        mPlayersWhoPaid.Remove(targetPlayer.Number);
 
         deck.AddCardToRemainingPile(justSayNo);
         --sPlayersPaid;
+       
         Server.BroadcastMessage(ServerSendMessages.NoWasRejected, targetPlayer.Number);
     }
     public static void PlayerUsedSayNo(Deck deck, Player player)
@@ -50,6 +56,9 @@ public static class PaymentManager
         if (sPlayerBeingPaid is null)
             return;
 
+        if (mPlayersWhoPaid.Contains(player.Number))
+            return;
+
         string[] cards = Format.ToString(data).Split('#', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         var notMoneyCards = Serializer.GetCardsFromString<Card>(cards[0]);
         var asMoneyCards = Serializer.GetCardsFromString<Card>(cards[1]);
@@ -66,7 +75,8 @@ public static class PaymentManager
             sPlayerBeingPaid.AddCardToPlayArea(card);
         }
 
-        Server.BroadcastMessage(ServerSendMessages.PlayerPaid, data, player.Number);    
+        Server.BroadcastMessage(ServerSendMessages.PlayerPaid, data, player.Number);
+        mPlayersWhoPaid.Add(player.Number);
         CheckForAllPlayersPaid();
     }
 

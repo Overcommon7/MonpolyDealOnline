@@ -195,6 +195,8 @@ public static class CardData
         if (!cardValues.TryGetValue(type, out var values))
             return 0;
 
+        cardsOwnedInSet = Math.Min(cardsOwnedInSet, values.Prices[^1].cardsOwned);            
+
         int index = Array.FindIndex(values.Prices, rent => rent.cardsOwned == cardsOwnedInSet);
         if (index == -1)
             return 0;

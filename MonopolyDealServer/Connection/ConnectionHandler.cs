@@ -164,7 +164,7 @@ public static class ConnectionHandler
                 Console.WriteLine("[SERVER] S: Sent Image #" + connected.Number);
                 var data = Format.ToData(ServerSendMessages.ProfileImageSent, connected.ProfilePictureData, connected.Number);
                 client.GetStream().Write(data, 0, data.Length);
-                Thread.Sleep(5000);
+                Thread.Sleep(100);
             }
 
             mSendingProfilePictures = false; 

@@ -19,7 +19,6 @@ public static class GameManager
     public static void Start()
     {
         Server.mOnDataRecieved += Server_OnDataRecieved;
-        Server.GameStarted();
 
         CurrentState = GameState.InGame;
         sDeck = new(Configuration.mDecksToUse);

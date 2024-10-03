@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using static CardData;
 
 namespace MonopolyDeal
 {
@@ -30,26 +29,36 @@ namespace MonopolyDeal
                 return false;
 
             ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); ImGui.SameLine();
-            bool valid = true;
-            if (card.ActionType == ActionType.House)
+
+            if (mPayPopup.IsPayingCard(card))
             {
-                if (PlayedCards.HasHotel(card.CurrentSetType))
-                {
-                    var building = PlayedCards.GetBuildingCard(ActionType.Hotel, card.CurrentSetType);
-                    if (building is not null && !mPayPopup.IsPayingCard(building))
-                        valid = false;
-                }
-            }
-
-            if (!valid)
                 ImGui.BeginDisabled();
-
-            if (ImGui.Button($"Pay##{id}"))
-                mPayPopup.AddToCardsPaying(card);
-
-            if (!valid)
+                ImGui.Button("In Use");
                 ImGui.EndDisabled();
+            }
+            else
+            {
+                bool valid = true;
+                if (card.ActionType == ActionType.House)
+                {
+                    if (PlayedCards.HasHotel(card.CurrentSetType))
+                    {
+                        var building = PlayedCards.GetBuildingCard(ActionType.Hotel, card.CurrentSetType);
+                        if (building is not null && !mPayPopup.IsPayingCard(building))
+                            valid = false;
+                    }
+                }
 
+                if (!valid)
+                    ImGui.BeginDisabled();
+
+                if (ImGui.Button($"Pay##{id}"))
+                    mPayPopup.AddToCardsPaying(card);
+
+                if (!valid)
+                    ImGui.EndDisabled();
+            }
+            
             return false;
         }
 

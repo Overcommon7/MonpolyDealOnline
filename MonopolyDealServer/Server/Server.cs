@@ -21,7 +21,8 @@ internal static class Server
     public static event Action<SimpleTcpServer, TcpClient>? mOnClientConnected;
     private static List<ClientRequest> mRequests;
     private static bool mProcessingRequests = false;
-    private static bool mProcessingProfilePicture = false;
+    private static int mProcessingRequest = 0;
+    private static List<byte> mIncomingData = new List<byte>();
 
     public static IPAddress? Address { get; private set; } = null;
 
@@ -56,20 +57,13 @@ internal static class Server
             return;
         }
 
-        mServer.Delimiter = Format.DELIMITER;
         mServer.Start(Address, port);
         mServer.ClientDisconnected += ClientDisconnected;
         mServer.ClientConnected += ClientConnected;
-        mServer.DataReceived += ProfilePictureLogic;
-        mServer.DelimiterDataReceived += DataReceived;
+        mServer.DataReceived += DataReceived;
+
         mServer.AutoTrimStrings = false;
         Console.WriteLine($"Server started on Address: {Address} - Port: {port}");
-    }
-
-    public static void GameStarted()
-    {
-        mProcessingProfilePicture = false;
-        mServer.DataReceived -= ProfilePictureLogic;
     }
 
     public static void Close()
@@ -200,89 +194,76 @@ internal static class Server
         mProcessingRequests = false;
     }
 
-    private static void ProfilePictureLogic(object? sender, Message e)
-    {
-        
-
-        if (!mProcessingProfilePicture)
-            return;
-
-        ClientRequest clientRequest = new();
-        clientRequest.mPlayerID = e.TcpClient.GetID();
-        clientRequest.mMessage = ClientSendMessages.ProfilePictureSent;
-        clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
-        clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
-
-        if (mProcessingRequests)
-        {
-            Task.Run(() =>
-            {
-                while (mProcessingRequests)
-                    Thread.Sleep(33);
-
-            }).Wait();
-        }
-
-        lock (mRequests)
-            mRequests.Add(clientRequest);
-
-        mProcessingProfilePicture = false;
-    }
-
     private static void DataReceived(object? sender, Message e)
     {
-        ClientRequest clientRequest = new();
-        clientRequest.mPlayerID = e.TcpClient.GetID();
-
-        if (mProcessingProfilePicture)
+Wait:
+        while (mProcessingRequest > 0)
         {
-            if (!Format.ContainsProperlyFormattedHeader<ClientSendMessages>(e.Data))
-                return;
-
-            Task.Run(() =>
-            {
-                while (mProcessingProfilePicture)
-                    Thread.Sleep(10);
-
-            }).Wait();
+            Thread.Sleep(10);
         }
 
-        if (e.Data.Length >= Format.HEADER_SIZE)
-        {
-            clientRequest.mMessage = Format.GetMessageType<ClientSendMessages>(e.Data);
-            clientRequest.mData = Format.GetByteDataFromMessage(e.Data);
-            clientRequest.mPlayerNumber = Format.GetPlayerNumber(e.Data);
+        Interlocked.Increment(ref mProcessingRequest);
 
-            if (clientRequest.mMessage == ClientSendMessages.PingRequested)
+        if (mProcessingRequest > 1)
+            goto Wait;
+
+        ulong id = e.TcpClient.GetID();
+        int length = e.Data.Length;
+        int index = 0;
+        do
+        {
+            int startIndex = index;
+            index = Format.GetDelimeterStartIndex(e.Data, index);
+            List<byte>? query = null;
+
+            if (index != -1)
             {
-                mOnDataRecieved?.Invoke(clientRequest.mPlayerID, clientRequest.mPlayerNumber, clientRequest.mMessage, clientRequest.mData);
+                query = new(mIncomingData);
+                var span = new Span<byte>(e.Data, startIndex, index);
+                query.AddRange(span);
+
+                AddRequest(query.ToArray());
+                index += Format.DELIMITER_LENGTH;
+            }
+            else
+            {
+                var span = new Span<byte>(e.Data, index, e.Data.Length - index);
+                mIncomingData.AddRange(span);
                 return;
             }
 
-            if (clientRequest.mMessage == ClientSendMessages.ProfilePictureSent)
-            {                
-                mProcessingProfilePicture = true;
+        } while (length > index + Format.DELIMITER_LENGTH);
+
+        mProcessingRequest = 0;
+
+        void AddRequest(byte[] data)
+        {
+            ClientRequest request = new();
+            request.mPlayerID = id;
+            request.mMessage = Format.GetMessageType<ClientSendMessages>(data);
+            request.mData = Format.GetByteDataFromMessage(data);
+            request.mPlayerNumber = Format.GetPlayerNumber(data);
+
+            if (request.mMessage == ClientSendMessages.PingRequested)
+            {
+                mOnDataRecieved?.Invoke(request.mPlayerID, request.mPlayerNumber, request.mMessage, request.mData);
                 return;
             }
-        }            
-        else
-        {
-            clientRequest.mData = e.Data;
-        }
-            
 
-        if (mProcessingRequests)
-        {
-            Task.Run(() =>
+
+            if (mProcessingRequests)
             {
-                while (mProcessingRequests)
-                    Thread.Sleep(10);
+                Task.Run(() =>
+                {
+                    while (mProcessingRequests)
+                        Thread.Sleep(10);
 
-            }).Wait();
+                }).Wait();
+            }
+
+            lock (mRequests)
+                mRequests.Add(request);
         }
-
-        lock (mRequests)
-            mRequests.Add(clientRequest);
     }
 
     private static void ClientConnected(object? sender, TcpClient e)

@@ -15,7 +15,7 @@ namespace MonopolyDeal
 
             if (card is WildCard wild)
             {
-                if (PlayedCards.HasHouse(wild.SetType))
+                if (PlayedCards.HasHouse(wild.SetType) && PlayedCards.GetNumberOfCardsInSet(wild.SetType) == wild.AmountForFullSet)
                     return false;
 
                 ImGui.SameLine();
@@ -32,7 +32,20 @@ namespace MonopolyDeal
 
             ImGui.SameLine(); ImGui.Text($" - M{card.Value}"); 
             bool invalid = PlayedCards.HasHouse(card.SetType);
-            if (!invalid)
+            int count = PlayedCards.GetNumberOfCardsInSet(card.SetType);
+            if (invalid && count > card.AmountForFullSet)
+            {
+                foreach (var property in PlayedCards.GetPropertyCardsOfType(card.SetType))
+                {
+                    if (mPayPopup.IsPayingCard(property))
+                        --count;
+                }
+
+                if (count > card.AmountForFullSet)
+                    invalid = false;
+            }
+
+            if (PlayedCards.HasHouse(card.SetType))
             {
                 var building = PlayedCards.GetBuildingCard(ActionType.House, card.SetType);
                 if (building is not null)

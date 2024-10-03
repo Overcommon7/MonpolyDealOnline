@@ -6,8 +6,8 @@ public static class Format
     public const int MESSAGE_SIZE = 20;
     public const int PLAYER_ID_LENGTH = 4;
     public const int HEADER_SIZE = MESSAGE_SIZE + PLAYER_ID_LENGTH;
-    public const byte DELIMITER = byte.MaxValue;
-
+    public static readonly byte[] DELIMITER = [255, 0, 254, 1];
+    public static int DELIMITER_LENGTH = DELIMITER.Length;
     public static byte[] CreateHeader<T>(T messageName) where T : struct, Enum
     {
         var header = messageName.ToString().PadRight(HEADER_SIZE);
@@ -19,6 +19,28 @@ public static class Format
         var header = messageName.ToString().PadRight(MESSAGE_SIZE);
         header += CreatePlayerIDString(playerNumber);
         return Encoding.UTF8.GetBytes(header);
+    }
+
+    public static int GetDelimeterStartIndex(byte[] data, int startIndex)
+    {        
+        for (int i = startIndex; i < data.Length; ++i)
+        {
+            if (data[i] != DELIMITER[0])
+                continue;
+
+            int valueIndex = i;
+            ++i;
+            for (int j = 1; j < DELIMITER.Length && i < data.Length; ++j, ++i)
+            {
+                if (data[i] != DELIMITER[j])
+                    break;
+
+                if (j == DELIMITER.Length - 1)
+                    return valueIndex; 
+            }
+        }
+
+        return -1;
     }
 
     public static bool ContainsProperlyFormattedHeader<T>(byte[] data) where T : struct, Enum
@@ -251,11 +273,22 @@ public static class Format
 
     public static byte[] AddDelimiter(this byte[] data)
     {
-        if (data[^1] == DELIMITER)
-            return data;
+        for (int i = 0; i < DELIMITER_LENGTH; ++i)
+        {
+            int j = DELIMITER_LENGTH - i;
+            if (data[new Index(j, true)] != DELIMITER[i])
+                break;
 
-        Array.Resize(ref data, data.Length + 1);
-        data[^1] = DELIMITER;
+            if (i == DELIMITER_LENGTH - 1)
+                return data;
+        }
+
+        Array.Resize(ref data, data.Length + DELIMITER_LENGTH);
+        for (int i = 0; i < DELIMITER_LENGTH; ++i)
+        {
+            int j = DELIMITER_LENGTH - i;
+            data[new Index(j, true)] = DELIMITER[i];
+        }
         return data;
     }
 
@@ -263,7 +296,7 @@ public static class Format
     {
         int length = array1.Length + array2.Length;
         if (withDelimiter)
-            ++length;
+            length += DELIMITER_LENGTH;
 
         byte[] combinedArray = new byte[length];
 
@@ -271,7 +304,7 @@ public static class Format
         Buffer.BlockCopy(array2, 0, combinedArray, array1.Length, array2.Length);
 
         if (withDelimiter)
-            combinedArray[^1] = DELIMITER;
+            Buffer.BlockCopy(DELIMITER, 0, combinedArray, array1.Length + array2.Length, DELIMITER_LENGTH);
 
         return combinedArray;
     }

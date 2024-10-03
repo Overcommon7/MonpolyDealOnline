@@ -37,7 +37,11 @@ namespace MonopolyDeal
 
         public static void OnPlayerPaid(PlayerManager playerManager, int playerNumber, byte[] data)
         {
-            var player = playerManager.GetPlayer(playerNumber);
+            int index = mPayments.FindIndex(info => info.mPlayerNumber == playerNumber);
+            if (index != -1)
+                return;
+
+            var player = playerManager.GetPlayer(playerNumber);           
 
             var strs = Format.ToString(data).Split('#', StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length < 2)

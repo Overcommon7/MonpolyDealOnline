@@ -68,20 +68,19 @@ namespace MonopolyDeal
             if (Client.IsConnected)
                 return;
 
+            mValidServerCredentials = true;
+            mPort = "25565";
 #if !DEBUG
             mAddress = "75.157.126.44";
-            mPort = "25565";
-            mUsername = string.Empty;
-            mValidServerCredentials = true;
+            mUsername = string.Empty;            
 #endif
 #if DEBUG
 
+            mAddress = "192.168.1.85";            
+            mUsername = "Overcommon";
+
             if (!mAutoConnect)
                 return;
-
-            mAddress = "192.168.1.85";
-            mPort = "25565";
-            mUsername = "Overcommon";
 
             Thread.Sleep(750);
 
@@ -320,9 +319,6 @@ namespace MonopolyDeal
             }
             else
             {
-                if (Client.IsProcessingProfilePicture)
-                    ImGui.BeginDisabled();
-
                 if (ImGui.Button("Test Ping"))
                 {
                     Client.SendData(ClientSendMessages.PingRequested, PlayerNumber);
@@ -331,11 +327,7 @@ namespace MonopolyDeal
                         mPingValues.mStopwatch = Stopwatch.StartNew();
                     else
                         mPingValues.mStopwatch.Restart();
-                }
-
-                if (Client.IsProcessingProfilePicture)
-                    ImGui.EndDisabled();
-                    
+                }                    
             }
 
             ImGui.SameLine();
