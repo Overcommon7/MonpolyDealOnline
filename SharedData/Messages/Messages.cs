@@ -28,7 +28,9 @@
     RequestHand,
 
     RecievedConstants,
-    ProfilePictureSent
+    ProfilePictureSent,
+
+    PingRequested
 }
 
 public enum ServerSendMessages : short
@@ -71,5 +73,7 @@ public enum ServerSendMessages : short
 
     SendConstants,
     ProfileImageSent,
-    DebugSendCard
+    DebugSendCard,
+
+    PingSent,    
 }

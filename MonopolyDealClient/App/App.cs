@@ -56,7 +56,7 @@ namespace MonopolyDeal
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
             Raylib.InitWindow((int)ScreenSize.X, (int)ScreenSize.Y, "Monopoly Deal");
-            Raylib.SetTargetFPS(30);
+            Raylib.SetTargetFPS(60);
             Raylib.SetExitKey(KeyboardKey.Null);
 
             if (position.X > 1 && position.Y > 1)

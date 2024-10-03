@@ -24,11 +24,13 @@ namespace MonopolyDeal
 
         public static bool IsConnected => mClient.TcpClient?.Connected ?? false;
         public static ulong ID { get; set; } = 0;
+        public static bool IsProcessingProfilePicture => mProcessingProfilePicture;
         public static string EndPoint { get; private set; } = string.Empty;
         private static List<ServerRequest> mRequests;
         private static bool mProcessingRequests = false;
         private static readonly object mEmptyObject = new();
         private static bool mProcessingProfilePicture = false;
+        
 
         static Client()
         {

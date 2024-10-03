@@ -10,6 +10,12 @@ using rlImGui_cs;
 
 namespace MonopolyDeal
 {
+    struct PingValues
+    {
+        public int mPing;
+        public double mPingStartTime;
+        public bool mIsTestingPing;
+    }
     public class Connection : Appstate
     {
         string mAddress = string.Empty;
@@ -19,6 +25,7 @@ namespace MonopolyDeal
         bool mIsReady = false;
         bool mAutoConnect = true;
         MessagePopup mMessagePopup;
+        PingValues mPingValues;
         public string Username => mUsername;
         public int PlayerNumber { get; set; }
         public Texture2D ProfilePicture { get; set; }
@@ -57,17 +64,21 @@ namespace MonopolyDeal
         {
             Client.mOnMessageRecieved += Client_OnMessageRecieved;
 
+            if (Client.IsConnected)
+                return;
+
 #if !DEBUG
-            mAddress = "154.5.153.25";
+            mAddress = "75.157.126.44";
             mPort = "25565";
             mUsername = string.Empty;
             mValidServerCredentials = true;
 #endif
 #if DEBUG
+
             if (!mAutoConnect)
                 return;
 
-            mAddress = "192.168.1.100";
+            mAddress = "192.168.1.85";
             mPort = "25565";
             mUsername = "Overcommon";
 
@@ -103,6 +114,19 @@ namespace MonopolyDeal
 
             if (message == ServerSendMessages.ProfileImageSent)
                 ProfilePictureRecieved(playerNumber, data);
+
+            if (message == ServerSendMessages.PingSent)
+                PingSent();
+        }
+
+        private void PingSent()
+        {
+            if (!mPingValues.mIsTestingPing)
+                return;
+
+            double ping = Raylib.GetTime() - mPingValues.mPingStartTime;
+            mPingValues.mIsTestingPing = false;
+            mPingValues.mPing = (int)Math.Round(ping * 1000f);
         }
 
         private void ProfilePictureRecieved(int playerNumber, byte[] data)
@@ -287,6 +311,32 @@ namespace MonopolyDeal
             
             if (!ImGui.CollapsingHeader("Debug Info"))
                 return;
+
+            if (mPingValues.mIsTestingPing)
+            {
+                ImGui.BeginDisabled();
+                ImGui.Button("Testing Ping");
+                ImGui.EndDisabled();
+            }
+            else
+            {
+                if (Client.IsProcessingProfilePicture)
+                    ImGui.BeginDisabled();
+
+                if (ImGui.Button("Test Ping"))
+                {
+                    Client.SendData(ClientSendMessages.PingRequested, PlayerNumber);
+                    mPingValues.mIsTestingPing = true;
+                    mPingValues.mPingStartTime = Raylib.GetTime();
+                }
+
+                if (Client.IsProcessingProfilePicture)
+                    ImGui.EndDisabled();
+                    
+            }
+
+            ImGui.SameLine();
+            ImGui.Text("Ping: " + (mPingValues.mPing == 0 ? "Not Tested" : $"{mPingValues.mPing}ms"));
 
             ImGui.TextDisabled($"Server Address: {mAddress}");
             ImGui.TextDisabled($"Server Port: {mPort}");

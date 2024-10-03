@@ -20,7 +20,7 @@ public class Program
 
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.Msaa4xHint | ConfigFlags.AlwaysRunWindow);
         Raylib.InitWindow(640, 480, "Server");
-        Raylib.SetTargetFPS(30);
+        Raylib.SetTargetFPS(60);
 
         rlImGui.Setup();
 
